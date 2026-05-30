@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Campaign Report</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .metric .rate { font-size:13px; color:var(--soft); font-weight:600; margin-left:8px; }
+  .funnel-row { display:flex; align-items:center; gap:12px; margin-bottom:13px; font-size:13px; } .funnel-row:last-child { margin-bottom:0; }
+  .funnel-row .fl { width:104px; color:var(--muted); display:flex; align-items:center; gap:7px; } .funnel-row .fl i { font-size:15px; }
+  .track { flex:1; height:10px; background:var(--surface); border-radius:999px; overflow:hidden; } .track > i { display:block; height:100%; border-radius:999px; }
+  .funnel-row .fv { width:96px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums; } .funnel-row .fv small { color:var(--soft); font-weight:500; margin-left:5px; }
+  .rail { display:flex; flex-direction:column; gap:16px; }
+  .link-row { display:flex; align-items:center; gap:10px; padding:7px 0; font-size:13px; } .link-row .url { flex:1; font-family:ui-monospace,monospace; font-size:12px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .link-row .lc { font-weight:600; font-variant-numeric:tabular-nums; color:var(--muted); }
+  .donut-wrap { display:flex; align-items:center; gap:18px; }
+  .legend-v { display:flex; flex-direction:column; gap:9px; font-size:13px; } .legend-v .lg { display:flex; align-items:center; gap:8px; } .legend-v .dot { width:10px; height:10px; border-radius:4px; } .legend-v b { font-variant-numeric:tabular-nums; } .legend-v small { color:var(--soft); }
+  .ck { color:var(--green); font-size:17px; } .xk { color:var(--red); font-size:17px; } .dash { color:var(--soft); }
+</style>
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="back" onclick="location.href='campaigns_list.html'"><i class="ti ti-arrow-left"></i> Back to campaigns</div>
+    <div class="head">
+      <div>
+        <h1>Dashain Festive Offer</h1>
+        <p class="sub"><span class="pill green dot">Sent</span> 2 hours ago · 8,612 recipients · Subject: "Dashain आयो — 25% off all masalas"</p>
+      </div>
+      <div class="actions">
+        <button class="btn"><i class="ti ti-download"></i> Export</button>
+        <button class="btn btn-primary"><i class="ti ti-share"></i> Share with client</button>
+      </div>
+    </div>
+
+    <div class="row metrics">
+      <div class="card metric"><div class="top"><span class="ico green"><i class="ti ti-circle-check"></i></span><span class="lbl">Delivered</span></div><div class="val tnum">8,548 <span class="rate">99.3%</span></div></div>
+      <div class="card metric"><div class="top"><span class="ico indigo"><i class="ti ti-mail-opened"></i></span><span class="lbl">Opened</span></div><div class="val tnum">3,251 <span class="rate">38.0%</span></div></div>
+      <div class="card metric"><div class="top"><span class="ico teal"><i class="ti ti-click"></i></span><span class="lbl">Clicked</span></div><div class="val tnum">487 <span class="rate">5.7%</span></div></div>
+      <div class="card metric"><div class="top"><span class="ico amber"><i class="ti ti-cash"></i></span><span class="lbl">Revenue</span></div><div class="val tnum">रू 1.2L</div></div>
+    </div>
+
+    <div class="row split">
+      <div class="card pad">
+        <p class="card-title">Engagement</p>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-mail-fast"></i> Delivered</span><div class="track"><i style="width:99.3%; background:var(--green);"></i></div><span class="fv">8,548 <small>99.3%</small></span></div>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-mail-opened"></i> Opened</span><div class="track"><i style="width:38%; background:var(--primary);"></i></div><span class="fv">3,251 <small>38.0%</small></span></div>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-click"></i> Clicked</span><div class="track"><i style="width:5.7%; background:var(--teal);"></i></div><span class="fv">487 <small>5.7%</small></span></div>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-arrow-back-up"></i> Bounced</span><div class="track"><i style="width:0.7%; background:var(--amber);"></i></div><span class="fv">60 <small>0.7%</small></span></div>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-alert-triangle"></i> Complained</span><div class="track"><i style="width:1%; background:var(--red);"></i></div><span class="fv">3 <small>0.04%</small></span></div>
+        <div class="funnel-row"><span class="fl"><i class="ti ti-mail-off"></i> Unsubscribed</span><div class="track"><i style="width:1.5%; background:var(--soft);"></i></div><span class="fv">26 <small>0.3%</small></span></div>
+      </div>
+      <div class="rail">
+        <div class="card pad">
+          <p class="card-title">Top links</p>
+          <div class="link-row"><span class="url">/sale/masala-set</span><span class="lc tnum">312</span></div>
+          <div class="link-row"><span class="url">/sale</span><span class="lc tnum">98</span></div>
+          <div class="link-row"><span class="url">/about</span><span class="lc tnum">44</span></div>
+          <div class="link-row"><span class="url">/unsubscribe</span><span class="lc tnum">26</span></div>
+        </div>
+        <div class="card pad">
+          <p class="card-title">Devices</p>
+          <div class="donut-wrap">
+            <svg width="96" height="96" viewBox="0 0 92 92">
+              <circle cx="46" cy="46" r="38" fill="none" stroke="var(--surface)" stroke-width="11"/>
+              <circle cx="46" cy="46" r="38" fill="none" stroke="var(--primary)" stroke-width="11" stroke-dasharray="171.9 66.9" stroke-dashoffset="0" transform="rotate(-90 46 46)"/>
+              <circle cx="46" cy="46" r="38" fill="none" stroke="var(--teal)" stroke-width="11" stroke-dasharray="57.3 181.5" stroke-dashoffset="-171.9" transform="rotate(-90 46 46)"/>
+              <circle cx="46" cy="46" r="38" fill="none" stroke="#C9C6BD" stroke-width="11" stroke-dasharray="9.6 229.2" stroke-dashoffset="-229.2" transform="rotate(-90 46 46)"/>
+            </svg>
+            <div class="legend-v">
+              <div class="lg"><span class="dot" style="background:var(--primary)"></span> <b>72%</b> <small>Mobile</small></div>
+              <div class="lg"><span class="dot" style="background:var(--teal)"></span> <b>24%</b> <small>Desktop</small></div>
+              <div class="lg"><span class="dot" style="background:#C9C6BD"></span> <b>4%</b> <small>Tablet</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-head"><h3>Per-recipient activity</h3><button class="btn btn-ghost">View all 8,612 <i class="ti ti-arrow-right"></i></button></div>
+      <table>
+        <thead><tr><th>Recipient</th><th class="c">Delivered</th><th class="c">Opened</th><th class="c">Clicked</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>aastha.shrestha@gmail.com</td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><i class="ti ti-check ck"></i></td><td><span class="pill green">Converted</span></td></tr>
+          <tr><td>bibek.k@outlook.com</td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><span class="dash">—</span></td><td><span class="pill blue">Opened</span></td></tr>
+          <tr><td>chandni.thapa@gmail.com</td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><span class="dash">—</span></td><td class="c"><span class="dash">—</span></td><td><span class="pill gray">Delivered</span></td></tr>
+          <tr><td>deepak.maharjan@yahoo.com</td><td class="c"><i class="ti ti-x xk"></i></td><td class="c"><span class="dash">—</span></td><td class="c"><span class="dash">—</span></td><td><span class="pill red">Bounced</span></td></tr>
+          <tr><td>eshwari.rai@gmail.com</td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><i class="ti ti-check ck"></i></td><td class="c"><i class="ti ti-check ck"></i></td><td><span class="pill green">Converted</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+.toolbar {
+  position: fixed;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 80ms ease;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.btn b,
+.btn i,
+.btn u {
+  font-size: 13px;
+  font-weight: 700;
+}

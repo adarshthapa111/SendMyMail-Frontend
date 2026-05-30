@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Contacts</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .seg-bar { display:flex; align-items:center; gap:10px; padding:11px 16px; background:var(--primary-light); border:1px solid var(--line-strong); border-radius:12px; font-size:13px; margin-bottom:14px; }
+  .seg-bar .lbl { color:var(--primary-ink); font-weight:600; }
+  .seg-bar .mono { background:rgba(255,255,255,0.7); padding:2px 7px; border-radius:6px; font-size:12px; }
+  .seg-bar .res { margin-left:auto; color:var(--primary-ink); font-weight:600; }
+  .tags { display:flex; gap:4px; flex-wrap:wrap; }
+  .src { display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-size:12.5px; } .src i { font-size:15px; color:var(--soft); }
+  .email { font-weight:600; }
+</style>
+</head>
+<body data-page="contacts">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main wide">
+    <div class="head">
+      <div><h1>Contacts</h1><p class="sub">12,420 contacts in 3 lists · 88 suppressed</p></div>
+      <div class="actions">
+        <button class="btn" onclick="location.href='contact_import.html'"><i class="ti ti-upload"></i> Import CSV</button>
+        <button class="btn btn-primary"><i class="ti ti-plus"></i> Add contact</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="seg">
+        <button class="on">All contacts <span class="n">12,420</span></button>
+        <button>Newsletter <span class="n">8,200</span></button>
+        <button>VIP buyers <span class="n">1,140</span></button>
+        <button>Suppressed <span class="n">88</span></button>
+      </div>
+      <div class="search"><i class="ti ti-search"></i><input placeholder="Search by email or name..."></div>
+    </div>
+    <div class="seg-bar">
+      <i class="ti ti-filter" style="color:var(--primary);"></i>
+      <span class="lbl">Segment</span>
+      <span class="mono">tag</span> = <span class="mono">vip</span> <span style="color:var(--soft);font-weight:600;">AND</span> <span class="mono">city</span> = <span class="mono">Kathmandu</span>
+      <span class="res">412 contacts</span>
+      <button class="btn btn-sm"><i class="ti ti-adjustments"></i> Edit segment</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Email</th><th>Name</th><th>Tags</th><th>Lists</th><th>Added</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">aastha.shrestha@gmail.com</td><td>Aastha Shrestha</td>
+            <td><div class="tags"><span class="pill purple">vip</span><span class="pill gray">kathmandu</span></div></td>
+            <td>Newsletter, VIP</td><td>2 days ago</td><td><span class="src"><i class="ti ti-shopping-cart"></i> WooCommerce</span></td>
+          </tr>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">bibek.k@outlook.com</td><td>Bibek Karki</td>
+            <td><div class="tags"><span class="pill gray">newsletter</span></div></td>
+            <td>Newsletter</td><td>5 days ago</td><td><span class="src"><i class="ti ti-forms"></i> Popup form</span></td>
+          </tr>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">chandni.thapa@gmail.com</td><td>Chandni Thapa</td>
+            <td><div class="tags"><span class="pill purple">vip</span><span class="pill gray">pokhara</span></div></td>
+            <td>VIP</td><td>1 week ago</td><td><span class="src"><i class="ti ti-file-import"></i> CSV import</span></td>
+          </tr>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">deepak.maharjan@yahoo.com</td><td>Deepak Maharjan</td>
+            <td><div class="tags"><span class="pill gray">newsletter</span></div></td>
+            <td>Newsletter</td><td>2 weeks ago</td><td><span class="src"><i class="ti ti-shopping-cart"></i> WooCommerce</span></td>
+          </tr>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">eshwari.rai@gmail.com</td><td>Eshwari Rai</td>
+            <td><div class="tags"><span class="pill purple">vip</span></div></td>
+            <td>VIP</td><td>3 weeks ago</td><td><span class="src"><i class="ti ti-forms"></i> Inline form</span></td>
+          </tr>
+          <tr class="clickable" onclick="location.href='contact_detail.html'">
+            <td class="email">firoj.tamrakar@hotmail.com</td><td>Firoj Tamrakar</td>
+            <td><div class="tags"><span class="pill gray">newsletter</span></div></td>
+            <td>Newsletter</td><td>1 month ago</td><td><span class="src"><i class="ti ti-file-import"></i> CSV import</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

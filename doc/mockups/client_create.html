@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Add Client</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .swatches { display:flex; gap:8px; }
+  .swatch { width:32px; height:32px; border-radius:9px; cursor:pointer; border:2px solid transparent; }
+  .swatch.on { border-color:var(--ink); }
+</style>
+</head>
+<body data-page="clients">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main narrow">
+    <div class="back" onclick="location.href='clients_list.html'"><i class="ti ti-arrow-left"></i> Back to clients</div>
+    <div class="head"><div><h1>Add a new client</h1><p class="sub">Each client has its own contacts, campaigns, and sending domain</p></div></div>
+    <div class="card pad">
+      <div class="field"><label class="label">Client name</label><input class="input" placeholder="e.g. Khukri Spices"></div>
+      <div class="field"><label class="label">Brand colour</label>
+        <div class="swatches">
+          <span class="swatch on" style="background:#1D9E75;"></span>
+          <span class="swatch" style="background:#D85A30;"></span>
+          <span class="swatch" style="background:#534AB7;"></span>
+          <span class="swatch" style="background:#D4537E;"></span>
+          <span class="swatch" style="background:#378ADD;"></span>
+          <span class="swatch" style="background:#BA7517;"></span>
+        </div>
+      </div>
+      <div class="field"><label class="label">Sending domain <span class="muted" style="font-weight:400;">(you'll verify this next)</span></label><input class="input" placeholder="mail.yourclient.com"><div class="helper">Don't have it yet? You can add it later.</div></div>
+      <div class="field"><label class="label">Default from-name</label><input class="input" placeholder="Khukri Spices"></div>
+      <div class="field" style="margin-bottom:0;"><label class="label">Default from-email</label><input class="input" placeholder="hello@mail.yourclient.com"></div>
+      <div class="foot"><button class="btn" onclick="location.href='clients_list.html'">Cancel</button><button class="btn btn-primary" onclick="location.href='clients_list.html'">Create client</button></div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

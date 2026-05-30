@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Flows</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .flow-card { cursor:pointer; padding:18px 20px; transition:transform .12s, box-shadow .12s; }
+  .flow-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  .flow-card .ftop { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .flow-card .ftop i { font-size:22px; color:var(--primary); } .flow-card .ftop b { font-weight:600; font-size:15px; }
+  .flow-card .fdesc { color:var(--muted); font-size:13px; margin:0 0 12px; }
+  .flow-card .fstat { font-size:12.5px; color:var(--soft); margin-top:10px; }
+  .flow-canvas { background:var(--surface); border-radius:14px; padding:24px; }
+  .fnode { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 16px; max-width:380px; margin:0 auto; display:flex; align-items:center; gap:13px; font-size:13px; box-shadow:var(--shadow-sm); }
+  .fnode i { color:var(--primary); font-size:19px; } .fnode b { font-weight:600; } .fnode small { display:block; color:var(--soft); font-size:11.5px; }
+  .farrow { text-align:center; color:var(--soft); font-size:12px; padding:7px 0; }
+</style>
+</head>
+<body data-page="flows">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head"><div><h1>Marketing automation</h1><p class="sub">Pre-built flows — configured with a wizard, not a flowchart</p></div></div>
+    <div class="row grid-3" style="margin-bottom:16px;">
+      <div class="card flow-card" onclick="location.href='flow_config.html'">
+        <div class="ftop"><i class="ti ti-confetti"></i><b>Welcome series</b></div>
+        <p class="fdesc">3 emails over 7 days, on list join</p>
+        <span class="pill green dot">Active</span>
+        <p class="fstat">412 entered · 38% completed</p>
+      </div>
+      <div class="card flow-card" onclick="location.href='flow_config.html'">
+        <div class="ftop"><i class="ti ti-shopping-cart"></i><b>Abandoned cart</b></div>
+        <p class="fdesc">2 emails at 1h + 24h, on cart webhook</p>
+        <span class="pill green dot">Active</span>
+        <p class="fstat">रू 87K recovered · 14% conversion</p>
+      </div>
+      <div class="card flow-card" onclick="location.href='flow_config.html'">
+        <div class="ftop"><i class="ti ti-cake"></i><b>Birthday</b></div>
+        <p class="fdesc">1 email on the day, daily cron</p>
+        <span class="pill gray dot">Paused</span>
+        <p class="fstat">No data yet</p>
+      </div>
+    </div>
+    <div class="card pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <p class="card-title" style="margin-bottom:0;">Welcome series · execution view</p>
+        <button class="btn btn-sm" onclick="location.href='welcome_series_preview.html'"><i class="ti ti-eye"></i> Preview emails</button>
+      </div>
+      <div style="height:14px;"></div>
+      <div class="flow-canvas">
+        <div class="fnode"><i class="ti ti-user-plus"></i><div><b>Trigger</b><small>Contact added to Newsletter list</small></div></div>
+        <div class="farrow">↓ immediately</div>
+        <div class="fnode"><i class="ti ti-mail"></i><div><b>Email 1 · Welcome</b><small>Sent 412 · opened 287</small></div></div>
+        <div class="farrow">↓ wait 2 days</div>
+        <div class="fnode"><i class="ti ti-mail"></i><div><b>Email 2 · Brand story</b><small>Sent 384 · opened 198</small></div></div>
+        <div class="farrow">↓ wait 5 days</div>
+        <div class="fnode"><i class="ti ti-mail"></i><div><b>Email 3 · First-order discount</b><small>Sent 356 · 47 conversions</small></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

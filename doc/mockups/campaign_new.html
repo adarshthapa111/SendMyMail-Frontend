@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — New Campaign · Step 1</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="back" onclick="location.href='campaigns_list.html'"><i class="ti ti-arrow-left"></i> Back to campaigns</div>
+    <div class="head"><div><h1>New campaign</h1><p class="sub">Step 1 of 6 · Name &amp; client</p></div></div>
+    <div class="wizard">
+      <div class="card steps">
+        <div class="vstep active"><div class="vnum">1</div><div class="vtext"><div class="t">Name &amp; client</div><div class="s">Name this campaign</div></div></div>
+        <div class="vstep"><div class="vnum">2</div><div class="vtext"><div class="t">Recipients</div><div class="s">Who gets it</div></div></div>
+        <div class="vstep"><div class="vnum">3</div><div class="vtext"><div class="t">From &amp; subject</div><div class="s">Sender &amp; subject line</div></div></div>
+        <div class="vstep"><div class="vnum">4</div><div class="vtext"><div class="t">Template</div><div class="s">Choose or build</div></div></div>
+        <div class="vstep"><div class="vnum">5</div><div class="vtext"><div class="t">Schedule</div><div class="s">Now or later</div></div></div>
+        <div class="vstep"><div class="vnum">6</div><div class="vtext"><div class="t">Review &amp; send</div><div class="s">Final check</div></div></div>
+      </div>
+      <div>
+        <div class="card pad">
+          <p class="panel-title">Name &amp; client</p>
+          <p class="panel-sub">An internal name — your recipients won't see this.</p>
+          <div class="field"><label class="label">Campaign name</label><input class="input" value="Dashain Tihar Sale"></div>
+          <div class="field"><label class="label">Client</label><select class="input"><option selected>Khukri Spices</option><option>Himalaya Trekking</option><option>Pashmina Co.</option></select></div>
+          <div class="field" style="margin-bottom:0;"><label class="label">Internal note <span class="muted" style="font-weight:400;">(optional)</span></label><input class="input" placeholder="e.g. festival push, coordinate with paid ads"></div>
+        </div>
+        <div class="wizard-foot">
+          <button class="btn" onclick="location.href='campaigns_list.html'">Cancel</button>
+          <div class="foot-right"><button class="btn btn-ghost">Save draft</button><button class="btn btn-primary" onclick="location.href='campaign_step2.html'">Continue <i class="ti ti-arrow-right"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Email Builder</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .builder { display:grid; grid-template-columns:76px 1fr 252px; gap:14px; min-height:560px; }
+  .bpalette { background:var(--surface); border-radius:14px; padding:8px; display:flex; flex-direction:column; gap:7px; }
+  .bblock { aspect-ratio:1; background:var(--card); border:1px solid var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:9px; color:var(--muted); cursor:grab; transition:box-shadow .12s; }
+  .bblock:hover { box-shadow:var(--shadow-sm); color:var(--ink); } .bblock i { font-size:17px; }
+  .bcanvas { background:var(--surface); border-radius:14px; padding:24px; overflow:auto; }
+  .bemail { background:#fff; border-radius:10px; max-width:380px; margin:0 auto; overflow:hidden; box-shadow:var(--shadow-md); }
+  .bemail .eh { background:var(--indigo); color:#fff; padding:22px; text-align:center; font-weight:600; font-size:16px; }
+  .bemail .ebody { padding:18px; font-size:13px; color:var(--ink); }
+  .ebtn { display:inline-block; background:var(--primary); color:#fff; padding:9px 18px; border-radius:8px; font-size:12px; cursor:pointer; }
+  .bsel { outline:2px solid var(--primary); outline-offset:2px; border-radius:4px; }
+  .bprops { background:var(--surface); border-radius:14px; padding:14px; }
+  .bprops .input { background:var(--card); }
+  @media (max-width:992px){ .builder { grid-template-columns:1fr; } .bpalette { flex-direction:row; flex-wrap:wrap; } }
+</style>
+</head>
+<body data-page="templates">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main wide">
+    <div class="back" onclick="location.href='templates.html'"><i class="ti ti-arrow-left"></i> Back to templates</div>
+    <div class="head">
+      <div><h1>Dashain Festive Offer</h1><p class="sub">Editing template · drag blocks from the left</p></div>
+      <div class="actions">
+        <button class="btn"><i class="ti ti-device-mobile"></i> Mobile</button>
+        <button class="btn"><i class="ti ti-mail-forward"></i> Send test</button>
+        <button class="btn btn-primary"><i class="ti ti-device-floppy"></i> Save</button>
+      </div>
+    </div>
+    <div class="builder">
+      <div class="bpalette">
+        <div class="bblock"><i class="ti ti-typography"></i>Text</div>
+        <div class="bblock"><i class="ti ti-photo"></i>Image</div>
+        <div class="bblock"><i class="ti ti-rectangle"></i>Button</div>
+        <div class="bblock"><i class="ti ti-minus"></i>Divider</div>
+        <div class="bblock"><i class="ti ti-columns-3"></i>Cols</div>
+        <div class="bblock"><i class="ti ti-brand-facebook"></i>Social</div>
+        <div class="bblock"><i class="ti ti-arrows-vertical"></i>Spacer</div>
+      </div>
+      <div class="bcanvas">
+        <div class="bemail">
+          <div class="eh">Khukri Spices</div>
+          <div class="ebody">
+            <p style="font-weight:600;margin:0 0 8px;">Namaste {{first_name|valued customer}}!</p>
+            <p class="bsel" style="margin:0 0 14px;">Dashain is here. Get 25% off our entire masala collection — handcrafted in Bhaktapur, shipped across Nepal.</p>
+            <p style="text-align:center;margin:6px 0;"><span class="ebtn">Shop the sale</span></p>
+            <p style="font-size:10px;color:var(--soft);text-align:center;margin-top:16px;">Khukri Spices · Bhaktapur, Nepal · <span style="text-decoration:underline;">Unsubscribe</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="bprops">
+        <p class="card-title">Properties</p>
+        <div class="field"><label class="label">Subject</label><input class="input" value="Dashain आयो — 25% off"></div>
+        <div class="field"><label class="label">Preheader</label><input class="input" value="Festive prices end Sunday"></div>
+        <div class="field"><label class="label">Button text</label><input class="input" value="Shop the sale"></div>
+        <div class="field" style="margin-bottom:0;"><label class="label">Button URL</label><input class="input" value="khukrispices.com/sale"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

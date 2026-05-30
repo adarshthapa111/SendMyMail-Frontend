@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Sending Domain</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .dns-row { display:grid; grid-template-columns:84px 1fr 40px 100px; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
+  .dns-row:first-of-type { border-top:0; }
+  .type { font-size:11px; font-weight:700; color:var(--soft); background:var(--surface); padding:4px 0; border-radius:6px; text-align:center; }
+  .dns-row .nm { font-weight:600; font-size:13px; }
+  .dns-row .vl { font-family:ui-monospace,monospace; font-size:11.5px; background:var(--surface); padding:3px 8px; border-radius:6px; color:var(--muted); display:inline-block; margin-top:4px; word-break:break-all; }
+  .copy { width:36px; height:34px; border-radius:9px; border:1px solid var(--line-strong); background:var(--card); color:var(--muted); cursor:pointer; }
+</style>
+</head>
+<body data-page="domain">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head">
+      <div><h1>Sending domain</h1><p class="sub"><span class="mono">mail.khukrispices.com</span> · <span class="pill amber dot">3 of 4 verified</span></p></div>
+      <div class="actions"><button class="btn"><i class="ti ti-refresh"></i> Recheck now</button></div>
+    </div>
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Add these 4 DNS records at your registrar</p>
+      <div class="dns-row"><span class="type">TXT</span><div><div class="nm">SPF</div><span class="vl">v=spf1 include:amazonses.com ~all</span></div><button class="copy"><i class="ti ti-copy"></i></button><span class="pill green dot">Verified</span></div>
+      <div class="dns-row"><span class="type">CNAME</span><div><div class="nm">DKIM 1</div><span class="vl">a7x2k._domainkey → a7x2k.dkim.amazonses.com</span></div><button class="copy"><i class="ti ti-copy"></i></button><span class="pill green dot">Verified</span></div>
+      <div class="dns-row"><span class="type">CNAME</span><div><div class="nm">DKIM 2</div><span class="vl">b9m4n._domainkey → b9m4n.dkim.amazonses.com</span></div><button class="copy"><i class="ti ti-copy"></i></button><span class="pill green dot">Verified</span></div>
+      <div class="dns-row"><span class="type">TXT</span><div><div class="nm">DMARC</div><span class="vl">v=DMARC1; p=quarantine; rua=mailto:dmarc@khukrispices.com</span></div><button class="copy"><i class="ti ti-copy"></i></button><span class="pill amber dot">Pending</span></div>
+    </div>
+    <div class="note"><i class="ti ti-info-circle"></i><span><b>Required since Feb 2024.</b> Gmail and Yahoo require SPF, DKIM, DMARC and one-click unsubscribe for senders over 5,000 emails/day. SendMyMail blocks sending from unverified domains and re-checks pending records hourly.</span></div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

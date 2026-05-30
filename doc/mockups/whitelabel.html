@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — White-label</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .swatch { width:32px; height:32px; border-radius:8px; border:2px solid var(--ink); } .logo-box { width:48px; height:48px; border-radius:11px; background:var(--primary); color:#fff; font-weight:700; display:grid; place-items:center; font-size:19px; }
+  .preview-wrap { background:var(--surface); border-radius:14px; padding:24px; min-height:240px; }
+  .client-view { background:#fff; border-radius:12px; padding:16px; border:1px solid var(--line); box-shadow:var(--shadow-md); }
+  .cv-top { display:flex; align-items:center; gap:9px; padding-bottom:12px; border-bottom:1px solid var(--line); } .cv-logo { width:28px; height:28px; border-radius:7px; background:var(--primary); color:#fff; display:grid; place-items:center; font-weight:700; font-size:13px; }
+</style>
+</head>
+<body data-page="whitelabel">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="head"><div><h1>White-label</h1><p class="sub">Your clients see your agency's brand, never SendMyMail's</p></div><div class="actions"><button class="btn btn-primary"><i class="ti ti-device-floppy"></i> Save changes</button></div></div>
+
+    <div class="row grid-2">
+      <div>
+        <div class="card pad" style="margin-bottom:16px;">
+          <p class="card-title">Custom domain</p>
+          <div class="field"><label class="label">Your URL</label><input class="input" value="mail.nirvanaagency.com"></div>
+          <div class="note" style="background:var(--green-bg);border-color:#C0DD97;color:var(--green-tx);"><i class="ti ti-circle-check"></i><span>SSL active · auto-renewed via Let's Encrypt. Branding is injected at the edge by domain — no flash of SendMyMail.</span></div>
+        </div>
+        <div class="card pad">
+          <p class="card-title">Branding</p>
+          <div class="field"><label class="label">Logo</label><div style="display:flex;align-items:center;gap:10px;"><div class="logo-box">N</div><button class="btn btn-sm">Replace</button></div></div>
+          <div class="field"><label class="label">Primary colour</label><div style="display:flex;align-items:center;gap:10px;"><div class="swatch"></div><span class="mono">#534AB7</span><button class="btn btn-sm">Edit</button></div></div>
+          <div class="field" style="margin-bottom:0;"><label class="label">Remove "Powered by SendMyMail" footer</label><label class="checkbox"><input type="checkbox" disabled> Available on the Scale plan</label></div>
+        </div>
+      </div>
+      <div>
+        <p class="card-title">Preview · what your client sees</p>
+        <div class="preview-wrap">
+          <div class="client-view">
+            <div class="cv-top"><div class="cv-logo">N</div><b>Nirvana Agency</b></div>
+            <p style="margin:12px 0 4px;font-weight:600;">Khukri Spices · Newsletter</p>
+            <p class="muted" style="margin:0;font-size:12.5px;">12,420 contacts · 38% open rate</p>
+            <button class="btn btn-primary btn-sm" style="margin-top:12px;">New campaign</button>
+          </div>
+          <p class="muted" style="font-size:12.5px;margin-top:12px;">Your client logs in via <span class="mono">mail.nirvanaagency.com</span> — they never see SendMyMail's brand.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

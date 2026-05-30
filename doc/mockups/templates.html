@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Templates</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .tpl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+  .tpl-card { cursor:pointer; overflow:hidden; padding:0; transition:transform .12s, box-shadow .12s; position:relative; }
+  .tpl-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  .tpl-thumb { height:128px; display:grid; place-items:center; background:linear-gradient(135deg,var(--primary-light),var(--surface)); color:var(--primary); font-size:34px; }
+  .tpl-meta { padding:12px 14px; } .tpl-meta b { font-weight:600; font-size:13px; } .tpl-meta small { display:block; color:var(--soft); margin-top:2px; font-size:12px; }
+  .tpl-badge { position:absolute; top:10px; left:10px; }
+</style>
+</head>
+<body data-page="templates">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main wide">
+    <div class="head">
+      <div><h1>Templates</h1><p class="sub">Reusable designs for Khukri Spices</p></div>
+      <div class="actions"><button class="btn btn-primary" onclick="location.href='builder.html'"><i class="ti ti-plus"></i> New template</button></div>
+    </div>
+    <div class="toolbar">
+      <div class="seg"><button class="on">All</button><button>Client</button><button>Agency</button><button>Starter library</button></div>
+    </div>
+    <div class="tpl-grid">
+      <div class="card tpl-card" onclick="location.href='builder.html'"><div class="tpl-thumb"><i class="ti ti-confetti"></i></div><div class="tpl-meta"><b>Welcome to Khukri</b><small>Welcome · 2 days ago</small></div></div>
+      <div class="card tpl-card" onclick="location.href='builder.html'"><span class="pill purple tpl-badge">Starter</span><div class="tpl-thumb"><i class="ti ti-gift"></i></div><div class="tpl-meta"><b>Dashain Festive Offer</b><small>Promo · 3 days ago</small></div></div>
+      <div class="card tpl-card" onclick="location.href='builder.html'"><div class="tpl-thumb"><i class="ti ti-news"></i></div><div class="tpl-meta"><b>Monthly newsletter</b><small>Newsletter · 1 week ago</small></div></div>
+      <div class="card tpl-card" onclick="location.href='builder.html'"><div class="tpl-thumb"><i class="ti ti-receipt"></i></div><div class="tpl-meta"><b>Order confirmation</b><small>Transactional · 2 weeks ago</small></div></div>
+      <div class="card tpl-card" onclick="location.href='builder.html'"><div class="tpl-thumb"><i class="ti ti-shopping-cart"></i></div><div class="tpl-meta"><b>Abandoned cart · 1h</b><small>Cart · 1 month ago</small></div></div>
+      <div class="card tpl-card" onclick="location.href='builder.html'"><div class="tpl-thumb"><i class="ti ti-cake"></i></div><div class="tpl-meta"><b>Birthday wish</b><small>Birthday · 1 month ago</small></div></div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

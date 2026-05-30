@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Campaign Sending</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .sent { max-width:460px; margin:6vh auto 0; text-align:center; }
+  .sent .big { width:84px; height:84px; border-radius:50%; background:var(--green-bg); color:var(--green); display:grid; place-items:center; font-size:42px; margin:0 auto 20px; }
+  .sent h1 { font-size:24px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+  .sent p { color:var(--muted); margin:0 0 4px; }
+  .sent .meta { font-weight:600; color:var(--ink); }
+  .sent .bar { margin:22px 0 8px; }
+  .sent .acts { display:flex; gap:9px; justify-content:center; margin-top:22px; }
+</style>
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="sent">
+      <div class="big"><i class="ti ti-rocket"></i></div>
+      <h1>Your campaign is sending 🚀</h1>
+      <p class="meta">Dashain Tihar Sale</p>
+      <p>Going out to 8,612 recipients now</p>
+      <div class="bar"><i style="width:34%"></i></div>
+      <p style="font-size:12.5px;">2,910 sent · queued at 14 emails/sec · ~10 min remaining</p>
+      <div class="acts">
+        <button class="btn" onclick="location.href='campaigns_list.html'">Back to campaigns</button>
+        <button class="btn btn-primary" onclick="location.href='campaign_report.html'"><i class="ti ti-chart-bar"></i> View live report</button>
+      </div>
+      <div class="note" style="margin-top:24px;text-align:left;"><i class="ti ti-info-circle"></i><span>Recipients were snapshotted at send time, so list changes mid-send won't affect this run. Bounces &amp; complaints feed suppression automatically.</span></div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

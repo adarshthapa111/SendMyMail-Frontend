@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Form Builder</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .mode-card { cursor:pointer; padding:16px; text-align:left; }
+  .mode-card i { font-size:20px; color:var(--muted); } .mode-card.on { border-color:var(--primary); background:var(--primary-light); } .mode-card.on i { color:var(--primary); }
+  .mode-card b { display:block; margin-top:7px; font-weight:600; font-size:13.5px; } .mode-card small { color:var(--muted); font-size:12px; }
+  .chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; background:var(--blue-bg); color:var(--blue); }
+  .preview-wrap { background:var(--surface); border-radius:14px; padding:30px; display:grid; place-items:center; min-height:300px; }
+  .fpreview { background:#fff; border-radius:14px; padding:24px; max-width:300px; width:100%; border:1px solid var(--line); box-shadow:var(--shadow-md); }
+  .fpreview h3 { font-size:16px; margin:0 0 4px; } .embed { font-family:ui-monospace,monospace; font-size:11.5px; background:var(--surface); padding:11px; border-radius:9px; word-break:break-all; display:block; }
+</style>
+</head>
+<body data-page="forms">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="back" onclick="location.href='forms.html'"><i class="ti ti-arrow-left"></i> Back to forms</div>
+    <div class="head"><div><h1>Footer newsletter</h1><p class="sub">Configure on the left, preview on the right</p></div><div class="actions"><button class="btn btn-primary"><i class="ti ti-device-floppy"></i> Save form</button></div></div>
+
+    <div class="row grid-3" style="margin-bottom:16px;">
+      <div class="card mode-card on"><i class="ti ti-layout-bottombar-collapse"></i><b>Inline</b><small>Embed in a page</small></div>
+      <div class="card mode-card"><i class="ti ti-app-window"></i><b>Popup</b><small>Timer or scroll trigger</small></div>
+      <div class="card mode-card"><i class="ti ti-external-link"></i><b>Hosted page</b><small>Standalone URL + SSL</small></div>
+    </div>
+
+    <div class="row grid-2">
+      <div>
+        <div class="card pad" style="margin-bottom:16px;">
+          <p class="card-title">Configure</p>
+          <div class="field"><label class="label">Form name</label><input class="input" value="Footer newsletter signup"></div>
+          <div class="field"><label class="label">Add to list</label><select class="input"><option>Newsletter</option></select></div>
+          <div class="field"><label class="label">After signup, enter flow</label><select class="input"><option>Welcome series</option><option>None</option></select></div>
+          <div class="field"><label class="label">Fields</label><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="chip">Email *</span><span class="chip">First name</span><button class="btn btn-sm"><i class="ti ti-plus"></i> Add field</button></div></div>
+          <div class="field" style="margin-bottom:0;"><label class="label">Spam protection</label><p style="margin:0;font-size:13px;"><span style="color:var(--green);">✓</span> hCaptcha enabled · EU contacts get double opt-in</p></div>
+        </div>
+        <div class="card pad">
+          <p class="card-title">Embed code</p>
+          <code class="embed">&lt;script src="https://embed.sendmymail.np/forms/f_x9k2.js" async&gt;&lt;/script&gt;</code>
+          <button class="btn btn-sm" style="margin-top:12px;"><i class="ti ti-copy"></i> Copy code</button>
+        </div>
+      </div>
+      <div>
+        <p class="card-title">Live preview</p>
+        <div class="preview-wrap">
+          <div class="fpreview">
+            <h3>Join the Khukri family</h3>
+            <p class="muted" style="font-size:13px;margin:0 0 14px;">Recipes, offers, and stories. No spam.</p>
+            <div class="field"><input class="input" placeholder="First name"></div>
+            <div class="field"><input class="input" placeholder="you@email.com"></div>
+            <button class="btn btn-primary" style="width:100%;">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

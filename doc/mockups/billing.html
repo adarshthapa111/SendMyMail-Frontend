@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Billing</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .plan { padding:18px 20px; position:relative; cursor:pointer; } .plan .pn { font-size:13px; font-weight:600; } .plan .pp { font-size:22px; font-weight:600; margin:6px 0; letter-spacing:-0.02em; } .plan .pp small { font-size:12px; color:var(--muted); font-weight:400; } .plan .pd { font-size:12.5px; color:var(--muted); margin:0; }
+  .plan.current { border:2px solid var(--primary); background:var(--primary-light); }
+  .plan .cur-badge { position:absolute; top:12px; right:12px; }
+  .usage { display:flex; flex-direction:column; gap:5px; } .usage .ul { display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); } .usage .ul b { color:var(--ink); font-weight:600; }
+</style>
+</head>
+<body data-page="billing">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="head"><div><h1>Billing</h1><p class="sub">Pay in NPR via Khalti or eSewa, or in USD via Stripe</p></div></div>
+
+    <div class="row grid-3" style="margin-bottom:16px;">
+      <div class="card plan"><div class="pn">Starter</div><div class="pp">रू 2,499<small>/mo</small></div><p class="pd">3 clients · 25K emails · 10K contacts</p></div>
+      <div class="card plan current"><span class="pill purple cur-badge">Current</span><div class="pn">Pro</div><div class="pp">रू 6,999<small>/mo</small></div><p class="pd">10 clients · 100K emails · 50K contacts</p></div>
+      <div class="card plan"><div class="pn">Scale</div><div class="pp">रू 14,999<small>/mo</small></div><p class="pd">30 clients · 500K emails · remove branding</p></div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Usage this cycle</p>
+      <div class="row grid-3">
+        <div class="usage"><div class="ul"><span>Clients</span><b class="tnum">8 / 10</b></div><div class="bar"><i style="width:80%"></i></div></div>
+        <div class="usage"><div class="ul"><span>Emails</span><b class="tnum">42,338 / 100,000</b></div><div class="bar"><i style="width:42%"></i></div></div>
+        <div class="usage"><div class="ul"><span>Contacts</span><b class="tnum">28,420 / 50,000</b></div><div class="bar"><i style="width:57%"></i></div></div>
+      </div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Payment method</p>
+      <div style="display:flex;align-items:center;gap:13px;">
+        <div style="width:48px;height:33px;border-radius:7px;background:#5C2D91;color:#fff;display:grid;place-items:center;font-weight:700;">K</div>
+        <div style="flex:1;"><b>Khalti</b><div class="muted" style="font-size:12.5px;">Renewal reminder sent 7 days before due date</div></div>
+        <button class="btn btn-sm">Change</button>
+      </div>
+      <div class="note amber" style="margin-top:12px;"><i class="ti ti-alert-circle"></i><span>Khalti and eSewa don't support card-on-file recurring billing. We send reminders before each renewal; you pay manually.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-head"><h3>Recent invoices</h3></div>
+      <table>
+        <thead><tr><th>Date</th><th class="r">Amount</th><th>Method</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>8 May 2026</td><td class="r tnum">रू 6,999</td><td>Khalti</td><td><span class="pill green dot">Paid</span></td><td class="r"><button class="btn btn-sm"><i class="ti ti-download"></i></button></td></tr>
+          <tr><td>8 Apr 2026</td><td class="r tnum">रू 6,999</td><td>Khalti</td><td><span class="pill green dot">Paid</span></td><td class="r"><button class="btn btn-sm"><i class="ti ti-download"></i></button></td></tr>
+          <tr><td>8 Mar 2026</td><td class="r tnum">रू 6,999</td><td>eSewa</td><td><span class="pill green dot">Paid</span></td><td class="r"><button class="btn btn-sm"><i class="ti ti-download"></i></button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

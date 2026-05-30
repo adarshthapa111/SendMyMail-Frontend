@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Onboarding</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body class="onb-body">
+
+<div class="onb-shell">
+
+  <!-- LEFT RAIL · vertical step progress -->
+  <aside class="onb-rail">
+    <div class="logo"><span class="mark">S</span> SendMyMail</div>
+    <span class="eyebrow" style="margin-top:4px;"><span class="dot"></span> Setup</span>
+
+    <div class="vstep-list">
+
+      <div class="vstep done">
+        <div class="vnum"><i class="ti ti-check" style="font-size:14px;"></i></div>
+        <div class="vtext">
+          <div class="t">Create your first client</div>
+          <div class="s">Khukri Spices · 2 days ago</div>
+        </div>
+      </div>
+
+      <div class="vstep done">
+        <div class="vnum"><i class="ti ti-check" style="font-size:14px;"></i></div>
+        <div class="vtext">
+          <div class="t">Verify sending domain</div>
+          <div class="s">mail.khukrispices.com · SPF + DKIM verified</div>
+        </div>
+      </div>
+
+      <div class="vstep active">
+        <div class="vnum">3</div>
+        <div class="vtext">
+          <div class="t">Import your first contacts</div>
+          <div class="s">CSV, WooCommerce, or paste</div>
+        </div>
+      </div>
+
+      <div class="vstep">
+        <div class="vnum">4</div>
+        <div class="vtext">
+          <div class="t">Send first campaign</div>
+          <div class="s">Pick a template, hit send</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="onb-rail-foot">
+      <div class="rail-help"><i class="ti ti-message-circle"></i> Reply to your welcome email — Sushant answers in &lt;1 hr.</div>
+      <a class="rail-skip">Skip onboarding for now →</a>
+    </div>
+  </aside>
+
+  <!-- RIGHT STAGE · current step focus -->
+  <main class="onb-stage">
+
+    <div class="onb-stage-top">
+      <div>
+        <h1>Namaste, Prasiddha <span style="font-family:'General Sans',sans-serif;">👋</span></h1>
+        <p class="greet-sub">Halfway there — let's bring in your first contacts. About 3 minutes.</p>
+      </div>
+      <span class="progress-pill">
+        <div class="pp-bar"><i style="width:50%;"></i></div>
+        <span><b>2 of 4</b> done · ~ 6 min left</span>
+      </span>
+    </div>
+
+    <div class="onb-step-active">
+
+      <span class="eyebrow indigo"><span class="dot"></span> Step 3 of 4</span>
+      <h2>Bring in your first contacts.</h2>
+      <p class="lede">Pick whichever's fastest — we'll automatically dedupe by email, reject role accounts (info@, admin@), and flag scraped patterns to protect your sender reputation.</p>
+
+      <div class="pickgrid">
+
+        <div class="pickcard on">
+          <div class="pi"><i class="ti ti-file-spreadsheet"></i></div>
+          <div class="pt">Upload a CSV</div>
+          <div class="pd">Drag &amp; drop a file. We'll auto-map columns like email, name, phone, city.</div>
+          <div class="pm"><i class="ti ti-bolt"></i> Most common · 2 min</div>
+        </div>
+
+        <div class="pickcard">
+          <div class="pi"><i class="ti ti-brand-woocommerce"></i></div>
+          <div class="pt">Connect WooCommerce</div>
+          <div class="pd">Auto-sync customers, segment by lifetime value, trigger abandoned-cart flows.</div>
+          <div class="pm"><i class="ti ti-refresh"></i> Live sync · 3 min</div>
+        </div>
+
+        <div class="pickcard">
+          <div class="pi"><i class="ti ti-clipboard"></i></div>
+          <div class="pt">Paste emails</div>
+          <div class="pd">Have a quick list? Paste up to 1,000 addresses. Good for testing.</div>
+          <div class="pm"><i class="ti ti-clock"></i> 1 min</div>
+        </div>
+
+      </div>
+
+      <div class="note" style="margin-bottom:0;">
+        <i class="ti ti-shield-check"></i>
+        <span><b>Quality protection.</b> SendMyMail rejects lists with &gt; 10% role accounts or scraped patterns. Importing purchased lists violates our terms and Nepal's Advertisement Act 2076.</span>
+      </div>
+
+      <div class="onb-foot">
+        <div class="reassure"><i class="ti ti-check"></i> Your progress is saved automatically</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn">Do this later</button>
+          <button class="btn btn-primary btn-lg" onclick="location.href='contact_import.html'">Continue with CSV <i class="ti ti-arrow-right" style="font-size:16px;"></i></button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>

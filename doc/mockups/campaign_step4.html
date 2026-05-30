@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — New Campaign · Step 4</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .tpl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media(max-width:720px){ .tpl-grid { grid-template-columns:repeat(2,1fr); } }
+  .tpl { cursor:pointer; overflow:hidden; padding:0; border:1px solid var(--line); border-radius:12px; background:var(--card); position:relative; }
+  .tpl.on { border:2px solid var(--primary); }
+  .tpl .th { height:96px; display:grid; place-items:center; background:linear-gradient(135deg,var(--primary-light),var(--surface)); color:var(--primary); font-size:26px; }
+  .tpl .tm { padding:9px 11px; font-size:12.5px; font-weight:600; } .tpl .tm small { display:block; color:var(--soft); font-weight:400; font-size:11px; }
+  .tpl .chk { position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:var(--primary); color:#fff; display:none; place-items:center; font-size:12px; }
+  .tpl.on .chk { display:grid; }
+</style>
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="back" onclick="location.href='campaign_step3.html'"><i class="ti ti-arrow-left"></i> Back</div>
+    <div class="head"><div><h1>New campaign</h1><p class="sub">Step 4 of 6 · Template</p></div></div>
+    <div class="wizard">
+      <div class="card steps">
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Name &amp; client</div><div class="s">Dashain Tihar Sale</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Recipients</div><div class="s">Newsletter + VIP · 8,612</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">From &amp; subject</div><div class="s">Khukri Spices</div></div></div>
+        <div class="vstep active"><div class="vnum">4</div><div class="vtext"><div class="t">Template</div><div class="s">Choose or build the email</div></div></div>
+        <div class="vstep"><div class="vnum">5</div><div class="vtext"><div class="t">Schedule</div><div class="s">Now or later</div></div></div>
+        <div class="vstep"><div class="vnum">6</div><div class="vtext"><div class="t">Review &amp; send</div><div class="s">Final check</div></div></div>
+      </div>
+      <div>
+        <div class="card pad">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div><p class="panel-title" style="margin:0;">Choose a template</p><p class="panel-sub" style="margin:2px 0 0;">Pick one, or build from scratch.</p></div>
+            <button class="btn" onclick="location.href='builder.html'"><i class="ti ti-pencil"></i> Open builder</button>
+          </div>
+          <div class="tpl-grid">
+            <div class="tpl on"><span class="chk"><i class="ti ti-check"></i></span><div class="th"><i class="ti ti-gift"></i></div><div class="tm">Festive promo<small>Promo</small></div></div>
+            <div class="tpl"><div class="th"><i class="ti ti-news"></i></div><div class="tm">Monthly newsletter<small>Newsletter</small></div></div>
+            <div class="tpl"><div class="th"><i class="ti ti-confetti"></i></div><div class="tm">Welcome to Khukri<small>Welcome</small></div></div>
+          </div>
+        </div>
+        <div class="wizard-foot">
+          <button class="btn" onclick="location.href='campaign_step3.html'"><i class="ti ti-arrow-left"></i> Back</button>
+          <div class="foot-right"><button class="btn btn-ghost">Save draft</button><button class="btn btn-primary" onclick="location.href='campaign_step5.html'">Continue <i class="ti ti-arrow-right"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

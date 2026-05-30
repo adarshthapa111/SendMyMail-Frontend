@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — New Campaign · Step 6</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .preview { width:118px; border:1px solid var(--line); border-radius:10px; overflow:hidden; flex-shrink:0; box-shadow:var(--shadow-sm); }
+  .preview .ph { background:var(--indigo); color:#fff; padding:9px; text-align:center; font-weight:600; font-size:10px; }
+  .preview .pb { padding:9px; font-size:8px; color:var(--muted); line-height:1.4; }
+  .preview .pbtn { display:inline-block; background:var(--primary); color:#fff; border-radius:4px; padding:3px 7px; font-size:7px; margin-top:5px; font-weight:600; }
+  .tplrow { display:flex; align-items:center; gap:12px; }
+  .check-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px; } .check-title h3 { font-size:14px; font-weight:600; margin:0; }
+</style>
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="back" onclick="location.href='campaign_step5.html'"><i class="ti ti-arrow-left"></i> Back</div>
+    <div class="head"><div><h1>New campaign</h1><p class="sub">Step 6 of 6 · Review &amp; send</p></div></div>
+    <div class="wizard">
+      <div class="card steps">
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Name &amp; client</div><div class="s">Dashain Tihar Sale</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Recipients</div><div class="s">Newsletter + VIP · 8,612</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">From &amp; subject</div><div class="s">Khukri Spices</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Template</div><div class="s">Festive promo</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Schedule</div><div class="s">Send now</div></div></div>
+        <div class="vstep active"><div class="vnum">6</div><div class="vtext"><div class="t">Review &amp; send</div><div class="s">Final check</div></div></div>
+      </div>
+      <div>
+        <div class="card pad">
+          <p class="panel-title">Review &amp; send</p>
+          <p class="panel-sub">One last look before this goes out to your audience.</p>
+          <div class="sum-row"><span class="k">Campaign</span><span class="v">Dashain Tihar Sale</span><span class="edit" onclick="location.href='campaign_new.html'">Edit</span></div>
+          <div class="sum-row"><span class="k">Audience</span><span class="v">Newsletter + VIP buyers <small>tag = vip OR list = Newsletter · 8,612 recipients</small></span><span class="edit" onclick="location.href='campaign_step2.html'">Edit</span></div>
+          <div class="sum-row"><span class="k">From</span><span class="v">Khukri Spices <small>hello@mail.khukrispices.com</small></span><span class="edit" onclick="location.href='campaign_step3.html'">Edit</span></div>
+          <div class="sum-row"><span class="k">Subject</span><span class="v">Dashain आयो — 25% off all masalas <small>Preheader: Festive prices end Sunday</small></span><span class="edit" onclick="location.href='campaign_step3.html'">Edit</span></div>
+          <div class="sum-row"><span class="k">Template</span><span class="v"><div class="tplrow"><div class="preview"><div class="ph">Khukri Spices</div><div class="pb">Namaste! Dashain is here — 25% off our masala collection.<span class="pbtn">Shop the sale</span></div></div><div>Festive promo<small style="display:block;color:var(--soft);">Tested in Gmail, Outlook, Apple Mail</small></div></div></span><span class="edit" onclick="location.href='campaign_step4.html'">Edit</span></div>
+          <div class="sum-row"><span class="k">Schedule</span><span class="v">Send immediately</span><span class="edit" onclick="location.href='campaign_step5.html'">Edit</span></div>
+        </div>
+        <div class="card pad" style="margin-top:16px;">
+          <div class="check-title"><h3>Deliverability check</h3><span class="pill green"><i class="ti ti-shield-check" style="font-size:13px;"></i> All clear</span></div>
+          <div class="check-row"><i class="ti ti-circle-check ci"></i><div class="ct"><b>Sending domain verified</b><small>mail.khukrispices.com · SPF, DKIM, DMARC passing</small></div></div>
+          <div class="check-row"><i class="ti ti-circle-check ci"></i><div class="ct"><b>One-click unsubscribe included</b><small>RFC 8058 List-Unsubscribe header added automatically</small></div></div>
+          <div class="check-row"><i class="ti ti-circle-check ci"></i><div class="ct"><b>Within daily sending limit</b><small>8,612 of 50,000 emails today</small></div></div>
+          <div class="check-row"><i class="ti ti-circle-check ci"></i><div class="ct"><b>List quality passed</b><small>0 role accounts or spam-trap patterns detected</small></div></div>
+        </div>
+        <div class="wizard-foot">
+          <button class="btn" onclick="location.href='campaign_step5.html'"><i class="ti ti-arrow-left"></i> Back</button>
+          <div class="foot-right"><button class="btn btn-ghost">Save draft</button><button class="btn btn-primary" onclick="location.href='campaign_sent.html'"><i class="ti ti-send"></i> Send to 8,612 recipients</button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

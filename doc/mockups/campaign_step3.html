@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — New Campaign · Step 3</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="back" onclick="location.href='campaign_step2.html'"><i class="ti ti-arrow-left"></i> Back</div>
+    <div class="head"><div><h1>New campaign</h1><p class="sub">Step 3 of 6 · From &amp; subject</p></div></div>
+    <div class="wizard">
+      <div class="card steps">
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Name &amp; client</div><div class="s">Dashain Tihar Sale</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Recipients</div><div class="s">Newsletter + VIP · 8,612</div></div></div>
+        <div class="vstep active"><div class="vnum">3</div><div class="vtext"><div class="t">From &amp; subject</div><div class="s">Sender &amp; subject line</div></div></div>
+        <div class="vstep"><div class="vnum">4</div><div class="vtext"><div class="t">Template</div><div class="s">Choose or build</div></div></div>
+        <div class="vstep"><div class="vnum">5</div><div class="vtext"><div class="t">Schedule</div><div class="s">Now or later</div></div></div>
+        <div class="vstep"><div class="vnum">6</div><div class="vtext"><div class="t">Review &amp; send</div><div class="s">Final check</div></div></div>
+      </div>
+      <div>
+        <div class="card pad">
+          <p class="panel-title">From &amp; subject</p>
+          <p class="panel-sub">The sender identity and the line that lands in the inbox.</p>
+          <div class="row grid-2" style="gap:12px;">
+            <div class="field"><label class="label">From name</label><input class="input" value="Khukri Spices"></div>
+            <div class="field"><label class="label">From email</label><select class="input"><option selected>hello@mail.khukrispices.com</option><option>orders@mail.khukrispices.com</option></select></div>
+          </div>
+          <div class="field"><label class="label">Subject</label><input class="input" value="Dashain आयो — 25% off all masalas"></div>
+          <div class="field"><label class="label">Preheader</label><input class="input" value="Festive prices end Sunday"></div>
+          <label class="label">Inbox preview</label>
+          <div class="inbox"><div class="from">Khukri Spices</div><div class="subj">Dashain आयो — 25% off all masalas</div><div class="pre">Festive prices end Sunday</div></div>
+        </div>
+        <div class="wizard-foot">
+          <button class="btn" onclick="location.href='campaign_step2.html'"><i class="ti ti-arrow-left"></i> Back</button>
+          <div class="foot-right"><button class="btn btn-ghost">Save draft</button><button class="btn btn-primary" onclick="location.href='campaign_step4.html'">Continue <i class="ti ti-arrow-right"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

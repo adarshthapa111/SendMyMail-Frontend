@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Welcome Series Preview</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  /* series timeline strip */
+  .timeline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:22px; }
+  .tnode { display:inline-flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:600; box-shadow:var(--shadow-sm); }
+  .tnode i { color:var(--primary); font-size:15px; } .tnode small { color:var(--soft); font-weight:500; }
+  .tsep { color:var(--soft); font-size:13px; }
+
+  /* 3 emails side by side */
+  .series { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:start; }
+  @media(max-width:1080px){ .series { grid-template-columns:1fr; max-width:420px; } }
+  .estep { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .estep b { font-weight:600; font-size:13.5px; } .estep .when { font-size:11px; }
+
+  .epreview { background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-md); }
+  .epreview .eh { background:var(--indigo); color:#fff; padding:18px; text-align:center; font-weight:600; font-size:15px; letter-spacing:.02em; }
+  .epreview .eb { padding:16px 16px 18px; font-size:12.5px; color:var(--ink); line-height:1.55; }
+  .epreview .eb p { margin:0 0 10px; }
+  .epreview .lead { font-weight:600; font-size:13.5px; }
+  .epreview .imgph { height:84px; border-radius:9px; background:linear-gradient(135deg,var(--primary-light),var(--surface)); display:grid; place-items:center; color:var(--primary); font-size:24px; margin:0 0 12px; }
+  .epreview .ebtn { display:inline-block; background:var(--primary); color:#fff; padding:9px 18px; border-radius:8px; font-size:11.5px; font-weight:600; }
+  .epreview .promo { text-align:center; background:var(--primary-light); border:1px dashed #B9B2EE; border-radius:9px; padding:9px; margin:0 0 12px; font-family:ui-monospace,monospace; font-weight:700; color:var(--primary-dark); letter-spacing:.05em; }
+  .epreview .ef { font-size:9px; color:var(--soft); text-align:center; margin-top:14px; }
+  .epreview .ef u { cursor:pointer; }
+  .estats { text-align:center; font-size:11.5px; color:var(--soft); margin-top:10px; }
+</style>
+</head>
+<body data-page="flows">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main wide">
+    <div class="back" onclick="location.href='flow_config.html'"><i class="ti ti-arrow-left"></i> Back to flow</div>
+    <div class="head">
+      <div><h1>Welcome series · email preview</h1><p class="sub">3 emails over 7 days · triggered when a contact joins the Newsletter list</p></div>
+      <div class="actions"><button class="btn"><i class="ti ti-device-mobile"></i> Mobile</button><button class="btn"><i class="ti ti-mail-forward"></i> Send test</button></div>
+    </div>
+
+    <!-- series timeline -->
+    <div class="timeline">
+      <span class="tnode"><i class="ti ti-user-plus"></i> Trigger <small>list join</small></span>
+      <span class="tsep">→</span>
+      <span class="tnode"><i class="ti ti-mail"></i> Email 1 <small>Day 0</small></span>
+      <span class="tsep">→ wait 2 days →</span>
+      <span class="tnode"><i class="ti ti-mail"></i> Email 2 <small>Day 2</small></span>
+      <span class="tsep">→ wait 5 days →</span>
+      <span class="tnode"><i class="ti ti-mail"></i> Email 3 <small>Day 7</small></span>
+    </div>
+
+    <!-- 3 emails side by side -->
+    <div class="series">
+      <!-- EMAIL 1 -->
+      <div>
+        <div class="estep"><b>Email 1 · Welcome</b><span class="pill gray when">Send immediately</span></div>
+        <div class="epreview">
+          <div class="eh">Khukri Spices</div>
+          <div class="eb">
+            <p class="lead">Namaste {{first_name|friend}} — welcome to the family! 🙏</p>
+            <p>Thank you for joining us. We hand-grind every masala in small batches in Bhaktapur, the way our grandmothers did.</p>
+            <p>Here's what's cooking — explore the collection that started it all.</p>
+            <p style="text-align:center;"><span class="ebtn">Browse the collection</span></p>
+            <div class="ef">Khukri Spices · Bhaktapur, Nepal · <u>Unsubscribe</u></div>
+          </div>
+        </div>
+        <div class="estats">Sent 412 · opened 287 (70%)</div>
+      </div>
+
+      <!-- EMAIL 2 -->
+      <div>
+        <div class="estep"><b>Email 2 · Brand story</b><span class="pill blue when">Day 2</span></div>
+        <div class="epreview">
+          <div class="eh">Khukri Spices</div>
+          <div class="eb">
+            <div class="imgph"><i class="ti ti-photo"></i></div>
+            <p class="lead">From a Bhaktapur kitchen to yours</p>
+            <p>It began with one stone grinder and a stubborn belief: spices taste better fresh, never mass-produced.</p>
+            <p>Today we ship that same freshness across all 77 districts of Nepal.</p>
+            <p style="text-align:center;"><span class="ebtn">Read our story</span></p>
+            <div class="ef">Khukri Spices · Bhaktapur, Nepal · <u>Unsubscribe</u></div>
+          </div>
+        </div>
+        <div class="estats">Sent 384 · opened 198 (52%)</div>
+      </div>
+
+      <!-- EMAIL 3 -->
+      <div>
+        <div class="estep"><b>Email 3 · First-order discount</b><span class="pill blue when">Day 7</span></div>
+        <div class="epreview">
+          <div class="eh">Khukri Spices</div>
+          <div class="eb">
+            <p class="lead">A little welcome gift 🎁</p>
+            <p>Ready to cook something special? Here's <b>15% off</b> your first order — our way of saying dhanyabad.</p>
+            <div class="promo">KHUKRI15</div>
+            <p>Valid for 7 days on the entire masala collection.</p>
+            <p style="text-align:center;"><span class="ebtn">Shop now &amp; save 15%</span></p>
+            <div class="ef">Khukri Spices · Bhaktapur, Nepal · <u>Unsubscribe</u></div>
+          </div>
+        </div>
+        <div class="estats">Sent 356 · 47 conversions (13%)</div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

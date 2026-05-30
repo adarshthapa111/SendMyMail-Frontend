@@ -1,0 +1,123 @@
+.toolbar {
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #e4e6eb;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.iconGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid #e4e6eb;
+}
+
+.iconBtn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  color: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: #f0f2f5;
+  border-color: #d2d4d8;
+}
+
+.iconBtn:active:not(:disabled) {
+  background: #e4e6eb;
+}
+
+.iconBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.iconBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.4);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid #d2d4d8;
+  background: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-right: 8px;
+  transition: background 80ms ease, border-color 80ms ease, color 80ms ease;
+}
+
+.secondaryBtn:hover {
+  border-color: #1a73e8;
+  color: #1a73e8;
+  background: #f0f6ff;
+}
+
+.secondaryBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.3);
+}
+
+.previewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid #1a73e8;
+  background: #1a73e8;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  transition: background 80ms ease, border-color 80ms ease, box-shadow 80ms ease;
+}
+
+.previewBtn:hover {
+  background: #1765c0;
+  border-color: #1765c0;
+}
+
+.previewBtn:active {
+  background: #145bab;
+}
+
+.previewBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.3);
+}

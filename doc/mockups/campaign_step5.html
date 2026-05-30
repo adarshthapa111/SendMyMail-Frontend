@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — New Campaign · Step 5</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="campaigns">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main mid">
+    <div class="back" onclick="location.href='campaign_step4.html'"><i class="ti ti-arrow-left"></i> Back</div>
+    <div class="head"><div><h1>New campaign</h1><p class="sub">Step 5 of 6 · Schedule</p></div></div>
+    <div class="wizard">
+      <div class="card steps">
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Name &amp; client</div><div class="s">Dashain Tihar Sale</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Recipients</div><div class="s">Newsletter + VIP · 8,612</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">From &amp; subject</div><div class="s">Khukri Spices</div></div></div>
+        <div class="vstep done"><div class="vnum"><i class="ti ti-check"></i></div><div class="vtext"><div class="t">Template</div><div class="s">Festive promo</div></div></div>
+        <div class="vstep active"><div class="vnum">5</div><div class="vtext"><div class="t">Schedule</div><div class="s">Send now or pick a time</div></div></div>
+        <div class="vstep"><div class="vnum">6</div><div class="vtext"><div class="t">Review &amp; send</div><div class="s">Final check</div></div></div>
+      </div>
+      <div>
+        <div class="card pad">
+          <p class="panel-title">When should it go out?</p>
+          <p class="panel-sub">Send immediately, or schedule for a specific time in your agency's timezone.</p>
+          <label class="pick on"><input type="radio" name="sched" checked><span class="pmeta"><b>Send immediately</b><small>Starts as soon as you hit send on the next step</small></span></label>
+          <label class="pick"><input type="radio" name="sched"><span class="pmeta"><b>Schedule for later</b><small>Pick a date &amp; time</small></span></label>
+          <div class="row grid-2" style="gap:12px;margin-top:4px;opacity:.55;">
+            <div class="field" style="margin:0;"><label class="label">Date</label><input class="input" value="2026-06-08"></div>
+            <div class="field" style="margin:0;"><label class="label">Time (NPT, UTC+5:45)</label><input class="input" value="09:00"></div>
+          </div>
+          <div class="note" style="margin-top:16px;"><i class="ti ti-clock"></i><span>Per-recipient send-time optimization (best time per contact) is coming in V2. V1 sends in your agency's timezone.</span></div>
+        </div>
+        <div class="wizard-foot">
+          <button class="btn" onclick="location.href='campaign_step4.html'"><i class="ti ti-arrow-left"></i> Back</button>
+          <div class="foot-right"><button class="btn btn-ghost">Save draft</button><button class="btn btn-primary" onclick="location.href='campaign_step6.html'">Continue <i class="ti ti-arrow-right"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

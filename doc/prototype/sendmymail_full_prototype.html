@@ -1,0 +1,2585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Full Prototype</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #FAFAF7; color: #2C2C2A; line-height: 1.5; font-size: 14px; }
+
+  /* ============ COLORS ============ */
+  :root {
+    --primary: #534AB7;
+    --primary-dark: #3C3489;
+    --primary-light: #EEEDFE;
+    --ink: #2C2C2A;
+    --muted: #5F5E5A;
+    --soft: #888780;
+    --bg: #FAFAF7;
+    --card: #FFFFFF;
+    --surface: #F1EFE8;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.2);
+    --green: #1D9E75;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-text: #854F0B;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+  }
+
+  /* ============ LAYOUT ============ */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ============ TOP DEMO BAR ============ */
+  .demo-bar { position: fixed; top: 0; left: 0; right: 0; background: var(--ink); color: white; padding: 6px 16px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; }
+  .demo-bar .demo-info { display: flex; align-items: center; gap: 12px; }
+  .demo-bar select { background: rgba(255,255,255,0.1); color: white; border: 0.5px solid rgba(255,255,255,0.3); padding: 3px 8px; border-radius: 4px; font-size: 12px; font-family: inherit; }
+  .demo-bar select option { color: var(--ink); }
+  .demo-bar .reset-btn { background: rgba(255,255,255,0.15); color: white; border: 0; padding: 3px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-family: inherit; }
+  .demo-bar .reset-btn:hover { background: rgba(255,255,255,0.25); }
+  body { padding-top: 32px; }
+
+  /* ============ AUTH LAYOUT ============ */
+  .auth-page { min-height: calc(100vh - 32px); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .auth-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; max-width: 980px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+  .auth-form-side { padding: 48px 40px; }
+  .auth-brand-side { background: var(--primary); color: white; padding: 48px 40px; position: relative; overflow: hidden; }
+  .auth-brand-side::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .auth-brand-side::after { content: ''; position: absolute; bottom: -80px; left: -80px; width: 240px; height: 240px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+  .auth-brand-content { position: relative; z-index: 1; }
+  .auth-single { padding: 48px 40px; max-width: 480px; margin: 0 auto; }
+
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 16px; margin-bottom: 32px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; }
+  .auth-brand-side .logo-mark { background: rgba(255,255,255,0.2); }
+
+  h1, h2, h3 { margin: 0; font-weight: 500; color: var(--ink); }
+  h2 { font-size: 24px; margin-bottom: 6px; }
+  h3 { font-size: 18px; }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+  /* ============ FORM ELEMENTS ============ */
+  .field { margin-bottom: 14px; }
+  .label { font-size: 12px; color: var(--ink); font-weight: 500; display: block; margin-bottom: 6px; }
+  .input, select.input, textarea.input { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 14px; background: white; font-family: inherit; }
+  .input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+  .input-suffix { display: flex; border: 0.5px solid var(--border-strong); border-radius: 8px; overflow: hidden; }
+  .input-suffix input { border: none; outline: none; flex: 1; padding: 10px 12px; font-size: 14px; font-family: inherit; }
+  .input-suffix .suffix { padding: 10px 12px; background: var(--surface); color: var(--muted); font-size: 13px; border-left: 0.5px solid var(--border); font-family: ui-monospace, monospace; }
+  .helper { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .helper.ok { color: var(--green); }
+  .helper.err { color: var(--red); }
+
+  /* ============ BUTTONS ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; background: white; border: 0.5px solid var(--border-strong); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--ink); font-family: inherit; transition: background 0.15s; }
+  .btn:hover { background: var(--surface); }
+  .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-danger { background: var(--red); color: white; border-color: var(--red); }
+  .btn-danger:hover { background: #7a1f1f; }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--primary); }
+  .btn-ghost:hover { background: var(--primary-light); }
+  .btn-block { width: 100%; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-lg { padding: 12px 20px; font-size: 15px; }
+
+  /* ============ DIVIDER ============ */
+  .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--soft); font-size: 12px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ============ CHECKBOX ============ */
+  .checkbox { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 14px; cursor: pointer; }
+  .checkbox input { margin-top: 2px; }
+  .checkbox a { color: var(--primary); }
+
+  /* ============ OTP ============ */
+  .otp { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+  .otp input { width: 44px; height: 52px; text-align: center; font-size: 22px; font-weight: 500; border: 0.5px solid var(--border-strong); border-radius: 8px; background: white; font-family: inherit; }
+  .otp input:focus { outline: 2px solid var(--primary); }
+  .otp input.filled { border-color: var(--primary); background: var(--primary-light); }
+
+  /* ============ APP LAYOUT ============ */
+  .app-shell { display: flex; min-height: calc(100vh - 32px); }
+  .topnav { background: white; border-bottom: 0.5px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 32px; z-index: 50; }
+  .topnav-left { display: flex; align-items: center; gap: 16px; }
+  .topnav-right { display: flex; align-items: center; gap: 8px; }
+  .client-switcher { display: flex; align-items: center; gap: 8px; padding: 4px 12px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; }
+  .client-switcher:hover { background: white; }
+  .avatar-sm { width: 22px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 500; }
+  .avatar-md { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-bg); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; cursor: pointer; }
+
+  .sidebar { width: 220px; background: var(--surface); border-right: 0.5px solid var(--border); padding: 16px 10px; flex-shrink: 0; }
+  .sidebar-section { font-size: 10px; color: var(--soft); padding: 12px 12px 6px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; color: var(--muted); cursor: pointer; margin-bottom: 2px; font-size: 13px; }
+  .sidebar-item:hover { background: white; color: var(--ink); }
+  .sidebar-item.active { background: white; color: var(--ink); font-weight: 500; }
+  .sidebar-item i { font-size: 16px; }
+  .sidebar-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 10px; padding: 1px 6px; border-radius: 99px; font-weight: 500; }
+
+  .main { flex: 1; padding: 20px 28px; min-width: 0; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 16px; }
+  .page-title { font-size: 24px; font-weight: 500; margin: 0 0 4px; }
+  .page-sub { font-size: 14px; color: var(--muted); margin: 0; }
+  .page-actions { display: flex; gap: 8px; }
+
+  /* ============ CARDS ============ */
+  .card { background: white; border: 0.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .card-tight { padding: 12px 14px; }
+  .card-section-title { font-size: 14px; font-weight: 500; margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+
+  /* ============ METRIC ============ */
+  .metric { background: var(--surface); padding: 14px; border-radius: 10px; }
+  .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 500; line-height: 1.2; }
+  .metric-delta { font-size: 11px; color: var(--green); margin-left: 6px; }
+  .metric-delta.down { color: var(--red); }
+
+  /* ============ TABLE ============ */
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { text-align: left; font-weight: 500; color: var(--muted); font-size: 11px; padding: 10px 12px; border-bottom: 0.5px solid var(--border); text-transform: uppercase; letter-spacing: 0.4px; }
+  .table td { padding: 12px; border-bottom: 0.5px solid var(--border); font-size: 13px; vertical-align: middle; }
+  .table tr:last-child td { border-bottom: none; }
+  .table tr.clickable { cursor: pointer; }
+  .table tr.clickable:hover td { background: var(--surface); }
+
+  /* ============ PILLS ============ */
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
+  .pill-green { background: var(--green-bg); color: var(--green-text); }
+  .pill-amber { background: var(--amber-bg); color: var(--amber-text); }
+  .pill-blue { background: var(--blue-bg); color: var(--blue); }
+  .pill-purple { background: var(--primary-light); color: var(--primary-dark); }
+  .pill-red { background: var(--red-bg); color: var(--red); }
+  .pill-gray { background: var(--surface); color: var(--muted); }
+
+  /* ============ TABS ============ */
+  .tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); margin-bottom: 16px; }
+  .tab { padding: 8px 14px; font-size: 13px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+  .tab.active { color: var(--ink); border-bottom-color: var(--primary); font-weight: 500; }
+
+  /* ============ STEPPER ============ */
+  .stepper { display: flex; gap: 8px; margin-bottom: 24px; }
+  .step { flex: 1; padding: 12px; border: 0.5px solid var(--border); border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .step.active { border-color: var(--primary); background: var(--primary-light); }
+  .step.done { border-color: var(--green); background: var(--green-bg); }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+  .step.active .step-num { background: var(--primary); color: white; }
+  .step.done .step-num { background: var(--green); color: white; }
+  .step-content { flex: 1; min-width: 0; }
+  .step-title { font-size: 12px; font-weight: 500; }
+  .step-sub { font-size: 11px; color: var(--muted); }
+
+  /* ============ MODAL ============ */
+  .modal-backdrop { position: fixed; inset: 32px 0 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 500; padding: 24px; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: white; border-radius: 12px; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; }
+  .modal-header { padding: 18px 20px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h3 { font-size: 16px; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 14px 20px; border-top: 0.5px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .close-x { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: 18px; padding: 4px; }
+
+  /* ============ TOAST ============ */
+  .toast-container { position: fixed; top: 48px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+  .toast { background: var(--ink); color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: 320px; display: flex; align-items: center; gap: 8px; animation: slideIn 0.2s ease-out; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ============ DNS RECORDS ============ */
+  .dns-row { display: grid; grid-template-columns: 70px 1fr 70px 90px; gap: 12px; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; font-size: 12px; align-items: center; }
+  .mono { font-family: ui-monospace, monospace; font-size: 11px; background: var(--surface); padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+
+  /* ============ EMAIL BUILDER ============ */
+  .builder { display: grid; grid-template-columns: 70px 1fr 240px; gap: 12px; min-height: 480px; }
+  .builder-sidebar { background: var(--surface); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+  .builder-block { aspect-ratio: 1; background: white; border: 0.5px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: var(--muted); cursor: grab; }
+  .builder-block i { font-size: 16px; margin-bottom: 2px; }
+  .builder-canvas { background: var(--surface); border-radius: 10px; padding: 20px; overflow: auto; }
+  .builder-email { background: white; border-radius: 8px; max-width: 360px; margin: 0 auto; overflow: hidden; }
+  .email-header { background: var(--primary); color: white; padding: 20px; text-align: center; font-weight: 500; }
+  .email-body { padding: 16px; font-size: 13px; color: var(--ink); }
+  .email-button { display: inline-block; background: var(--primary); color: white; padding: 10px 18px; border-radius: 8px; margin: 8px 0; font-size: 13px; cursor: pointer; }
+  .builder-props { background: var(--surface); border-radius: 10px; padding: 14px; }
+
+  /* ============ FLOW NODES ============ */
+  .flow-canvas { background: var(--surface); border-radius: 10px; padding: 24px; }
+  .flow-node { background: white; border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 16px; max-width: 360px; margin: 0 auto 8px; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .flow-node i { color: var(--primary); font-size: 18px; }
+  .flow-arrow { text-align: center; color: var(--soft); font-size: 14px; margin: -2px 0; }
+
+  /* ============ PROGRESS BAR ============ */
+  .progress { height: 6px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
+
+  /* ============ BAR ROWS ============ */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+  .bar-label { width: 90px; color: var(--muted); }
+  .bar-track { flex: 1; height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; }
+  .bar-val { width: 60px; text-align: right; font-weight: 500; }
+
+  /* ============ HELPERS ============ */
+  .empty-state { padding: 48px 24px; text-align: center; color: var(--muted); }
+  .empty-state i { font-size: 40px; color: var(--soft); display: block; margin-bottom: 12px; }
+  .text-sm { font-size: 12px; }
+  .text-muted { color: var(--muted); }
+  .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; } .mt-6 { margin-top: 24px; }
+  .mb-2 { margin-bottom: 8px; } .mb-4 { margin-bottom: 16px; }
+  .flex { display: flex; } .flex-1 { flex: 1; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .items-center { align-items: center; } .justify-between { justify-content: space-between; }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 880px) {
+    .auth-card { grid-template-columns: 1fr; }
+    .auth-brand-side { display: none; }
+    .sidebar { display: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .builder { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Demo navigation bar -->
+<div class="demo-bar">
+  <div class="demo-info">
+    <strong>SendMyMail · Prototype</strong>
+    <span style="opacity:0.7;">Jump to any screen →</span>
+    <select id="screen-jumper" onchange="showScreen(this.value)">
+      <optgroup label="Pre-login">
+        <option value="signup">Signup</option>
+        <option value="verify">Verify email</option>
+        <option value="workspace-setup">Workspace setup</option>
+        <option value="login">Login</option>
+        <option value="forgot">Forgot password</option>
+        <option value="reset">Reset password</option>
+        <option value="invite">Accept invite</option>
+      </optgroup>
+      <optgroup label="Onboarding">
+        <option value="onboarding">Onboarding wizard</option>
+      </optgroup>
+      <optgroup label="App (agency)">
+        <option value="dashboard">Dashboard</option>
+        <option value="clients">Clients list</option>
+        <option value="client-create">Add new client</option>
+      </optgroup>
+      <optgroup label="Per-client">
+        <option value="domain">Sending domain</option>
+        <option value="contacts">Contacts</option>
+        <option value="contact-import">Import CSV</option>
+        <option value="contact-detail">Contact detail</option>
+        <option value="templates">Templates list</option>
+        <option value="builder">Email builder</option>
+        <option value="campaigns">Campaigns list</option>
+        <option value="campaign-new">New campaign</option>
+        <option value="campaign-report">Campaign report</option>
+        <option value="flows">Flows</option>
+        <option value="flow-config">Configure flow</option>
+        <option value="forms">Forms</option>
+        <option value="form-builder">Form builder</option>
+        <option value="reports">Reports</option>
+      </optgroup>
+      <optgroup label="Settings">
+        <option value="team">Team</option>
+        <option value="integrations">Integrations</option>
+        <option value="billing">Billing</option>
+        <option value="whitelabel">White-label</option>
+      </optgroup>
+    </select>
+  </div>
+  <button class="reset-btn" onclick="resetDemo()">Restart from signup</button>
+</div>
+
+<!-- ============================================ -->
+<!-- AUTH SCREENS                                 -->
+<!-- ============================================ -->
+
+<!-- SIGNUP -->
+<div class="screen active" id="screen-signup">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-form-side">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <h2>Start your agency in 60 seconds</h2>
+        <p class="subtitle">14-day free trial · no credit card · cancel anytime</p>
+
+        <button class="btn btn-block" style="margin-bottom: 14px;" onclick="handleGoogleAuth()">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">or</div>
+
+        <div class="field">
+          <label class="label">Work email</label>
+          <input class="input" type="email" placeholder="you@youragency.com" id="signup-email" value="prasiddha@nirvanaagency.com" />
+        </div>
+
+        <div class="field">
+          <label class="label">Password</label>
+          <input class="input" type="password" placeholder="At least 8 characters" id="signup-password" value="••••••••••••" />
+          <div class="helper ok">Strong · min 8 chars, 1 number, 1 symbol</div>
+        </div>
+
+        <label class="checkbox">
+          <input type="checkbox" checked />
+          <span>I agree to the <a href="#" onclick="event.preventDefault();toast('Terms would open');">Terms</a>, <a href="#" onclick="event.preventDefault();toast('Privacy would open');">Privacy</a>, and <a href="#" onclick="event.preventDefault();toast('Anti-Spam Policy would open');">Anti-Spam Policy</a>. I will only send to contacts who explicitly opted in.</span>
+        </label>
+
+        <button class="btn btn-primary btn-block btn-lg" onclick="handleSignup()">Create account →</button>
+
+        <p class="text-sm text-muted" style="text-align: center; margin-top: 20px;">
+          Already have an account? <a href="#" onclick="event.preventDefault();showScreen('login')" style="color: var(--primary); font-weight: 500;">Log in</a>
+        </p>
+      </div>
+
+      <div class="auth-brand-side">
+        <div class="auth-brand-content">
+          <div class="logo"><span class="logo-mark">S</span> <strong>For Nepali agencies</strong></div>
+          <h3 style="color:white; font-size: 22px; line-height: 1.3; margin-bottom: 14px;">Manage all your clients' email marketing from one dashboard.</h3>
+          <p style="opacity: 0.85; line-height: 1.6;">White-label, NPR billing, deliverability tuned for Gmail and Outlook.</p>
+
+          <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 8px; border-left: 3px solid rgba(255,255,255,0.4); margin-top: 24px;">
+            <p style="margin: 0 0 8px; line-height: 1.5; opacity: 0.95;">"We replaced 8 Mailchimp accounts with SendMyMail. The client switcher alone saves 4 hours a week."</p>
+            <div style="font-size: 12px; opacity: 0.7; display: flex; align-items: center; gap: 6px;">
+              <span style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:10px;">RT</span>
+              Roshani Tamang, Threesixty Studio
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
+            <div style="background:rgba(255,255,255,0.08); padding:12px; border-radius:8px;">
+              <div style="font-size:20px;font-weight:500;">42+</div>
+              <div style="font-size:10px;opacity:0.7;">Agencies live</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.08); padding:12px; border-radius:8px;">
+              <div style="font-size:20px;font-weight:500;">96.4%</div>
+              <div style="font-size:10px;opacity:0.7;">Gmail inbox</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.08); padding:12px; border-radius:8px;">
+              <div style="font-size:20px;font-weight:500;">14d</div>
+              <div style="font-size:10px;opacity:0.7;">Free trial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY EMAIL -->
+<div class="screen" id="screen-verify">
+  <div class="auth-page">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 520px;">
+      <div class="auth-single" style="text-align: center;">
+        <div class="logo" style="justify-content: center;"><span class="logo-mark">S</span> SendMyMail</div>
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;"><i class="ti ti-mail-check"></i></div>
+        <h2>Check your inbox</h2>
+        <p class="text-muted" style="margin-bottom: 4px;">We sent a 6-digit code to</p>
+        <p style="font-weight: 500; margin-bottom: 20px;" id="verify-email-display">prasiddha@nirvanaagency.com</p>
+
+        <div class="otp">
+          <input maxlength="1" class="otp-input" />
+          <input maxlength="1" class="otp-input" />
+          <input maxlength="1" class="otp-input" />
+          <input maxlength="1" class="otp-input" />
+          <input maxlength="1" class="otp-input" />
+          <input maxlength="1" class="otp-input" />
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="handleVerify()">Verify and continue</button>
+
+        <p class="text-sm text-muted mt-4">
+          Didn't get it? <a href="#" onclick="event.preventDefault();toast('Code resent','success')" style="color: var(--primary); font-weight: 500;">Resend code</a> · <a href="#" onclick="event.preventDefault();showScreen('signup')" style="color: var(--primary); font-weight: 500;">Change email</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE SETUP -->
+<div class="screen" id="screen-workspace-setup">
+  <div class="auth-page">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 560px;">
+      <div class="auth-single">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; font-size: 12px;">
+          <span class="pill pill-green"><i class="ti ti-check" style="font-size:10px;"></i> Email verified</span>
+          <span class="pill pill-purple">Step 1: Workspace</span>
+        </div>
+        <h2>Tell us about your agency</h2>
+        <p class="subtitle">This becomes your workspace. You can invite teammates after this step.</p>
+
+        <div class="field">
+          <label class="label">Agency name</label>
+          <input class="input" id="ws-name" value="Nirvana Agency" />
+        </div>
+
+        <div class="field">
+          <label class="label">Workspace URL</label>
+          <div class="input-suffix">
+            <input id="ws-slug" value="nirvana" />
+            <div class="suffix">.sendmymail.np</div>
+          </div>
+          <div class="helper ok"><i class="ti ti-check" style="font-size:11px;"></i> Available</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="label">Team size</label>
+            <select class="input">
+              <option>Just me</option>
+              <option selected>2-5 people</option>
+              <option>6-15 people</option>
+              <option>15+ people</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label">Clients to manage</label>
+            <select class="input">
+              <option>1-3 clients</option>
+              <option selected>4-10 clients</option>
+              <option>11-30 clients</option>
+              <option>30+ clients</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">How did you hear about us?</label>
+          <select class="input">
+            <option>Select one...</option>
+            <option>Google search</option>
+            <option>Twitter / X</option>
+            <option>From a colleague</option>
+            <option selected>TechSathi article</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg" onclick="handleWorkspaceCreate()">Create my workspace →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="screen-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-form-side">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <h2>Welcome back</h2>
+        <p class="subtitle">Log in to your agency workspace</p>
+
+        <button class="btn btn-block" style="margin-bottom: 14px;" onclick="handleGoogleAuth()">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+          Continue with Google
+        </button>
+        <div class="divider">or</div>
+
+        <div class="field">
+          <label class="label">Email</label>
+          <input class="input" type="email" placeholder="you@youragency.com" />
+        </div>
+
+        <div class="field">
+          <div class="flex justify-between items-center" style="margin-bottom: 6px;">
+            <label class="label" style="margin: 0;">Password</label>
+            <a href="#" onclick="event.preventDefault();showScreen('forgot')" style="font-size: 11px; color: var(--primary); font-weight: 500;">Forgot?</a>
+          </div>
+          <input class="input" type="password" />
+        </div>
+
+        <label class="checkbox"><input type="checkbox" checked /> Stay logged in for 30 days</label>
+
+        <button class="btn btn-primary btn-block btn-lg" onclick="showScreen('dashboard')">Log in</button>
+
+        <p class="text-sm text-muted" style="text-align: center; margin-top: 20px;">
+          New to SendMyMail? <a href="#" onclick="event.preventDefault();showScreen('signup')" style="color: var(--primary); font-weight: 500;">Create an account</a>
+        </p>
+      </div>
+
+      <div class="auth-brand-side">
+        <div class="auth-brand-content">
+          <div class="logo"><span class="logo-mark">S</span> <strong>SendMyMail</strong></div>
+          <h3 style="color:white; font-size: 22px; line-height: 1.3;">Your clients' emails are landing in the inbox.</h3>
+          <p style="opacity: 0.85; line-height: 1.6;">Across all 42 agencies, last 7 days.</p>
+
+          <div style="background:rgba(255,255,255,0.08); padding:16px; border-radius:8px; margin-top:20px;">
+            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Platform deliverability</div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div style="font-size: 32px; font-weight: 500;">96.4%</div>
+              <div style="font-size: 11px; background: rgba(29,158,117,0.3); padding: 2px 8px; border-radius: 99px;">+0.8%</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-top: 12px;">
+              <div><div style="opacity:0.7;">Bounce</div><div style="font-weight:500;">0.6%</div></div>
+              <div><div style="opacity:0.7;">Complaint</div><div style="font-weight:500;">0.04%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div class="screen" id="screen-forgot">
+  <div class="auth-page">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 480px;">
+      <div class="auth-single">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <h2>Reset your password</h2>
+        <p class="subtitle">Enter your email and we'll send a reset link</p>
+        <div class="field">
+          <label class="label">Email</label>
+          <input class="input" type="email" placeholder="you@youragency.com" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="toast('If an account exists, we sent a link','success');setTimeout(()=>showScreen('reset'),900);">Send reset link</button>
+        <p class="text-sm text-muted mt-4" style="text-align:center;">
+          Remembered it? <a href="#" onclick="event.preventDefault();showScreen('login')" style="color:var(--primary);font-weight:500;">Back to login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESET PASSWORD -->
+<div class="screen" id="screen-reset">
+  <div class="auth-page">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 480px;">
+      <div class="auth-single">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <h2>Set a new password</h2>
+        <p class="subtitle">For <strong>prasiddha@nirvanaagency.com</strong></p>
+        <div class="field">
+          <label class="label">New password</label>
+          <input class="input" type="password" value="••••••••••••••" />
+          <div class="helper ok">Excellent · 14 chars, mixed case, number, symbol</div>
+        </div>
+        <div class="field">
+          <label class="label">Confirm new password</label>
+          <input class="input" type="password" value="••••••••••••••" />
+          <div class="helper ok"><i class="ti ti-check" style="font-size:11px;"></i> Passwords match</div>
+        </div>
+        <label class="checkbox"><input type="checkbox" checked /> Log out of all my other sessions</label>
+        <button class="btn btn-primary btn-block" onclick="toast('Password updated','success');setTimeout(()=>showScreen('login'),900);">Update password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCEPT INVITE -->
+<div class="screen" id="screen-invite">
+  <div class="auth-page">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 520px;">
+      <div class="auth-single">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <div style="background: var(--primary-light); border: 0.5px solid #C7C0F7; border-radius: 8px; padding: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+          <div style="width:44px;height:44px;border-radius:8px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:18px;">N</div>
+          <div>
+            <div style="font-size:11px;color:var(--primary-dark);text-transform:uppercase;letter-spacing:0.4px;font-weight:500;">You've been invited</div>
+            <div style="font-weight:500;margin-top:2px;">Join <strong>Nirvana Agency</strong></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Prasiddha invited you as an <span class="pill pill-purple">Agency member</span></div>
+          </div>
+        </div>
+        <h2 style="font-size: 20px;">Create your account</h2>
+        <p class="subtitle">You'll be added to Nirvana Agency once you finish setup.</p>
+        <div class="field">
+          <label class="label">Your name</label>
+          <input class="input" placeholder="Sushmita Karki" />
+        </div>
+        <div class="field">
+          <label class="label">Email (can't be changed)</label>
+          <input class="input" value="sushmita@nirvanaagency.com" disabled style="background:var(--surface);" />
+        </div>
+        <div class="field">
+          <label class="label">Set a password</label>
+          <input class="input" type="password" value="••••••••••••" />
+        </div>
+        <label class="checkbox"><input type="checkbox" checked /> I agree to the <a href="#" onclick="event.preventDefault();toast('Terms')">Terms</a> and <a href="#" onclick="event.preventDefault();toast('Privacy')">Privacy Policy</a></label>
+        <button class="btn btn-primary btn-block" onclick="toast('Welcome to Nirvana Agency','success');setTimeout(()=>showScreen('dashboard'),900);">Join Nirvana Agency</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- ONBOARDING WIZARD                            -->
+<!-- ============================================ -->
+<div class="screen" id="screen-onboarding">
+  <div class="auth-page" style="align-items: flex-start; padding-top: 48px;">
+    <div class="auth-card" style="grid-template-columns: 1fr; max-width: 720px;">
+      <div class="auth-single" style="max-width: 100%; padding: 40px;">
+        <div class="logo"><span class="logo-mark">S</span> SendMyMail</div>
+        <h2>Welcome to Nirvana Agency 👋</h2>
+        <p class="subtitle">4 steps to send your first campaign · about 10 minutes</p>
+
+        <div id="onb-steps">
+          <div class="step done" onclick="toast('Already done')">
+            <div class="step-num"><i class="ti ti-check" style="font-size:14px;"></i></div>
+            <div class="step-content">
+              <div class="step-title">Create your first client</div>
+              <div class="step-sub" style="color: var(--green-text);">Khukri Spices added</div>
+            </div>
+          </div>
+          <div style="height: 8px;"></div>
+          <div class="step done" onclick="toast('Already done')">
+            <div class="step-num"><i class="ti ti-check" style="font-size:14px;"></i></div>
+            <div class="step-content">
+              <div class="step-title">Verify sending domain</div>
+              <div class="step-sub" style="color: var(--green-text);">mail.khukrispices.com · SPF + DKIM verified</div>
+            </div>
+          </div>
+          <div style="height: 8px;"></div>
+          <div class="step active">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Import contacts</div>
+              <div class="step-sub">Upload a CSV or connect WooCommerce</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showScreen('contact-import')">Start</button>
+          </div>
+          <div style="height: 8px;"></div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title" style="color: var(--muted);">Send first campaign</div>
+              <div class="step-sub">Pick a template, write a subject, hit send</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: var(--blue-bg); border: 0.5px solid #B5D4F4; border-radius: 8px; padding: 12px 16px; margin-top: 20px; display: flex; gap: 10px; font-size: 12px; color: var(--blue);">
+          <i class="ti ti-info-circle" style="font-size: 16px; flex-shrink: 0;"></i>
+          <span><strong>Free trial · 14 days.</strong> Identity verification (PAN number) required before your first real send.</span>
+        </div>
+
+        <button class="btn btn-ghost mt-4" onclick="showScreen('dashboard')">Skip for now, explore the app →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- IN-APP SCREENS (with sidebar)                -->
+<!-- ============================================ -->
+
+<!-- Helper template for app shell -->
+<div id="app-shell-template" style="display:none;">
+  <!-- Will be rendered via JS -->
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="screen-dashboard">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail <span style="color:var(--soft); font-weight: 400; font-size: 13px;">/ Nirvana Agency</span></div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" id="current-client-avatar" style="background:#1D9E75;">KS</span>
+        <span id="current-client-name">Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <button class="btn btn-sm" onclick="showScreen('campaign-new')"><i class="ti ti-plus"></i> New campaign</button>
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-dashboard"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Agency overview</h1>
+          <p class="page-sub">All 8 clients · 142,338 emails sent this month</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="showScreen('clients')"><i class="ti ti-users-group"></i> All clients</button>
+          <button class="btn btn-primary" onclick="showScreen('client-create')"><i class="ti ti-plus"></i> Add client</button>
+        </div>
+      </div>
+
+      <div class="grid-4 mb-4">
+        <div class="metric"><div class="metric-label">Active clients</div><div class="metric-value">8 <span class="metric-delta">+2</span></div></div>
+        <div class="metric"><div class="metric-label">Emails sent</div><div class="metric-value">142K <span class="metric-delta">+18%</span></div></div>
+        <div class="metric"><div class="metric-label">Avg open rate</div><div class="metric-value">34.2%</div></div>
+        <div class="metric"><div class="metric-label">Revenue tracked</div><div class="metric-value">रू 4.2L</div></div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">
+          Client activity <span style="font-size: 12px; color: var(--soft); font-weight: 400;">last 7 days</span>
+        </div>
+        <table class="table">
+          <thead><tr><th>Client</th><th>Sent</th><th>Open</th><th>Click</th><th>Status</th></tr></thead>
+          <tbody id="dashboard-client-rows"></tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-section-title">Plan usage</div>
+          <div style="font-size:13px; color: var(--muted); margin-bottom: 6px;">142,338 / 500,000 emails</div>
+          <div class="progress"><div class="progress-fill" style="width: 28%;"></div></div>
+          <p class="text-sm text-muted mt-2">Agency Scale · NPR 14,999/mo · renews 8 Jun</p>
+          <button class="btn btn-sm mt-3" onclick="showScreen('billing')">Manage billing →</button>
+        </div>
+        <div class="card">
+          <div class="card-section-title">Deliverability score</div>
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <div style="font-size:28px;font-weight:500;color:var(--green);">94</div>
+            <span class="pill pill-green">Excellent</span>
+          </div>
+          <p class="text-sm text-muted mt-2">Bounce 0.4% · Complaint 0.02%</p>
+          <button class="btn btn-sm mt-3" onclick="showScreen('reports')">View reports →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENTS LIST -->
+<div class="screen" id="screen-clients">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail <span style="color:var(--soft); font-weight: 400; font-size: 13px;">/ Nirvana Agency</span></div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-clients"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">All clients</h1>
+          <p class="page-sub">Manage everything from one dashboard</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="showScreen('client-create')"><i class="ti ti-plus"></i> Add client</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>Client</th><th>List size</th><th>Last campaign</th><th>Billing</th><th>Engagement</th><th></th></tr></thead>
+          <tbody id="all-clients-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD NEW CLIENT -->
+<div class="screen" id="screen-client-create">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-client-create"></div>
+    <div class="main" style="max-width: 640px;">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('clients')"><i class="ti ti-arrow-left"></i> Back to clients</button>
+      <h1 class="page-title">Add a new client</h1>
+      <p class="page-sub mb-4">Each client has their own contacts, campaigns, and sending domain.</p>
+
+      <div class="card">
+        <div class="field">
+          <label class="label">Client name</label>
+          <input class="input" placeholder="e.g. Khukri Spices" id="new-client-name" />
+        </div>
+        <div class="field">
+          <label class="label">Brand colour</label>
+          <div style="display:flex; gap: 8px;">
+            <div onclick="selectColor(this)" data-color="#1D9E75" style="width:32px;height:32px;border-radius:8px;background:#1D9E75;cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="selectColor(this)" data-color="#D85A30" style="width:32px;height:32px;border-radius:8px;background:#D85A30;cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="selectColor(this)" data-color="#534AB7" style="width:32px;height:32px;border-radius:8px;background:#534AB7;cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="selectColor(this)" data-color="#D4537E" style="width:32px;height:32px;border-radius:8px;background:#D4537E;cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="selectColor(this)" data-color="#378ADD" style="width:32px;height:32px;border-radius:8px;background:#378ADD;cursor:pointer;border:2px solid transparent;"></div>
+            <div onclick="selectColor(this)" data-color="#BA7517" style="width:32px;height:32px;border-radius:8px;background:#BA7517;cursor:pointer;border:2px solid transparent;"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Sending domain (you'll verify this next)</label>
+          <input class="input" placeholder="mail.yourclient.com" />
+          <div class="helper">Don't worry if you don't have it yet — you can add it later.</div>
+        </div>
+        <div class="field">
+          <label class="label">Default from-name</label>
+          <input class="input" placeholder="Khukri Spices" />
+        </div>
+        <div class="field">
+          <label class="label">Default from-email</label>
+          <input class="input" placeholder="hello@mail.yourclient.com" />
+        </div>
+        <div class="flex gap-2" style="justify-content: flex-end;">
+          <button class="btn" onclick="showScreen('clients')">Cancel</button>
+          <button class="btn btn-primary" onclick="toast('Client added','success');setTimeout(()=>showScreen('clients'),700);">Create client</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOMAIN -->
+<div class="screen" id="screen-domain">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-domain"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Sending domain</h1>
+          <p class="page-sub"><span class="mono">mail.khukrispices.com</span> · <span class="pill pill-amber">3 of 4 verified</span></p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="toast('Recheck initiated','success')"><i class="ti ti-refresh"></i> Recheck now</button>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Add these 4 DNS records</div>
+        <div class="dns-row">
+          <span class="pill pill-gray">TXT</span>
+          <div>
+            <div style="font-weight:500;font-size:13px;">SPF</div>
+            <div class="mono">v=spf1 include:amazonses.com ~all</div>
+          </div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();toast('Copied!','success')"><i class="ti ti-copy"></i></button>
+          <span class="pill pill-green">OK</span>
+        </div>
+        <div class="dns-row">
+          <span class="pill pill-gray">CNAME</span>
+          <div>
+            <div style="font-weight:500;font-size:13px;">DKIM 1</div>
+            <div class="mono">a7x2k._domainkey → a7x2k.dkim.amazonses.com</div>
+          </div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();toast('Copied!','success')"><i class="ti ti-copy"></i></button>
+          <span class="pill pill-green">OK</span>
+        </div>
+        <div class="dns-row">
+          <span class="pill pill-gray">CNAME</span>
+          <div>
+            <div style="font-weight:500;font-size:13px;">DKIM 2</div>
+            <div class="mono">b9m4n._domainkey → b9m4n.dkim.amazonses.com</div>
+          </div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();toast('Copied!','success')"><i class="ti ti-copy"></i></button>
+          <span class="pill pill-green">OK</span>
+        </div>
+        <div class="dns-row">
+          <span class="pill pill-gray">TXT</span>
+          <div>
+            <div style="font-weight:500;font-size:13px;">DMARC</div>
+            <div class="mono">v=DMARC1; p=quarantine; rua=mailto:dmarc@khukrispices.com</div>
+          </div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();toast('Copied!','success')"><i class="ti ti-copy"></i></button>
+          <span class="pill pill-amber">Pending</span>
+        </div>
+      </div>
+
+      <div style="background: var(--blue-bg); border: 0.5px solid #B5D4F4; border-radius: 8px; padding: 14px 16px; display: flex; gap: 10px; color: var(--blue); font-size: 12px;">
+        <i class="ti ti-info-circle" style="font-size: 16px; flex-shrink: 0;"></i>
+        <div>
+          <strong>Required since Feb 2024:</strong> Gmail and Yahoo require DKIM, SPF, DMARC, and one-click unsubscribe for senders over 5,000 emails per day. SendMyMail blocks sending from unverified domains.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACTS -->
+<div class="screen" id="screen-contacts">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-contacts"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Contacts</h1>
+          <p class="page-sub">12,420 contacts in 3 lists</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="showScreen('contact-import')"><i class="ti ti-upload"></i> Import CSV</button>
+          <button class="btn btn-primary" onclick="openModal('add-contact')"><i class="ti ti-plus"></i> Add contact</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">All contacts (12,420)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Newsletter (8,200)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">VIP buyers (1,140)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Suppressed (88)</div>
+      </div>
+
+      <div class="card card-tight mb-4">
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px;flex-wrap:wrap;">
+          <span class="text-muted">Segment:</span>
+          <span class="mono">tag</span> = <span class="mono">vip</span> AND <span class="mono">city</span> = <span class="mono">Kathmandu</span>
+          <span style="margin-left:auto; color: var(--muted);">→ 412 contacts</span>
+          <button class="btn btn-sm" onclick="openModal('segment-builder')">Edit segment</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <table class="table">
+          <thead><tr><th>Email</th><th>Name</th><th>Tags</th><th>Added</th><th>Source</th></tr></thead>
+          <tbody id="contacts-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT IMPORT -->
+<div class="screen" id="screen-contact-import">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-contact-import"></div>
+    <div class="main" style="max-width: 720px;">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('contacts')"><i class="ti ti-arrow-left"></i> Back to contacts</button>
+      <h1 class="page-title">Import contacts from CSV</h1>
+      <p class="page-sub mb-4">Upload a CSV file. We'll map the columns to fields in the next step.</p>
+
+      <div class="card mb-4">
+        <div style="border: 1.5px dashed var(--border-strong); border-radius: 8px; padding: 36px 20px; text-align: center;">
+          <i class="ti ti-upload" style="font-size: 32px; color: var(--soft); margin-bottom: 8px;"></i>
+          <p style="font-weight: 500; margin: 0 0 4px;">Drop CSV here or click to browse</p>
+          <p class="text-sm text-muted">Max 10 MB · UTF-8 encoded · first row should be column headers</p>
+          <button class="btn btn-primary mt-3" onclick="toast('File khukri_subscribers.csv ready','success')">Choose file</button>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Add to list</div>
+        <select class="input">
+          <option>Newsletter (8,200 contacts)</option>
+          <option>VIP buyers (1,140 contacts)</option>
+          <option>— Create new list —</option>
+        </select>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Consent declaration</div>
+        <label class="checkbox" style="margin-bottom: 0;">
+          <input type="checkbox" />
+          <span>I confirm these contacts opted in to receive emails from this client. Importing scraped or unconsented lists violates SendMyMail's terms and Nepal's Advertisement Act.</span>
+        </label>
+      </div>
+
+      <div class="flex gap-2" style="justify-content: flex-end;">
+        <button class="btn" onclick="showScreen('contacts')">Cancel</button>
+        <button class="btn btn-primary" onclick="toast('Importing 1,240 contacts...','success');setTimeout(()=>showScreen('contacts'),1200);">Map and import →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT DETAIL -->
+<div class="screen" id="screen-contact-detail">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-contact-detail"></div>
+    <div class="main">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('contacts')"><i class="ti ti-arrow-left"></i> Back to contacts</button>
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Aastha Shrestha</h1>
+          <p class="page-sub">aastha.shrestha@gmail.com · added via WooCommerce · 2 days ago</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn" onclick="toast('Edit')"><i class="ti ti-edit"></i> Edit</button>
+          <button class="btn btn-danger" onclick="openModal('unsub-contact')"><i class="ti ti-mail-off"></i> Unsubscribe</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-section-title">Profile</div>
+          <table class="table" style="font-size: 12px;">
+            <tbody>
+              <tr><td style="color:var(--muted);width:120px;">Email</td><td>aastha.shrestha@gmail.com</td></tr>
+              <tr><td style="color:var(--muted);">Name</td><td>Aastha Shrestha</td></tr>
+              <tr><td style="color:var(--muted);">Phone</td><td>+977-9841234567</td></tr>
+              <tr><td style="color:var(--muted);">City</td><td>Kathmandu</td></tr>
+              <tr><td style="color:var(--muted);">Birthday</td><td>15 Mar 1994</td></tr>
+              <tr><td style="color:var(--muted);">Status</td><td><span class="pill pill-green">Active</span></td></tr>
+              <tr><td style="color:var(--muted);">Tags</td><td><span class="pill pill-purple">vip</span> <span class="pill pill-gray">kathmandu</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-section-title">E-commerce activity</div>
+          <table class="table" style="font-size: 12px;">
+            <tbody>
+              <tr><td style="color:var(--muted);width:140px;">Lifetime orders</td><td>7</td></tr>
+              <tr><td style="color:var(--muted);">Total spent</td><td>रू 23,400</td></tr>
+              <tr><td style="color:var(--muted);">Avg order</td><td>रू 3,343</td></tr>
+              <tr><td style="color:var(--muted);">Last order</td><td>9 days ago</td></tr>
+              <tr><td style="color:var(--muted);">Cart abandoned</td><td>2 times</td></tr>
+              <tr><td style="color:var(--muted);">Source</td><td>WooCommerce</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-section-title">Recent activity</div>
+        <div style="font-size:13px;">
+          <div style="padding: 8px 0; border-bottom: 0.5px solid var(--border); display: flex; gap: 12px;">
+            <div style="font-size:11px; color: var(--muted); width: 90px;">2 hours ago</div>
+            <div>Opened "Dashain Festive Offer"</div>
+          </div>
+          <div style="padding: 8px 0; border-bottom: 0.5px solid var(--border); display: flex; gap: 12px;">
+            <div style="font-size:11px; color: var(--muted); width: 90px;">2 hours ago</div>
+            <div>Received "Dashain Festive Offer"</div>
+          </div>
+          <div style="padding: 8px 0; border-bottom: 0.5px solid var(--border); display: flex; gap: 12px;">
+            <div style="font-size:11px; color: var(--muted); width: 90px;">3 days ago</div>
+            <div>Clicked "View order #2402" link</div>
+          </div>
+          <div style="padding: 8px 0; display: flex; gap: 12px;">
+            <div style="font-size:11px; color: var(--muted); width: 90px;">9 days ago</div>
+            <div>Placed order #2402 · रू 4,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="screen" id="screen-templates">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-templates"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Templates</h1>
+          <p class="page-sub">Reusable designs for this client</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="showScreen('builder')"><i class="ti ti-plus"></i> New template</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">All templates</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Client templates</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Agency templates</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Starter library</div>
+      </div>
+
+      <div class="grid-auto" id="templates-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BUILDER -->
+<div class="screen" id="screen-builder">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+      <span style="color: var(--muted); font-size: 13px;">/ Dashain Festive Offer</span>
+    </div>
+    <div class="topnav-right">
+      <button class="btn btn-sm" onclick="toast('Preview on mobile')"><i class="ti ti-device-mobile"></i> Mobile</button>
+      <button class="btn btn-sm" onclick="toast('Test sent to your inbox','success')"><i class="ti ti-mail-forward"></i> Send test</button>
+      <button class="btn btn-sm btn-primary" onclick="toast('Template saved','success');setTimeout(()=>showScreen('templates'),700);"><i class="ti ti-device-floppy"></i> Save</button>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-builder"></div>
+    <div class="main">
+      <div class="builder">
+        <div class="builder-sidebar">
+          <div class="builder-block"><i class="ti ti-typography"></i>Text</div>
+          <div class="builder-block"><i class="ti ti-photo"></i>Image</div>
+          <div class="builder-block"><i class="ti ti-rectangle"></i>Button</div>
+          <div class="builder-block"><i class="ti ti-minus"></i>Divider</div>
+          <div class="builder-block"><i class="ti ti-columns-3"></i>Cols</div>
+          <div class="builder-block"><i class="ti ti-brand-facebook"></i>Social</div>
+        </div>
+        <div class="builder-canvas">
+          <div class="builder-email">
+            <div class="email-header">Khukri Spices</div>
+            <div class="email-body">
+              <p style="font-weight:500; margin: 0 0 8px;">Namaste {{first_name|valued customer}}!</p>
+              <p style="margin: 0 0 12px;">Dashain is here. Get 25% off our entire masala collection — handcrafted in Bhaktapur, shipped across Nepal.</p>
+              <div style="text-align:center;"><span class="email-button">Shop the sale</span></div>
+              <p style="font-size:10px;color:var(--soft);margin-top:14px;text-align:center;">
+                Khukri Spices · Bhaktapur, Nepal · <a href="#" onclick="event.preventDefault();" style="color:var(--soft);">Unsubscribe</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="builder-props">
+          <div class="card-section-title">Properties</div>
+          <div class="field">
+            <label class="label">Subject</label>
+            <input class="input" value="Dashain आयो — 25% off all masalas" />
+          </div>
+          <div class="field">
+            <label class="label">Preheader</label>
+            <input class="input" value="Festive prices end Sunday" />
+          </div>
+          <div class="field">
+            <label class="label">Button text</label>
+            <input class="input" value="Shop the sale" />
+          </div>
+          <div class="field">
+            <label class="label">Button URL</label>
+            <input class="input" value="khukrispices.com/sale" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPAIGNS LIST -->
+<div class="screen" id="screen-campaigns">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+        <i class="ti ti-chevron-down" style="font-size: 12px;"></i>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-campaigns"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Campaigns</h1>
+          <p class="page-sub">Past and scheduled broadcasts</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="showScreen('campaign-new')"><i class="ti ti-plus"></i> New campaign</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">All (24)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Sent (20)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Scheduled (2)</div>
+        <div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');">Drafts (2)</div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <table class="table">
+          <thead><tr><th>Campaign</th><th>Sent</th><th>Recipients</th><th>Open</th><th>Click</th><th>Status</th></tr></thead>
+          <tbody id="campaigns-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CAMPAIGN -->
+<div class="screen" id="screen-campaign-new">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-campaign-new"></div>
+    <div class="main">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('campaigns')"><i class="ti ti-arrow-left"></i> Back to campaigns</button>
+      <h1 class="page-title">Create campaign · Step <span id="campaign-step">4</span> of 6</h1>
+      <p class="page-sub mb-4">Dashain Festive Offer · Khukri Spices</p>
+
+      <div id="campaign-steps">
+        <div class="step done"><div class="step-num"><i class="ti ti-check" style="font-size:14px;"></i></div><div class="step-content"><div class="step-title">Name &amp; client</div><div class="step-sub">Dashain Festive Offer</div></div></div>
+        <div style="height:6px;"></div>
+        <div class="step done"><div class="step-num"><i class="ti ti-check" style="font-size:14px;"></i></div><div class="step-content"><div class="step-title">Recipients</div><div class="step-sub">Newsletter + VIP segment · 8,612 contacts</div></div></div>
+        <div style="height:6px;"></div>
+        <div class="step done"><div class="step-num"><i class="ti ti-check" style="font-size:14px;"></i></div><div class="step-content"><div class="step-title">From &amp; subject</div><div class="step-sub">Khukri Spices · "Dashain आयो — 25% off"</div></div></div>
+        <div style="height:6px;"></div>
+        <div class="step active"><div class="step-num">4</div><div class="step-content"><div class="step-title">Template</div><div class="step-sub">Choose or build the email</div></div><button class="btn btn-primary btn-sm" onclick="showScreen('builder')">Open builder</button></div>
+        <div style="height:6px;"></div>
+        <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Schedule</div><div class="step-sub">Send now or pick a time</div></div></div>
+        <div style="height:6px;"></div>
+        <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Review &amp; send</div><div class="step-sub">Final deliverability check</div></div></div>
+      </div>
+
+      <div class="flex gap-2 mt-4" style="justify-content: flex-end;">
+        <button class="btn" onclick="toast('Saved as draft','success')">Save draft</button>
+        <button class="btn btn-primary" onclick="showScreen('campaign-report')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPAIGN REPORT -->
+<div class="screen" id="screen-campaign-report">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-campaign-report"></div>
+    <div class="main">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('campaigns')"><i class="ti ti-arrow-left"></i> Back to campaigns</button>
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashain Festive Offer</h1>
+          <p class="page-sub">Sent 2 hours ago · 8,612 recipients</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn"><i class="ti ti-download"></i> Export</button>
+          <button class="btn"><i class="ti ti-share"></i> Share with client</button>
+        </div>
+      </div>
+
+      <div class="grid-4 mb-4">
+        <div class="metric"><div class="metric-label">Delivered</div><div class="metric-value">8,548</div></div>
+        <div class="metric"><div class="metric-label">Opened</div><div class="metric-value">3,251 <span class="metric-delta">38.0%</span></div></div>
+        <div class="metric"><div class="metric-label">Clicked</div><div class="metric-value">487 <span class="metric-delta">5.7%</span></div></div>
+        <div class="metric"><div class="metric-label">Revenue</div><div class="metric-value">रू 1.2L</div></div>
+      </div>
+
+      <div class="grid-2 mb-4">
+        <div class="card">
+          <div class="card-section-title">Engagement</div>
+          <div class="bar-row"><span class="bar-label">Delivered</span><div class="bar-track"><div class="bar-fill" style="background:var(--green);width:99%;"></div></div><span class="bar-val">99.3%</span></div>
+          <div class="bar-row"><span class="bar-label">Opened</span><div class="bar-track"><div class="bar-fill" style="background:var(--primary);width:38%;"></div></div><span class="bar-val">38.0%</span></div>
+          <div class="bar-row"><span class="bar-label">Clicked</span><div class="bar-track"><div class="bar-fill" style="background:var(--blue);width:5.7%;"></div></div><span class="bar-val">5.7%</span></div>
+          <div class="bar-row"><span class="bar-label">Bounced</span><div class="bar-track"><div class="bar-fill" style="background:var(--amber);width:0.7%;"></div></div><span class="bar-val">0.7%</span></div>
+          <div class="bar-row"><span class="bar-label">Complained</span><div class="bar-track"><div class="bar-fill" style="background:var(--red);width:0.04%;"></div></div><span class="bar-val">0.04%</span></div>
+          <div class="bar-row"><span class="bar-label">Unsub</span><div class="bar-track"><div class="bar-fill" style="background:var(--soft);width:0.3%;"></div></div><span class="bar-val">0.3%</span></div>
+        </div>
+        <div class="card">
+          <div class="card-section-title">Top links</div>
+          <table class="table">
+            <tbody>
+              <tr><td class="mono">/sale/masala-set</td><td style="text-align:right;font-weight:500;">312</td></tr>
+              <tr><td class="mono">/sale</td><td style="text-align:right;font-weight:500;">98</td></tr>
+              <tr><td class="mono">/about</td><td style="text-align:right;font-weight:500;">44</td></tr>
+              <tr><td class="mono">/unsubscribe</td><td style="text-align:right;font-weight:500;">26</td></tr>
+            </tbody>
+          </table>
+          <div class="card-section-title mt-4">Devices</div>
+          <div class="bar-row"><span class="bar-label">Mobile</span><div class="bar-track"><div class="bar-fill" style="background:var(--primary);width:72%;"></div></div><span class="bar-val">72%</span></div>
+          <div class="bar-row"><span class="bar-label">Desktop</span><div class="bar-track"><div class="bar-fill" style="background:var(--primary);width:24%;"></div></div><span class="bar-val">24%</span></div>
+          <div class="bar-row"><span class="bar-label">Tablet</span><div class="bar-track"><div class="bar-fill" style="background:var(--primary);width:4%;"></div></div><span class="bar-val">4%</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-section-title">Per-recipient activity</div>
+        <table class="table">
+          <thead><tr><th>Recipient</th><th>Delivered</th><th>Opened</th><th>Clicked</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>aastha.shrestha@gmail.com</td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td><span class="pill pill-green">Converted</span></td></tr>
+            <tr><td>bibek.k@outlook.com</td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td>—</td><td><span class="pill pill-blue">Opened</span></td></tr>
+            <tr><td>chandni.thapa@gmail.com</td><td><i class="ti ti-check" style="color:var(--green);"></i></td><td>—</td><td>—</td><td><span class="pill pill-gray">Delivered</span></td></tr>
+            <tr><td>deepak.maharjan@yahoo.com</td><td><i class="ti ti-x" style="color:var(--red);"></i></td><td>—</td><td>—</td><td><span class="pill pill-red">Bounced</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOWS -->
+<div class="screen" id="screen-flows">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-flows"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Marketing automation</h1>
+          <p class="page-sub">Pre-built flow templates · configure with a wizard, not a flowchart</p>
+        </div>
+      </div>
+
+      <div class="grid-3 mb-4">
+        <div class="card" onclick="showScreen('flow-config')" style="cursor:pointer;">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="ti ti-confetti" style="color:var(--primary); font-size: 22px;"></i>
+            <strong>Welcome series</strong>
+          </div>
+          <p class="text-sm text-muted" style="margin: 0 0 8px;">3 emails over 7 days</p>
+          <span class="pill pill-green">Active</span>
+          <p class="text-sm mt-2" style="color: var(--soft);">412 entered · 38% completed</p>
+        </div>
+        <div class="card" onclick="showScreen('flow-config')" style="cursor:pointer;">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="ti ti-shopping-cart-x" style="color:var(--primary); font-size: 22px;"></i>
+            <strong>Abandoned cart</strong>
+          </div>
+          <p class="text-sm text-muted" style="margin: 0 0 8px;">2 emails: 1h + 24h</p>
+          <span class="pill pill-green">Active</span>
+          <p class="text-sm mt-2" style="color: var(--soft);">रू 87K recovered · 14% conv.</p>
+        </div>
+        <div class="card" onclick="showScreen('flow-config')" style="cursor:pointer;">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="ti ti-cake" style="color:var(--primary); font-size: 22px;"></i>
+            <strong>Birthday</strong>
+          </div>
+          <p class="text-sm text-muted" style="margin: 0 0 8px;">1 email on the day</p>
+          <span class="pill pill-gray">Paused</span>
+          <p class="text-sm mt-2" style="color: var(--soft);">No data yet</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-section-title">Welcome series · execution view</div>
+        <div class="flow-canvas">
+          <div class="flow-node"><i class="ti ti-user-plus"></i><div><strong>Trigger</strong><div class="text-sm text-muted">Contact added to Newsletter list</div></div></div>
+          <div class="flow-arrow">↓ wait 0 min</div>
+          <div class="flow-node"><i class="ti ti-mail"></i><div><strong>Email 1 · Welcome</strong><div class="text-sm text-muted">Sent 412 · opened 287</div></div></div>
+          <div class="flow-arrow">↓ wait 2 days</div>
+          <div class="flow-node"><i class="ti ti-mail"></i><div><strong>Email 2 · Brand story</strong><div class="text-sm text-muted">Sent 384 · opened 198</div></div></div>
+          <div class="flow-arrow">↓ wait 5 days</div>
+          <div class="flow-node"><i class="ti ti-mail"></i><div><strong>Email 3 · First-order discount</strong><div class="text-sm text-muted">Sent 356 · 47 conversions</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOW CONFIG -->
+<div class="screen" id="screen-flow-config">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-flow-config"></div>
+    <div class="main" style="max-width: 720px;">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('flows')"><i class="ti ti-arrow-left"></i> Back to flows</button>
+      <h1 class="page-title">Welcome series</h1>
+      <p class="page-sub mb-4">Triggered when a contact is added to a list</p>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Trigger</div>
+        <div class="field">
+          <label class="label">When a contact joins</label>
+          <select class="input">
+            <option selected>Newsletter list</option>
+            <option>VIP buyers list</option>
+            <option>Any list</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Emails in series</div>
+        <div style="border: 0.5px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+          <div class="flex items-center justify-between mb-2">
+            <strong>Email 1 · Welcome</strong>
+            <span class="text-sm text-muted">Send immediately</span>
+          </div>
+          <select class="input">
+            <option selected>Template: Welcome to Khukri</option>
+            <option>Template: Brand intro</option>
+          </select>
+        </div>
+        <div style="border: 0.5px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+          <div class="flex items-center justify-between mb-2">
+            <strong>Email 2 · Brand story</strong>
+            <input class="input" style="width: 100px; padding: 4px 8px;" value="2 days" />
+          </div>
+          <select class="input">
+            <option selected>Template: Our story from Bhaktapur</option>
+          </select>
+        </div>
+        <div style="border: 0.5px solid var(--border); border-radius: 8px; padding: 12px;">
+          <div class="flex items-center justify-between mb-2">
+            <strong>Email 3 · First-order discount</strong>
+            <input class="input" style="width: 100px; padding: 4px 8px;" value="5 days" />
+          </div>
+          <select class="input">
+            <option selected>Template: 15% off your first order</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm mt-3"><i class="ti ti-plus"></i> Add another email</button>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Stop conditions</div>
+        <label class="checkbox"><input type="checkbox" checked /> Contact unsubscribes</label>
+        <label class="checkbox"><input type="checkbox" checked /> Contact places an order</label>
+        <label class="checkbox"><input type="checkbox" /> Contact opens email 2</label>
+      </div>
+
+      <div class="flex gap-2" style="justify-content: flex-end;">
+        <button class="btn" onclick="showScreen('flows')">Cancel</button>
+        <button class="btn btn-primary" onclick="toast('Flow saved','success');setTimeout(()=>showScreen('flows'),700);">Save flow</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORMS -->
+<div class="screen" id="screen-forms">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-forms"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Signup forms</h1>
+          <p class="page-sub">Embed forms on any website</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="showScreen('form-builder')"><i class="ti ti-plus"></i> New form</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <table class="table">
+          <thead><tr><th>Form</th><th>Type</th><th>Adds to</th><th>Signups</th><th>Conversion</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr class="clickable" onclick="showScreen('form-builder')">
+              <td><strong>Footer newsletter</strong></td>
+              <td><span class="pill pill-gray">Inline</span></td>
+              <td>Newsletter</td>
+              <td>1,240</td>
+              <td>3.2%</td>
+              <td><span class="pill pill-green">Active</span></td>
+            </tr>
+            <tr class="clickable" onclick="showScreen('form-builder')">
+              <td><strong>Welcome popup</strong></td>
+              <td><span class="pill pill-gray">Popup</span></td>
+              <td>Newsletter</td>
+              <td>892</td>
+              <td>2.4%</td>
+              <td><span class="pill pill-green">Active</span></td>
+            </tr>
+            <tr class="clickable" onclick="showScreen('form-builder')">
+              <td><strong>VIP signup page</strong></td>
+              <td><span class="pill pill-gray">Hosted</span></td>
+              <td>VIP buyers</td>
+              <td>87</td>
+              <td>—</td>
+              <td><span class="pill pill-gray">Draft</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM BUILDER -->
+<div class="screen" id="screen-form-builder">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <button class="btn btn-sm btn-primary" onclick="toast('Form saved','success');setTimeout(()=>showScreen('forms'),700);">Save form</button>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-form-builder"></div>
+    <div class="main">
+      <button class="btn btn-ghost btn-sm mb-4" onclick="showScreen('forms')"><i class="ti ti-arrow-left"></i> Back to forms</button>
+      <h1 class="page-title">Edit form · Footer newsletter</h1>
+      <p class="page-sub mb-4">Configure on the left, preview on the right</p>
+
+      <div class="grid-3 mb-4">
+        <div class="card" style="cursor:pointer;border-color:var(--primary);background:var(--primary-light);" onclick="toast('Inline mode selected')">
+          <i class="ti ti-layout-bottombar-collapse" style="font-size: 20px; color: var(--primary);"></i>
+          <strong style="display:block;margin-top:6px;">Inline</strong>
+          <p class="text-sm text-muted" style="margin: 4px 0 0;">Embed in a page</p>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="toast('Popup mode selected')">
+          <i class="ti ti-app-window" style="font-size: 20px; color: var(--muted);"></i>
+          <strong style="display:block;margin-top:6px;">Popup</strong>
+          <p class="text-sm text-muted" style="margin: 4px 0 0;">Timer or scroll</p>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="toast('Hosted page selected')">
+          <i class="ti ti-external-link" style="font-size: 20px; color: var(--muted);"></i>
+          <strong style="display:block;margin-top:6px;">Hosted page</strong>
+          <p class="text-sm text-muted" style="margin: 4px 0 0;">Standalone URL</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card mb-4">
+            <div class="card-section-title">Configure</div>
+            <div class="field">
+              <label class="label">Form name</label>
+              <input class="input" value="Footer newsletter signup" />
+            </div>
+            <div class="field">
+              <label class="label">Add to list</label>
+              <select class="input"><option>Newsletter</option></select>
+            </div>
+            <div class="field">
+              <label class="label">After signup, enter flow</label>
+              <select class="input"><option>Welcome series</option><option>None</option></select>
+            </div>
+            <div class="field">
+              <label class="label">Fields</label>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                <span class="pill pill-blue">Email *</span>
+                <span class="pill pill-blue">First name</span>
+                <button class="pill pill-gray" style="border:0;cursor:pointer;font-family:inherit;" onclick="toast('Field added')">+ Add field</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Spam protection</label>
+              <p class="text-sm" style="margin:0;"><span style="color:var(--green);">✓</span> hCaptcha enabled</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-section-title">Embed code</div>
+            <div class="mono" style="display:block; padding: 10px; word-break: break-all;">&lt;script src="https://embed.sendmymail.np/forms/f_x9k2.js" async&gt;&lt;/script&gt;</div>
+            <button class="btn btn-sm mt-3" onclick="toast('Copied!','success')"><i class="ti ti-copy"></i> Copy code</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card-section-title">Live preview</div>
+          <div style="background: var(--surface); border-radius: 10px; padding: 32px; display:flex;align-items:center;justify-content:center;min-height:280px;">
+            <div style="background:white;border-radius:12px;padding:24px;max-width:300px;width:100%;border:0.5px solid var(--border);">
+              <h3 style="font-size:16px;margin:0 0 4px;">Join the Khukri family</h3>
+              <p class="text-sm text-muted" style="margin: 0 0 14px;">Recipes, offers, and stories. No spam.</p>
+              <input class="input mb-2" placeholder="First name" />
+              <input class="input mb-2" placeholder="you@email.com" />
+              <button class="btn btn-primary btn-block">Subscribe</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="screen" id="screen-reports">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+      <div class="client-switcher" onclick="openClientSwitcher()">
+        <span class="avatar-sm" style="background:#1D9E75;">KS</span>
+        <span>Khukri Spices</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-reports"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Reports</h1>
+          <p class="page-sub">Performance across all Khukri Spices campaigns</p>
+        </div>
+        <div class="page-actions">
+          <select class="btn"><option>Last 30 days</option><option>Last 90 days</option><option>This year</option></select>
+          <button class="btn"><i class="ti ti-download"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="grid-4 mb-4">
+        <div class="metric"><div class="metric-label">Emails sent</div><div class="metric-value">142K <span class="metric-delta">+18%</span></div></div>
+        <div class="metric"><div class="metric-label">Avg open rate</div><div class="metric-value">36.4%</div></div>
+        <div class="metric"><div class="metric-label">Avg click rate</div><div class="metric-value">4.8%</div></div>
+        <div class="metric"><div class="metric-label">Revenue attributed</div><div class="metric-value">रू 8.7L</div></div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Campaign performance</div>
+        <table class="table">
+          <thead><tr><th>Campaign</th><th>Sent</th><th>Open</th><th>Click</th><th>Revenue</th></tr></thead>
+          <tbody>
+            <tr class="clickable" onclick="showScreen('campaign-report')"><td>Dashain Festive Offer</td><td>8,612</td><td>38.0%</td><td>5.7%</td><td>रू 1.2L</td></tr>
+            <tr class="clickable" onclick="showScreen('campaign-report')"><td>October newsletter</td><td>12,400</td><td>34.2%</td><td>4.1%</td><td>रू 84K</td></tr>
+            <tr class="clickable" onclick="showScreen('campaign-report')"><td>VIP exclusive: new arrivals</td><td>1,140</td><td>48.6%</td><td>9.2%</td><td>रू 2.1L</td></tr>
+            <tr class="clickable" onclick="showScreen('campaign-report')"><td>Pre-Dashain teaser</td><td>8,200</td><td>32.8%</td><td>3.4%</td><td>रू 54K</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-section-title">List growth</div>
+          <div class="bar-row"><span class="bar-label">New signups</span><div class="bar-track"><div class="bar-fill" style="background:var(--green);width:75%;"></div></div><span class="bar-val">+892</span></div>
+          <div class="bar-row"><span class="bar-label">Unsubs</span><div class="bar-track"><div class="bar-fill" style="background:var(--soft);width:8%;"></div></div><span class="bar-val">-94</span></div>
+          <div class="bar-row"><span class="bar-label">Bounces</span><div class="bar-track"><div class="bar-fill" style="background:var(--amber);width:5%;"></div></div><span class="bar-val">-58</span></div>
+          <p class="text-sm text-muted mt-3"><strong style="color:var(--green);">Net +740</strong> contacts this month</p>
+        </div>
+        <div class="card">
+          <div class="card-section-title">Deliverability health</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom: 6px;">
+            <div style="font-size: 28px; font-weight: 500; color: var(--green);">94</div>
+            <span class="pill pill-green">Excellent</span>
+          </div>
+          <p class="text-sm text-muted">Score weighted by engagement, bounces, and complaints over last 30 days.</p>
+          <table class="table mt-3" style="font-size:12px;">
+            <tbody>
+              <tr><td style="color:var(--muted);width:160px;">Gmail inbox rate</td><td>96.4%</td></tr>
+              <tr><td style="color:var(--muted);">Outlook inbox rate</td><td>91.2%</td></tr>
+              <tr><td style="color:var(--muted);">Hard bounce rate</td><td>0.4%</td></tr>
+              <tr><td style="color:var(--muted);">Complaint rate</td><td>0.02%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM -->
+<div class="screen" id="screen-team">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-team"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Team</h1>
+          <p class="page-sub">2 members · Pro plan supports up to 5</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="openModal('invite-member')"><i class="ti ti-user-plus"></i> Invite member</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <table class="table">
+          <thead><tr><th>Member</th><th>Email</th><th>Role</th><th>Last active</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="avatar-md" style="cursor: default;">PG</div>
+                  <div><strong>Prasiddha Gyawali</strong><div class="text-sm text-muted">You</div></div>
+                </div>
+              </td>
+              <td>prasiddha@nirvanaagency.com</td>
+              <td><span class="pill pill-purple">Admin</span></td>
+              <td>Now</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="avatar-md" style="background: var(--green-bg); color: var(--green-text); cursor: default;">SK</div>
+                  <div><strong>Sushmita Karki</strong></div>
+                </div>
+              </td>
+              <td>sushmita@nirvanaagency.com</td>
+              <td><span class="pill pill-gray">Member</span></td>
+              <td>2 hours ago</td>
+              <td><button class="btn btn-sm" onclick="toast('Remove member')"><i class="ti ti-trash"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-section-title">Pending invites (1)</div>
+        <table class="table">
+          <thead><tr><th>Email</th><th>Role</th><th>Invited</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>roshan@nirvanaagency.com</td>
+              <td><span class="pill pill-gray">Member</span></td>
+              <td>2 days ago</td>
+              <td>
+                <button class="btn btn-sm" onclick="toast('Invite resent','success')"><i class="ti ti-refresh"></i> Resend</button>
+                <button class="btn btn-sm" onclick="toast('Invite revoked')"><i class="ti ti-x"></i> Revoke</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTEGRATIONS -->
+<div class="screen" id="screen-integrations">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-integrations"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Integrations</h1>
+          <p class="page-sub">E-commerce, payments, and tools your Nepali clients use</p>
+        </div>
+      </div>
+
+      <div class="card-section-title mt-4">E-commerce</div>
+      <div class="card mb-4" style="padding: 0;">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:0.5px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:8px;background:#7F54B3;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;">W</div>
+          <div style="flex:1;">
+            <strong>WooCommerce</strong>
+            <p class="text-sm text-muted" style="margin: 2px 0 0;">Free WordPress plugin · customer + order + cart sync</p>
+          </div>
+          <span class="pill pill-green">Connected</span>
+          <button class="btn btn-sm" onclick="openModal('woo-settings')">Configure</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:0.5px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:8px;background:#95BF47;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;">S</div>
+          <div style="flex:1;">
+            <strong>Shopify</strong>
+            <p class="text-sm text-muted" style="margin: 2px 0 0;">Private app · App Store listing pending</p>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="toast('Connect flow would start')">Connect</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;opacity:0.6;">
+          <div style="width:36px;height:36px;border-radius:8px;background:#F85606;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;">D</div>
+          <div style="flex:1;">
+            <strong>Daraz</strong>
+            <p class="text-sm text-muted" style="margin: 2px 0 0;">No third-party API · use CSV export</p>
+          </div>
+          <span class="pill pill-gray">Not supported</span>
+        </div>
+      </div>
+
+      <div class="card-section-title">Other</div>
+      <div class="card" style="padding: 0;">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:#FF4F00;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;">Z</div>
+          <div style="flex:1;">
+            <strong>Zapier webhook</strong>
+            <p class="text-sm text-muted" style="margin: 2px 0 0;">Outgoing webhooks for any event</p>
+          </div>
+          <button class="btn btn-sm" onclick="toast('Zapier setup would open')">Set up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BILLING -->
+<div class="screen" id="screen-billing">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-billing"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Billing</h1>
+          <p class="page-sub">Pay in NPR via Khalti / eSewa, or in USD via Stripe</p>
+        </div>
+      </div>
+
+      <div class="grid-3 mb-4">
+        <div class="card" style="cursor:pointer;" onclick="openModal('plan-change')">
+          <div class="text-sm" style="font-weight: 500;">Starter</div>
+          <div style="font-size: 22px; font-weight: 500; margin: 6px 0;">रू 2,499<span style="font-size:12px;color:var(--muted);font-weight:400;">/mo</span></div>
+          <p class="text-sm text-muted" style="margin: 0;">Up to 3 clients · 25K emails</p>
+        </div>
+        <div class="card" style="border-color: var(--primary); border-width: 2px; background: var(--primary-light); position: relative;">
+          <span class="pill pill-purple" style="position:absolute; top: 8px; right: 8px;">Current</span>
+          <div class="text-sm" style="font-weight: 500;">Pro</div>
+          <div style="font-size: 22px; font-weight: 500; margin: 6px 0;">रू 6,999<span style="font-size:12px;color:var(--muted);font-weight:400;">/mo</span></div>
+          <p class="text-sm text-muted" style="margin: 0;">Up to 10 clients · 100K emails</p>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="openModal('plan-change')">
+          <div class="text-sm" style="font-weight: 500;">Scale</div>
+          <div style="font-size: 22px; font-weight: 500; margin: 6px 0;">रू 14,999<span style="font-size:12px;color:var(--muted);font-weight:400;">/mo</span></div>
+          <p class="text-sm text-muted" style="margin: 0;">Up to 30 clients · 500K emails</p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Usage this cycle</div>
+        <div class="grid-3">
+          <div>
+            <div class="text-sm text-muted">Clients</div>
+            <div style="font-size:20px;font-weight:500;margin:4px 0;">8 / 10</div>
+            <div class="progress"><div class="progress-fill" style="width: 80%;"></div></div>
+          </div>
+          <div>
+            <div class="text-sm text-muted">Emails</div>
+            <div style="font-size:20px;font-weight:500;margin:4px 0;">42,338 / 100,000</div>
+            <div class="progress"><div class="progress-fill" style="width: 42%;"></div></div>
+          </div>
+          <div>
+            <div class="text-sm text-muted">Contacts</div>
+            <div style="font-size:20px;font-weight:500;margin:4px 0;">28,420 / 50,000</div>
+            <div class="progress"><div class="progress-fill" style="width: 57%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-section-title">Payment method</div>
+        <div class="flex items-center gap-3">
+          <div style="width:48px;height:32px;border-radius:6px;background:#5C2D91;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;">K</div>
+          <div style="flex:1;">
+            <strong>Khalti</strong>
+            <div class="text-sm text-muted">Renewal reminder will be sent 7 days before due date</div>
+          </div>
+          <button class="btn btn-sm" onclick="toast('Switch payment method')">Change</button>
+        </div>
+        <div style="background: var(--amber-bg); border: 0.5px solid #FCD79B; border-radius: 8px; padding: 10px 12px; margin-top: 12px; display: flex; gap: 8px; font-size: 12px; color: var(--amber-text);">
+          <i class="ti ti-alert-circle" style="font-size: 14px; flex-shrink: 0;"></i>
+          <span>Khalti and eSewa do not support card-on-file recurring. We send reminders before each renewal; you pay manually.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-section-title">Recent invoices</div>
+        <table class="table">
+          <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>8 May 2026</td><td>रू 6,999</td><td>Khalti</td><td><span class="pill pill-green">Paid</span></td><td><button class="btn btn-sm" onclick="toast('Download invoice','success')"><i class="ti ti-download"></i></button></td></tr>
+            <tr><td>8 Apr 2026</td><td>रू 6,999</td><td>Khalti</td><td><span class="pill pill-green">Paid</span></td><td><button class="btn btn-sm" onclick="toast('Download invoice','success')"><i class="ti ti-download"></i></button></td></tr>
+            <tr><td>8 Mar 2026</td><td>रू 6,999</td><td>eSewa</td><td><span class="pill pill-green">Paid</span></td><td><button class="btn btn-sm" onclick="toast('Download invoice','success')"><i class="ti ti-download"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHITE-LABEL -->
+<div class="screen" id="screen-whitelabel">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="logo" style="margin: 0;"><span class="logo-mark">S</span> SendMyMail</div>
+    </div>
+    <div class="topnav-right">
+      <div class="avatar-md" onclick="openProfileMenu()">PG</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <div class="sidebar" id="sidebar-whitelabel"></div>
+    <div class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">White-label settings</h1>
+          <p class="page-sub">Your clients see your agency's brand, not SendMyMail's</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="toast('Settings saved','success')">Save changes</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card mb-4">
+            <div class="card-section-title">Custom domain</div>
+            <div class="field">
+              <label class="label">Your URL</label>
+              <input class="input" value="mail.nirvanaagency.com" />
+            </div>
+            <div style="background:var(--green-bg);border:0.5px solid #C0DD97;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--green-text);display:flex;align-items:center;gap:6px;">
+              <i class="ti ti-check"></i> SSL active · auto-renewed via Let's Encrypt
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-section-title">Branding</div>
+            <div class="field">
+              <label class="label">Logo</label>
+              <div class="flex items-center gap-2">
+                <div style="width:48px;height:48px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:500;">N</div>
+                <button class="btn btn-sm" onclick="toast('Upload dialog')">Replace</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Primary colour</label>
+              <div class="flex items-center gap-2">
+                <div style="width:32px;height:32px;background:var(--primary);border-radius:6px;border:2px solid var(--ink);"></div>
+                <span class="mono">#534AB7</span>
+                <button class="btn btn-sm" onclick="toast('Color picker')">Edit</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Remove SendMyMail footer from emails</label>
+              <label class="checkbox" style="margin: 0;"><input type="checkbox" disabled /> Available on Scale plan</label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card-section-title">Preview · what your client sees</div>
+          <div style="background: var(--surface); border-radius: 10px; padding: 24px; min-height: 240px;">
+            <div style="background:white;border-radius:8px;padding:16px;border:0.5px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:0.5px solid var(--border);">
+                <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:500;">N</div>
+                <strong>Nirvana Agency</strong>
+              </div>
+              <p style="margin: 12px 0 4px; font-weight: 500;">Khukri Spices · Newsletter</p>
+              <p class="text-sm text-muted" style="margin: 0;">12,420 contacts · 38% open rate</p>
+              <button class="btn btn-primary btn-sm mt-3">New campaign</button>
+            </div>
+          </div>
+          <p class="text-sm text-muted mt-2">Your client logs in via <span class="mono">mail.nirvanaagency.com</span> — they never see SendMyMail's brand.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODALS                                       -->
+<!-- ============================================ -->
+
+<!-- Client Switcher -->
+<div class="modal-backdrop" id="modal-client-switcher" onclick="if(event.target===this) closeModal('client-switcher')">
+  <div class="modal" style="max-width: 480px;">
+    <div class="modal-header">
+      <h3>Switch client</h3>
+      <button class="close-x" onclick="closeModal('client-switcher')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="padding: 8px;">
+      <div id="client-switcher-list"></div>
+      <div style="border-top: 0.5px solid var(--border); margin-top: 8px; padding-top: 8px;">
+        <button class="btn btn-ghost btn-block" onclick="closeModal('client-switcher');showScreen('client-create');"><i class="ti ti-plus"></i> Add a new client</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Menu -->
+<div class="modal-backdrop" id="modal-profile" onclick="if(event.target===this) closeModal('profile')">
+  <div class="modal" style="max-width: 380px;">
+    <div class="modal-header">
+      <h3>Account</h3>
+      <button class="close-x" onclick="closeModal('profile')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="padding: 8px;">
+      <div style="padding: 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 12px;">
+        <div class="avatar-md" style="width: 40px; height: 40px; cursor: default;">PG</div>
+        <div><strong>Prasiddha Gyawali</strong><div class="text-sm text-muted">prasiddha@nirvanaagency.com</div></div>
+      </div>
+      <button class="btn btn-ghost btn-block" style="justify-content: flex-start;" onclick="closeModal('profile');toast('Profile settings');"><i class="ti ti-user"></i> Profile settings</button>
+      <button class="btn btn-ghost btn-block" style="justify-content: flex-start;" onclick="closeModal('profile');showScreen('team');"><i class="ti ti-users-group"></i> Team</button>
+      <button class="btn btn-ghost btn-block" style="justify-content: flex-start;" onclick="closeModal('profile');showScreen('billing');"><i class="ti ti-credit-card"></i> Billing</button>
+      <button class="btn btn-ghost btn-block" style="justify-content: flex-start;" onclick="closeModal('profile');toast('Help docs');"><i class="ti ti-help"></i> Help &amp; docs</button>
+      <div style="border-top: 0.5px solid var(--border); margin-top: 4px;"></div>
+      <button class="btn btn-ghost btn-block" style="justify-content: flex-start; color: var(--red);" onclick="closeModal('profile');showScreen('login');toast('Logged out');"><i class="ti ti-logout"></i> Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Contact -->
+<div class="modal-backdrop" id="modal-add-contact" onclick="if(event.target===this) closeModal('add-contact')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add a contact</h3>
+      <button class="close-x" onclick="closeModal('add-contact')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="field"><label class="label">First name</label><input class="input" /></div>
+        <div class="field"><label class="label">Last name</label><input class="input" /></div>
+      </div>
+      <div class="field"><label class="label">Email *</label><input class="input" type="email" /></div>
+      <div class="field"><label class="label">Phone</label><input class="input" /></div>
+      <div class="field"><label class="label">Add to list</label><select class="input"><option>Newsletter</option><option>VIP buyers</option></select></div>
+      <label class="checkbox"><input type="checkbox" checked /> This person has consented to receive marketing emails</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('add-contact')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('add-contact');toast('Contact added','success');">Add contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- Segment Builder -->
+<div class="modal-backdrop" id="modal-segment-builder" onclick="if(event.target===this) closeModal('segment-builder')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit segment</h3>
+      <button class="close-x" onclick="closeModal('segment-builder')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted mb-4">Match contacts where:</p>
+      <div class="grid-3 mb-2" style="grid-template-columns: 1fr 100px 1fr;">
+        <select class="input"><option>tag</option><option>city</option><option>email</option></select>
+        <select class="input"><option>equals</option><option>contains</option></select>
+        <input class="input" value="vip" />
+      </div>
+      <div class="text-sm text-muted" style="text-align:center; padding: 4px 0;">AND</div>
+      <div class="grid-3 mb-2" style="grid-template-columns: 1fr 100px 1fr;">
+        <select class="input"><option selected>city</option><option>tag</option></select>
+        <select class="input"><option>equals</option><option>contains</option></select>
+        <input class="input" value="Kathmandu" />
+      </div>
+      <button class="btn btn-ghost btn-sm"><i class="ti ti-plus"></i> Add condition</button>
+      <div style="background: var(--primary-light); border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 13px;">
+        <strong>Matches 412 contacts</strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('segment-builder')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('segment-builder');toast('Segment updated','success');">Save segment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unsubscribe -->
+<div class="modal-backdrop" id="modal-unsub-contact" onclick="if(event.target===this) closeModal('unsub-contact')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Unsubscribe this contact?</h3>
+      <button class="close-x" onclick="closeModal('unsub-contact')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Aastha Shrestha will be added to the suppression list. They will no longer receive any campaigns from Khukri Spices, including automated flows.</p>
+      <label class="checkbox mt-3"><input type="checkbox" /> Also remove from all other clients in this agency</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('unsub-contact')">Cancel</button>
+      <button class="btn btn-danger" onclick="closeModal('unsub-contact');toast('Contact unsubscribed','success');">Unsubscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Member -->
+<div class="modal-backdrop" id="modal-invite-member" onclick="if(event.target===this) closeModal('invite-member')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Invite a teammate</h3>
+      <button class="close-x" onclick="closeModal('invite-member')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label class="label">Email</label><input class="input" type="email" placeholder="teammate@nirvanaagency.com" /></div>
+      <div class="field">
+        <label class="label">Role</label>
+        <select class="input">
+          <option>Member — can run campaigns, can't change billing or invite others</option>
+          <option>Admin — full access, including billing and team management</option>
+        </select>
+      </div>
+      <p class="text-sm text-muted">An invite email will be sent. The link expires in 7 days.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('invite-member')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('invite-member');toast('Invite sent','success');">Send invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Plan Change -->
+<div class="modal-backdrop" id="modal-plan-change" onclick="if(event.target===this) closeModal('plan-change')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Change plan</h3>
+      <button class="close-x" onclick="closeModal('plan-change')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Plan changes take effect at the start of your next billing cycle. You can downgrade anytime as long as your usage fits the new plan.</p>
+      <p class="text-sm text-muted mt-3">Need help choosing? <a href="#" style="color:var(--primary);" onclick="event.preventDefault();toast('Contact sales');">Contact sales</a></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('plan-change')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('plan-change');toast('Plan changed — invoice will arrive','success');">Confirm change</button>
+    </div>
+  </div>
+</div>
+
+<!-- WooCommerce settings -->
+<div class="modal-backdrop" id="modal-woo-settings" onclick="if(event.target===this) closeModal('woo-settings')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>WooCommerce settings</h3>
+      <button class="close-x" onclick="closeModal('woo-settings')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label class="label">WordPress site</label><input class="input" value="khukrispices.com" /></div>
+      <div class="field"><label class="label">API key</label><input class="input" type="password" value="••••••••••••••" /></div>
+      <div class="card-section-title mt-4">Events to sync</div>
+      <label class="checkbox"><input type="checkbox" checked /> Customer created</label>
+      <label class="checkbox"><input type="checkbox" checked /> Order placed</label>
+      <label class="checkbox"><input type="checkbox" checked /> Cart abandoned</label>
+      <label class="checkbox"><input type="checkbox" /> Product viewed</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="closeModal('woo-settings');toast('Disconnected')">Disconnect</button>
+      <button class="btn btn-primary" onclick="closeModal('woo-settings');toast('Settings saved','success');">Save settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ==================================================
+// STATE
+// ==================================================
+const state = {
+  currentScreen: 'signup',
+  currentClient: 'khukri',
+  clients: [
+    { id: 'khukri', initials: 'KS', color: '#1D9E75', name: 'Khukri Spices', listSize: '12,420', lastCampaign: '2 hours ago', billing: 'Paid', engagement: '38.1%', sent: '24,300', open: '38.1%', click: '4.2%', status: 'Healthy' },
+    { id: 'himalaya', initials: 'HT', color: '#D85A30', name: 'Himalaya Trekking', listSize: '4,830', lastCampaign: 'Yesterday', billing: 'Paid', engagement: '42.7%', sent: '8,120', open: '42.7%', click: '6.8%', status: 'Healthy' },
+    { id: 'pashmina', initials: 'PC', color: '#534AB7', name: 'Pashmina Co.', listSize: '8,940', lastCampaign: '3 days ago', billing: 'Due', engagement: '29.4%', sent: '15,200', open: '29.4%', click: '2.9%', status: 'Watch' },
+    { id: 'sajilo', initials: 'SK', color: '#D4537E', name: 'Sajilo Kitchen', listSize: '1,210', lastCampaign: 'Never', billing: 'Trial', engagement: '—', sent: '3,400', open: '—', click: '—', status: 'Setup' },
+    { id: 'newa', initials: 'NB', color: '#378ADD', name: 'Newa Bites', listSize: '3,650', lastCampaign: '5 days ago', billing: 'Paid', engagement: '33.8%', sent: '6,200', open: '33.8%', click: '3.1%', status: 'Healthy' },
+    { id: 'yak', initials: 'YS', color: '#BA7517', name: 'Yak Studios', listSize: '892', lastCampaign: '1 week ago', billing: 'Paid', engagement: '51.2%', sent: '1,800', open: '51.2%', click: '8.4%', status: 'Healthy' }
+  ],
+  contacts: [
+    { email: 'aastha.shrestha@gmail.com', name: 'Aastha Shrestha', tags: [['vip', 'purple'], ['kathmandu', 'gray']], added: '2 days ago', source: 'WooCommerce' },
+    { email: 'bibek.k@outlook.com', name: 'Bibek Karki', tags: [['newsletter', 'gray']], added: '5 days ago', source: 'Popup form' },
+    { email: 'chandni.thapa@gmail.com', name: 'Chandni Thapa', tags: [['vip', 'purple'], ['pokhara', 'gray']], added: '1 week ago', source: 'CSV import' },
+    { email: 'deepak.maharjan@yahoo.com', name: 'Deepak Maharjan', tags: [['newsletter', 'gray']], added: '2 weeks ago', source: 'WooCommerce' },
+    { email: 'eshwari.rai@gmail.com', name: 'Eshwari Rai', tags: [['vip', 'purple']], added: '3 weeks ago', source: 'Inline form' },
+    { email: 'firoj.tamrakar@hotmail.com', name: 'Firoj Tamrakar', tags: [['newsletter', 'gray']], added: '1 month ago', source: 'CSV import' }
+  ],
+  campaigns: [
+    { name: 'Dashain Festive Offer', sent: '2 hours ago', recipients: '8,612', open: '38.0%', click: '5.7%', status: ['Sent', 'green'] },
+    { name: 'October newsletter', sent: '12 Oct', recipients: '12,400', open: '34.2%', click: '4.1%', status: ['Sent', 'green'] },
+    { name: 'VIP exclusive: new arrivals', sent: '8 Oct', recipients: '1,140', open: '48.6%', click: '9.2%', status: ['Sent', 'green'] },
+    { name: 'Tihar campaign', sent: 'In 3 days', recipients: '8,612', open: '—', click: '—', status: ['Scheduled', 'blue'] },
+    { name: 'Year-end sale draft', sent: '—', recipients: '—', open: '—', click: '—', status: ['Draft', 'gray'] }
+  ],
+  templates: [
+    { name: 'Welcome to Khukri', type: 'Welcome', updated: '2 days ago' },
+    { name: 'Dashain Festive Offer', type: 'Promo', updated: '3 days ago' },
+    { name: 'Monthly newsletter', type: 'Newsletter', updated: '1 week ago' },
+    { name: 'Order confirmation', type: 'Transactional', updated: '2 weeks ago' },
+    { name: 'Abandoned cart 1h', type: 'Cart', updated: '1 month ago' },
+    { name: 'Birthday wish', type: 'Birthday', updated: '1 month ago' }
+  ]
+};
+
+// ==================================================
+// NAVIGATION
+// ==================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + id);
+  if (target) {
+    target.classList.add('active');
+    state.currentScreen = id;
+    document.getElementById('screen-jumper').value = id;
+    window.scrollTo(0, 0);
+    renderAll();
+  }
+}
+
+function resetDemo() {
+  showScreen('signup');
+}
+
+// ==================================================
+// AUTH HANDLERS
+// ==================================================
+function handleSignup() {
+  toast('Sending verification code...', 'success');
+  setTimeout(() => showScreen('verify'), 700);
+}
+
+function handleVerify() {
+  const filled = Array.from(document.querySelectorAll('.otp-input')).filter(i => i.value).length;
+  if (filled < 6) {
+    // Demo: pretend the code was right
+    toast('Verifying...', 'success');
+  } else {
+    toast('Verified!', 'success');
+  }
+  setTimeout(() => showScreen('workspace-setup'), 700);
+}
+
+function handleWorkspaceCreate() {
+  toast('Workspace created!', 'success');
+  setTimeout(() => showScreen('onboarding'), 700);
+}
+
+function handleGoogleAuth() {
+  toast('Google OAuth would open');
+  setTimeout(() => showScreen('verify'), 700);
+}
+
+// ==================================================
+// OTP HANDLING
+// ==================================================
+document.addEventListener('input', e => {
+  if (e.target.classList && e.target.classList.contains('otp-input')) {
+    e.target.classList.toggle('filled', !!e.target.value);
+    if (e.target.value && e.target.nextElementSibling) {
+      e.target.nextElementSibling.focus();
+    }
+  }
+});
+
+// ==================================================
+// SIDEBAR
+// ==================================================
+function renderSidebar() {
+  const sidebars = document.querySelectorAll('.sidebar');
+  const html = `
+    <div class="sidebar-section">Agency</div>
+    <div class="sidebar-item ${state.currentScreen === 'dashboard' ? 'active' : ''}" onclick="showScreen('dashboard')"><i class="ti ti-layout-dashboard"></i> Overview</div>
+    <div class="sidebar-item ${state.currentScreen === 'clients' || state.currentScreen === 'client-create' ? 'active' : ''}" onclick="showScreen('clients')"><i class="ti ti-users-group"></i> All clients <span class="badge">${state.clients.length}</span></div>
+    <div class="sidebar-section">${currentClientName()}</div>
+    <div class="sidebar-item ${state.currentScreen === 'domain' ? 'active' : ''}" onclick="showScreen('domain')"><i class="ti ti-world-check"></i> Sending domain</div>
+    <div class="sidebar-item ${['contacts','contact-import','contact-detail'].includes(state.currentScreen) ? 'active' : ''}" onclick="showScreen('contacts')"><i class="ti ti-address-book"></i> Contacts</div>
+    <div class="sidebar-item ${['templates','builder'].includes(state.currentScreen) ? 'active' : ''}" onclick="showScreen('templates')"><i class="ti ti-template"></i> Templates</div>
+    <div class="sidebar-item ${['campaigns','campaign-new','campaign-report'].includes(state.currentScreen) ? 'active' : ''}" onclick="showScreen('campaigns')"><i class="ti ti-send"></i> Campaigns</div>
+    <div class="sidebar-item ${['flows','flow-config'].includes(state.currentScreen) ? 'active' : ''}" onclick="showScreen('flows')"><i class="ti ti-route"></i> Flows</div>
+    <div class="sidebar-item ${['forms','form-builder'].includes(state.currentScreen) ? 'active' : ''}" onclick="showScreen('forms')"><i class="ti ti-forms"></i> Forms</div>
+    <div class="sidebar-item ${state.currentScreen === 'reports' ? 'active' : ''}" onclick="showScreen('reports')"><i class="ti ti-chart-bar"></i> Reports</div>
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item ${state.currentScreen === 'team' ? 'active' : ''}" onclick="showScreen('team')"><i class="ti ti-users"></i> Team</div>
+    <div class="sidebar-item ${state.currentScreen === 'integrations' ? 'active' : ''}" onclick="showScreen('integrations')"><i class="ti ti-plug"></i> Integrations</div>
+    <div class="sidebar-item ${state.currentScreen === 'billing' ? 'active' : ''}" onclick="showScreen('billing')"><i class="ti ti-credit-card"></i> Billing</div>
+    <div class="sidebar-item ${state.currentScreen === 'whitelabel' ? 'active' : ''}" onclick="showScreen('whitelabel')"><i class="ti ti-palette"></i> White-label</div>
+  `;
+  sidebars.forEach(s => s.innerHTML = html);
+}
+
+function currentClientName() {
+  const c = state.clients.find(x => x.id === state.currentClient);
+  return c ? c.name : 'Khukri Spices';
+}
+
+// ==================================================
+// DATA RENDERING
+// ==================================================
+function renderDashboard() {
+  const rows = document.getElementById('dashboard-client-rows');
+  if (!rows) return;
+  rows.innerHTML = state.clients.slice(0, 4).map(c => `
+    <tr class="clickable" onclick="switchClient('${c.id}');showScreen('contacts');">
+      <td>
+        <div class="flex items-center gap-2">
+          <div class="avatar-sm" style="background:${c.color};">${c.initials}</div>
+          <strong>${c.name}</strong>
+        </div>
+      </td>
+      <td>${c.sent}</td>
+      <td>${c.open}</td>
+      <td>${c.click}</td>
+      <td><span class="pill pill-${statusColor(c.status)}">${c.status}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderClients() {
+  const rows = document.getElementById('all-clients-rows');
+  if (!rows) return;
+  rows.innerHTML = state.clients.map(c => `
+    <tr class="clickable" onclick="switchClient('${c.id}');showScreen('contacts');">
+      <td>
+        <div class="flex items-center gap-2">
+          <div class="avatar-sm" style="background:${c.color};">${c.initials}</div>
+          <strong>${c.name}</strong>
+        </div>
+      </td>
+      <td>${c.listSize}</td>
+      <td>${c.lastCampaign}</td>
+      <td><span class="pill pill-${billingColor(c.billing)}">${c.billing}</span></td>
+      <td>${c.engagement}</td>
+      <td><button class="btn btn-sm" onclick="event.stopPropagation();switchClient('${c.id}');showScreen('contacts');">Open →</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderContacts() {
+  const rows = document.getElementById('contacts-rows');
+  if (!rows) return;
+  rows.innerHTML = state.contacts.map(c => `
+    <tr class="clickable" onclick="showScreen('contact-detail')">
+      <td>${c.email}</td>
+      <td>${c.name}</td>
+      <td>${c.tags.map(t => `<span class="pill pill-${t[1]}">${t[0]}</span>`).join(' ')}</td>
+      <td>${c.added}</td>
+      <td>${c.source}</td>
+    </tr>
+  `).join('');
+}
+
+function renderCampaigns() {
+  const rows = document.getElementById('campaigns-rows');
+  if (!rows) return;
+  rows.innerHTML = state.campaigns.map(c => `
+    <tr class="clickable" onclick="showScreen('${c.status[0] === 'Sent' ? 'campaign-report' : 'campaign-new'}')">
+      <td><strong>${c.name}</strong></td>
+      <td>${c.sent}</td>
+      <td>${c.recipients}</td>
+      <td>${c.open}</td>
+      <td>${c.click}</td>
+      <td><span class="pill pill-${c.status[1]}">${c.status[0]}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderTemplates() {
+  const grid = document.getElementById('templates-grid');
+  if (!grid) return;
+  grid.innerHTML = state.templates.map(t => `
+    <div class="card" style="cursor:pointer;padding:0;overflow:hidden;" onclick="showScreen('builder')">
+      <div style="background:linear-gradient(135deg,var(--primary-light) 0%,var(--surface) 100%);height:120px;display:flex;align-items:center;justify-content:center;">
+        <i class="ti ti-mail" style="font-size:36px;color:var(--primary);opacity:0.6;"></i>
+      </div>
+      <div style="padding:12px 14px;">
+        <strong style="font-size:13px;">${t.name}</strong>
+        <div class="text-sm text-muted" style="margin-top:2px;">${t.type} · ${t.updated}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderClientSwitcher() {
+  const list = document.getElementById('client-switcher-list');
+  if (!list) return;
+  list.innerHTML = state.clients.map(c => `
+    <button class="btn btn-ghost btn-block" style="justify-content: flex-start; padding: 10px 12px; ${state.currentClient === c.id ? 'background:var(--primary-light);' : ''}" onclick="switchClient('${c.id}');closeModal('client-switcher');">
+      <div class="avatar-sm" style="background:${c.color};">${c.initials}</div>
+      <span style="flex:1;text-align:left;">${c.name}</span>
+      ${state.currentClient === c.id ? '<i class="ti ti-check" style="color:var(--primary);"></i>' : ''}
+    </button>
+  `).join('');
+}
+
+function statusColor(s) {
+  if (s === 'Healthy') return 'green';
+  if (s === 'Watch') return 'amber';
+  if (s === 'Setup') return 'blue';
+  return 'gray';
+}
+function billingColor(b) {
+  if (b === 'Paid') return 'green';
+  if (b === 'Due') return 'amber';
+  if (b === 'Trial') return 'blue';
+  return 'gray';
+}
+
+// ==================================================
+// CLIENT SWITCHING
+// ==================================================
+function switchClient(id) {
+  state.currentClient = id;
+  const c = state.clients.find(x => x.id === id);
+  if (!c) return;
+  document.querySelectorAll('#current-client-avatar, .client-switcher .avatar-sm').forEach(el => {
+    el.textContent = c.initials;
+    el.style.background = c.color;
+  });
+  document.querySelectorAll('#current-client-name, .client-switcher span:not(.avatar-sm):not(.pill)').forEach(el => {
+    if (el.tagName === 'SPAN' && !el.classList.contains('avatar-sm') && el.previousElementSibling && el.previousElementSibling.classList.contains('avatar-sm')) {
+      el.textContent = c.name;
+    }
+  });
+  // Force re-render of all client-switcher labels
+  document.querySelectorAll('.client-switcher').forEach(sw => {
+    const avatar = sw.querySelector('.avatar-sm');
+    const label = sw.querySelector('span:not(.avatar-sm)');
+    if (avatar) { avatar.textContent = c.initials; avatar.style.background = c.color; }
+    if (label) { label.textContent = c.name; }
+  });
+  renderAll();
+  toast(`Switched to ${c.name}`, 'success');
+}
+
+function openClientSwitcher() { openModal('client-switcher'); }
+function openProfileMenu() { openModal('profile'); }
+
+// ==================================================
+// MODALS
+// ==================================================
+function openModal(id) {
+  document.getElementById('modal-' + id).classList.add('open');
+  renderClientSwitcher();
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('open');
+}
+
+// ==================================================
+// TOAST
+// ==================================================
+function toast(msg, type) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type ? ' ' + type : '');
+  const icon = type === 'success' ? 'check' : type === 'error' ? 'alert-circle' : 'info-circle';
+  t.innerHTML = `<i class="ti ti-${icon}" style="font-size:14px;"></i> ${msg}`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(100%)'; t.style.transition = 'all 0.2s'; }, 2200);
+  setTimeout(() => c.removeChild(t), 2500);
+}
+
+// ==================================================
+// HELPERS
+// ==================================================
+function selectColor(el) {
+  el.parentElement.querySelectorAll('div').forEach(d => d.style.border = '2px solid transparent');
+  el.style.border = '2px solid var(--ink)';
+}
+
+// ==================================================
+// RENDER ALL
+// ==================================================
+function renderAll() {
+  renderSidebar();
+  renderDashboard();
+  renderClients();
+  renderContacts();
+  renderCampaigns();
+  renderTemplates();
+}
+
+// Initial render
+renderAll();
+</script>
+
+</body>
+</html>

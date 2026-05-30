@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Team</title>
+<link rel="stylesheet" href="_shared.css">
+<style> .member { display:flex; align-items:center; gap:11px; } .member b { font-weight:600; } .member small { display:block; color:var(--soft); font-size:11.5px; } </style>
+</head>
+<body data-page="team">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head"><div><h1>Team</h1><p class="sub">2 members · Pro plan supports up to 5</p></div><div class="actions"><button class="btn btn-primary"><i class="ti ti-user-plus"></i> Invite member</button></div></div>
+    <div class="card" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th>Member</th><th>Email</th><th>Role</th><th>Last active</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#E08A5B,#C9613A);">PG</span><div><b>Prasiddha Gyawali</b><small>You</small></div></div></td><td>prasiddha@nirvanaagency.com</td><td><span class="pill purple">Admin</span></td><td>Now</td><td></td></tr>
+          <tr><td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#27B98A,#149068);">SK</span><div><b>Sushmita Karki</b></div></div></td><td>sushmita@nirvanaagency.com</td><td><span class="pill gray">Member</span></td><td>2 hours ago</td><td class="r"><button class="btn btn-sm"><i class="ti ti-trash"></i></button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="tbl-head"><h3>Pending invites (1)</h3></div>
+      <table>
+        <thead><tr><th>Email</th><th>Role</th><th>Invited</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>roshan@nirvanaagency.com</td><td><span class="pill gray">Member</span></td><td>2 days ago · expires in 5 days</td><td class="r"><button class="btn btn-sm"><i class="ti ti-refresh"></i> Resend</button> <button class="btn btn-sm"><i class="ti ti-x"></i> Revoke</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

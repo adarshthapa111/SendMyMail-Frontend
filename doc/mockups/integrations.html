@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Integrations</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .section-label { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--soft); font-weight:600; margin:22px 0 10px; }
+  .section-label:first-child { margin-top:0; }
+  .int-row { display:flex; align-items:center; gap:13px; padding:14px 18px; border-top:1px solid var(--line); }
+  .int-row:first-child { border-top:0; }
+  .int-logo { width:38px; height:38px; border-radius:10px; color:#fff; font-weight:700; display:grid; place-items:center; flex-shrink:0; font-size:15px; }
+  .int-row .meta { flex:1; } .int-row .meta b { font-weight:600; } .int-row .meta small { display:block; color:var(--soft); font-size:12px; margin-top:1px; }
+  .int-row.off { opacity:.6; }
+</style>
+</head>
+<body data-page="integrations">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head"><div><h1>Integrations</h1><p class="sub">Sync e-commerce data in, and export your built email out to the platform you use</p></div></div>
+
+    <div class="section-label">E-commerce sync (inbound)</div>
+    <div class="card">
+      <div class="int-row"><div class="int-logo" style="background:#7F54B3;">W</div><div class="meta"><b>WooCommerce</b><small>Free WordPress plugin · customer, order &amp; cart sync</small></div><span class="pill green dot">Connected</span><button class="btn btn-sm">Configure</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#95BF47;">S</div><div class="meta"><b>Shopify</b><small>Private app · public App Store listing pending</small></div><button class="btn btn-sm btn-primary">Connect</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#FF4F00;">Z</div><div class="meta"><b>Zapier</b><small>Inbound webhook escape hatch for anything else</small></div><button class="btn btn-sm">Set up</button></div>
+      <div class="int-row off"><div class="int-logo" style="background:#F85606;">D</div><div class="meta"><b>Daraz</b><small>No third-party API — use CSV export instead</small></div><span class="pill gray">Not supported</span></div>
+    </div>
+
+    <div class="section-label">Email platform export (outbound · 6 for V1)</div>
+    <div class="card">
+      <div class="int-row"><div class="int-logo" style="background:#FFE01B;color:#2B2620;">M</div><div class="meta"><b>Mailchimp</b><small>Copy/paste HTML</small></div><button class="btn btn-sm">Export</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#09C269;">ML</div><div class="meta"><b>MailerLite</b><small>API push — connect &amp; send drafts</small></div><span class="pill green dot">Connected</span><button class="btn btn-sm">Configure</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#0B996E;">B</div><div class="meta"><b>Brevo</b><small>API push — affordable, email + SMS</small></div><button class="btn btn-sm btn-primary">Connect</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#1A82E2;">SG</div><div class="meta"><b>SendGrid</b><small>API push — transactional + marketing</small></div><button class="btn btn-sm btn-primary">Connect</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#FF7A59;">H</div><div class="meta"><b>HubSpot</b><small>Copy/paste HTML — B2B</small></div><button class="btn btn-sm">Export</button></div>
+      <div class="int-row"><div class="int-logo" style="background:#1E1E1E;">K</div><div class="meta"><b>Klaviyo</b><small>Copy/paste HTML — e-commerce</small></div><button class="btn btn-sm">Export</button></div>
+    </div>
+    <div class="note" style="margin-top:12px;"><i class="ti ti-arrow-bounce"></i><span><b>Need another platform?</b> Export raw <b>HTML</b> / <b>MJML</b> or POST to a <b>webhook</b> (Zapier, Make) to reach any other tool — no integration required.</span></div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

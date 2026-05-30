@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Configure Flow</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .email-block { border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; }
+  .email-block .ebh { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .email-block b { font-weight:600; }
+  .delay { width:104px; height:32px; }
+</style>
+</head>
+<body data-page="flows">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main narrow">
+    <div class="back" onclick="location.href='flows.html'"><i class="ti ti-arrow-left"></i> Back to flows</div>
+    <div class="head"><div><h1>Welcome series</h1><p class="sub">Runs when a contact joins a list</p></div><div class="actions"><button class="btn" onclick="location.href='welcome_series_preview.html'"><i class="ti ti-eye"></i> Preview emails</button><span class="pill green dot" style="align-self:center;">Active</span></div></div>
+
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Trigger</p>
+      <div class="field" style="margin-bottom:0;"><label class="label">When a contact joins</label>
+        <select class="input"><option>Newsletter list</option><option>VIP buyers list</option><option>Any list</option></select>
+      </div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Emails in series</p>
+      <div class="email-block"><div class="ebh"><b>Email 1 · Welcome</b><span class="pill gray">Send immediately</span></div><select class="input"><option>Template: Welcome to Khukri</option><option>Template: Brand intro</option></select></div>
+      <div class="email-block"><div class="ebh"><b>Email 2 · Brand story</b><input class="input delay" value="2 days"></div><select class="input"><option>Template: Our story from Bhaktapur</option></select></div>
+      <div class="email-block" style="margin-bottom:0;"><div class="ebh"><b>Email 3 · First-order discount</b><input class="input delay" value="5 days"></div><select class="input"><option>Template: 15% off your first order</option></select></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px;"><i class="ti ti-plus"></i> Add another email</button>
+    </div>
+
+    <div class="card pad">
+      <p class="card-title">Stop conditions</p>
+      <label class="checkbox" style="margin-bottom:11px;"><input type="checkbox" checked> Contact unsubscribes</label>
+      <label class="checkbox" style="margin-bottom:11px;"><input type="checkbox" checked> Contact places an order</label>
+      <label class="checkbox"><input type="checkbox"> Contact opens email 2</label>
+    </div>
+
+    <div class="foot">
+      <button class="btn" onclick="location.href='flows.html'">Cancel</button>
+      <button class="btn btn-primary"><i class="ti ti-device-floppy"></i> Save flow</button>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

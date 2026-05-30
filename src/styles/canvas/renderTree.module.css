@@ -1,0 +1,175 @@
+.body {
+  border: 1px solid #e4e6eb;
+  box-sizing: border-box;
+}
+
+.emptyColumn {
+  padding: 24px;
+  color: #b0b3b8;
+  font-style: italic;
+  font-size: 13px;
+  text-align: center;
+  border: 1px dashed #e4e6eb;
+  border-radius: 4px;
+  margin: 8px;
+}
+
+/* ── Containers ───────────────────────────────────────────────── */
+
+.section,
+.column,
+.hero {
+  cursor: pointer;
+  outline-offset: -2px;
+  transition: outline-color 80ms ease;
+}
+
+.section:hover {
+  outline: 1px solid #c5c8cd;
+}
+
+.column:hover {
+  outline: 1px dashed #c5c8cd;
+}
+
+.hero {
+  color: #ffffff;
+  position: relative;
+}
+
+.hero:hover {
+  outline: 1px solid #c5c8cd;
+}
+
+/* ── Leaves ───────────────────────────────────────────────────── */
+
+.text,
+.imageWrap,
+.buttonWrap,
+.dividerWrap,
+.spacer,
+.socialWrap,
+.navbarWrap,
+.rawHtml {
+  cursor: pointer;
+  outline-offset: -2px;
+  transition: outline-color 80ms ease;
+  position: relative;
+}
+
+.text:hover,
+.imageWrap:hover,
+.buttonWrap:hover,
+.dividerWrap:hover,
+.spacer:hover,
+.socialWrap:hover,
+.navbarWrap:hover,
+.rawHtml:hover {
+  outline: 1px solid #c5c8cd;
+}
+
+.button {
+  display: inline-block;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+  line-height: 1;
+}
+
+.spacer {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      rgba(0, 0, 0, 0.03) 6px,
+      rgba(0, 0, 0, 0.03) 12px
+    );
+}
+
+/* Social: each "icon" is a small circle with the network's initial. The
+   backend's transformSocialToRaw rewrites this to a proper HTML table at
+   compile time — the canvas just needs to communicate "this is social". */
+.socialIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.navbarLink {
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+}
+
+.rawHtml {
+  margin: 8px 16px;
+  padding: 12px 14px;
+  border: 1px dashed #d2d4d8;
+  background: #fafbfc;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: #65676b;
+}
+
+.rawHtmlLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1a73e8;
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.rawHtmlSnippet {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #1a1a1a;
+  background: transparent;
+  padding: 0;
+}
+
+/* ── Selection ────────────────────────────────────────────────── */
+
+.selected {
+  outline: 2px solid #1a73e8 !important;
+}
+
+/* While inline-editing, dim the outline a touch and show a caret cursor */
+.editing {
+  outline: 2px dashed #1a73e8 !important;
+  cursor: text;
+}
+
+.editing [contenteditable='true'] {
+  outline: none;
+  cursor: text;
+}
+
+.unknown {
+  padding: 16px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 12px;
+  border-radius: 4px;
+  margin: 8px;
+}

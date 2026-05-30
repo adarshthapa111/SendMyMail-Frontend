@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Modal Library</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .gal { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+  .gal .card { padding:16px 18px; display:flex; align-items:center; justify-content:space-between; }
+  .gal b { font-weight:600; font-size:13.5px; } .gal small { display:block; color:var(--soft); font-size:12px; }
+  .cond { display:grid; grid-template-columns:1fr 96px 1fr; gap:10px; margin-bottom:8px; }
+  .sw-row { display:flex; align-items:center; gap:11px; width:100%; padding:9px 11px; border-radius:10px; border:1px solid transparent; background:transparent; cursor:pointer; font:inherit; }
+  .sw-row:hover { background:var(--surface); } .sw-row.on { background:var(--primary-light); }
+  .menu-item { display:flex; align-items:center; gap:11px; width:100%; padding:9px 11px; border:0; background:transparent; font:inherit; font-size:13.5px; color:var(--ink); cursor:pointer; border-radius:10px; } .menu-item:hover { background:var(--surface); } .menu-item i { font-size:18px; color:var(--muted); }
+</style>
+</head>
+<body data-page="">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head"><div><h1>Modal library</h1><p class="sub">The 8 dialogs used across the app — click to open</p></div></div>
+    <div class="gal">
+      <div class="card"><div><b>Client switcher</b><small>Top nav</small></div><button class="btn btn-sm" onclick="openModal('switcher')">Open</button></div>
+      <div class="card"><div><b>Profile menu</b><small>Top nav</small></div><button class="btn btn-sm" onclick="openModal('profile')">Open</button></div>
+      <div class="card"><div><b>Add contact</b><small>Contacts</small></div><button class="btn btn-sm" onclick="openModal('contact')">Open</button></div>
+      <div class="card"><div><b>Segment builder</b><small>Contacts</small></div><button class="btn btn-sm" onclick="openModal('segment')">Open</button></div>
+      <div class="card"><div><b>Unsubscribe</b><small>Contact detail</small></div><button class="btn btn-sm" onclick="openModal('unsub')">Open</button></div>
+      <div class="card"><div><b>Invite member</b><small>Team</small></div><button class="btn btn-sm" onclick="openModal('invite')">Open</button></div>
+      <div class="card"><div><b>Change plan</b><small>Billing</small></div><button class="btn btn-sm" onclick="openModal('plan')">Open</button></div>
+      <div class="card"><div><b>WooCommerce settings</b><small>Integrations</small></div><button class="btn btn-sm" onclick="openModal('woo')">Open</button></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-backdrop hidden" id="m-switcher" onclick="if(event.target===this)closeModal()"><div class="modal" style="max-width:420px;"><div class="modal-header"><h3>Switch client</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body" style="padding:10px;">
+  <button class="sw-row on"><span class="av av-sm" style="background:linear-gradient(145deg,#27B98A,#149068);">KS</span><span style="flex:1;text-align:left;font-weight:600;">Khukri Spices</span><i class="ti ti-check" style="color:var(--primary);"></i></button>
+  <button class="sw-row"><span class="av av-sm" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">HT</span><span style="flex:1;text-align:left;font-weight:600;">Himalaya Trekking</span></button>
+  <button class="sw-row"><span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PC</span><span style="flex:1;text-align:left;font-weight:600;">Pashmina Co.</span></button>
+  <div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px;"><button class="menu-item" onclick="location.href='client_create.html'"><i class="ti ti-plus"></i> Add a new client</button></div>
+</div></div></div>
+
+<div class="modal-backdrop hidden" id="m-profile" onclick="if(event.target===this)closeModal()"><div class="modal" style="max-width:360px;"><div class="modal-header"><h3>Account</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body" style="padding:10px;">
+  <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-bottom:1px solid var(--line);margin-bottom:4px;"><div class="me" style="cursor:default;">PG</div><div><b style="font-weight:600;">Prasiddha Gyawali</b><div class="muted" style="font-size:12px;">prasiddha@nirvanaagency.com</div></div></div>
+  <button class="menu-item"><i class="ti ti-user"></i> Profile settings</button>
+  <button class="menu-item" onclick="location.href='team.html'"><i class="ti ti-users-group"></i> Team</button>
+  <button class="menu-item" onclick="location.href='billing.html'"><i class="ti ti-credit-card"></i> Billing</button>
+  <button class="menu-item"><i class="ti ti-help"></i> Help &amp; docs</button>
+  <div style="border-top:1px solid var(--line);margin-top:4px;"></div>
+  <button class="menu-item" style="color:var(--red);" onclick="location.href='login.html'"><i class="ti ti-logout" style="color:var(--red);"></i> Log out</button>
+</div></div></div>
+
+<div class="modal-backdrop hidden" id="m-contact" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>Add a contact</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <div class="row grid-2" style="gap:12px;"><div class="field"><label class="label">First name</label><input class="input"></div><div class="field"><label class="label">Last name</label><input class="input"></div></div>
+  <div class="field"><label class="label">Email *</label><input class="input" type="email"></div>
+  <div class="field"><label class="label">Add to list</label><select class="input"><option>Newsletter</option><option>VIP buyers</option></select></div>
+  <label class="checkbox"><input type="checkbox" checked> This person consented to receive marketing emails</label>
+</div><div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Add contact</button></div></div></div>
+
+<div class="modal-backdrop hidden" id="m-segment" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>Edit segment</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <p class="muted" style="font-size:13px;margin:0 0 14px;">Match contacts where:</p>
+  <div class="cond"><select class="input"><option>tag</option><option>city</option></select><select class="input"><option>equals</option><option>contains</option></select><input class="input" value="vip"></div>
+  <div style="text-align:center;color:var(--soft);font-size:12px;padding:2px 0;">AND</div>
+  <div class="cond"><select class="input"><option selected>city</option><option>tag</option></select><select class="input"><option>equals</option></select><input class="input" value="Kathmandu"></div>
+  <button class="btn btn-sm" style="margin-top:4px;"><i class="ti ti-plus"></i> Add condition</button>
+  <div style="background:var(--primary-light);border-radius:10px;padding:12px;margin-top:14px;font-size:13px;font-weight:600;color:var(--primary-dark);">Matches 412 contacts</div>
+</div><div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Save segment</button></div></div></div>
+
+<div class="modal-backdrop hidden" id="m-unsub" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>Unsubscribe this contact?</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <p style="margin:0 0 12px;">Aastha Shrestha will be added to the suppression list and will no longer receive any campaigns from Khukri Spices, including automated flows.</p>
+  <label class="checkbox"><input type="checkbox"> Also suppress across all other clients in this agency</label>
+</div><div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-danger" onclick="closeModal()">Unsubscribe</button></div></div></div>
+
+<div class="modal-backdrop hidden" id="m-invite" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>Invite a teammate</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <div class="field"><label class="label">Email</label><input class="input" type="email" placeholder="teammate@nirvanaagency.com"></div>
+  <div class="field"><label class="label">Role</label><select class="input"><option>Member — run campaigns, no billing or team access</option><option>Admin — full access</option></select></div>
+  <p class="muted" style="font-size:12.5px;margin:0;">An invite email will be sent. The link expires in 7 days.</p>
+</div><div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Send invite</button></div></div></div>
+
+<div class="modal-backdrop hidden" id="m-plan" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>Change plan</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <p style="margin:0 0 10px;">Plan changes take effect at the start of your next billing cycle. You can downgrade anytime as long as your usage fits the new plan.</p>
+  <p class="muted" style="font-size:12.5px;margin:0;">Need help choosing? <a class="auth-link">Contact sales</a></p>
+</div><div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Confirm change</button></div></div></div>
+
+<div class="modal-backdrop hidden" id="m-woo" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-header"><h3>WooCommerce settings</h3><button class="close-x" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">
+  <div class="field"><label class="label">WordPress site</label><input class="input" value="khukrispices.com"></div>
+  <div class="field"><label class="label">API key</label><input class="input" type="password" value="**************"></div>
+  <p class="card-title" style="margin:16px 0 10px;">Events to sync</p>
+  <label class="checkbox" style="margin-bottom:9px;"><input type="checkbox" checked> Customer created</label>
+  <label class="checkbox" style="margin-bottom:9px;"><input type="checkbox" checked> Order placed</label>
+  <label class="checkbox" style="margin-bottom:9px;"><input type="checkbox" checked> Cart abandoned</label>
+  <label class="checkbox"><input type="checkbox"> Product viewed</label>
+</div><div class="modal-footer"><button class="btn btn-danger" onclick="closeModal()">Disconnect</button><button class="btn btn-primary" onclick="closeModal()">Save settings</button></div></div></div>
+
+<script src="_shell.js"></script>
+<script>
+  function openModal(id){ document.querySelectorAll('.modal-backdrop').forEach(function(m){m.classList.add('hidden');}); document.getElementById('m-'+id).classList.remove('hidden'); }
+  function closeModal(){ document.querySelectorAll('.modal-backdrop').forEach(function(m){m.classList.add('hidden');}); }
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+  openModal('contact'); /* show one open by default */
+</script>
+</body>
+</html>

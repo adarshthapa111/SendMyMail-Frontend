@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Import Contacts</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .card { padding:20px 22px; margin-bottom:16px; }
+  .card-title { display:flex; align-items:center; gap:8px; }
+  .dropfile { display:flex; align-items:center; gap:14px; padding:16px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+  .dropfile .fic { width:42px; height:42px; border-radius:11px; background:var(--green-bg); color:var(--green); display:grid; place-items:center; font-size:21px; }
+  .dropfile b { font-weight:600; } .dropfile small { color:var(--soft); font-size:12px; } .dropfile .repl { margin-left:auto; }
+  .map-row { display:grid; grid-template-columns:1fr 28px 1fr; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--line-soft); } .map-row:first-of-type { border-top:0; }
+  .csvcol { font-family:ui-monospace,monospace; font-size:12.5px; background:var(--surface); padding:7px 11px; border-radius:9px; color:var(--ink); }
+  .arrow { text-align:center; color:var(--soft); }
+  .consent { display:flex; gap:11px; align-items:flex-start; font-size:13px; color:var(--muted); cursor:pointer; } .consent input { margin-top:3px; width:16px; height:16px; accent-color:var(--primary); flex-shrink:0; }
+</style>
+</head>
+<body data-page="contacts">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main narrow">
+    <div class="back" onclick="location.href='contacts.html'"><i class="ti ti-arrow-left"></i> Back to contacts</div>
+    <div class="head"><h1>Import contacts from CSV</h1><p class="sub">Upload a CSV, map the columns, and confirm consent.</p></div>
+
+    <div class="card">
+      <p class="card-title"><span class="num-badge">1</span> File</p>
+      <div class="dropfile">
+        <div class="fic"><i class="ti ti-file-spreadsheet"></i></div>
+        <div><b>khukri_subscribers.csv</b><br><small>1,240 rows · UTF-8 · 6 columns detected</small></div>
+        <button class="btn repl"><i class="ti ti-replace"></i> Replace</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title"><span class="num-badge">2</span> Add to list</p>
+      <select class="input">
+        <option>Newsletter (8,200 contacts)</option>
+        <option>VIP buyers (1,140 contacts)</option>
+        <option>— Create a new list —</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <p class="card-title"><span class="num-badge">3</span> Map columns</p>
+      <div class="map-row"><span class="csvcol">email</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>Email &nbsp;·&nbsp; required</option></select></div>
+      <div class="map-row"><span class="csvcol">first_name</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>First name</option></select></div>
+      <div class="map-row"><span class="csvcol">last_name</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>Last name</option></select></div>
+      <div class="map-row"><span class="csvcol">phone</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>Phone</option></select></div>
+      <div class="map-row"><span class="csvcol">city</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>City</option></select></div>
+      <div class="map-row"><span class="csvcol">signup_src</span><span class="arrow"><i class="ti ti-arrow-right"></i></span><select class="input"><option>— Don't import —</option><option>Custom field: source</option></select></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title"><span class="num-badge">4</span> Consent</p>
+      <label class="consent">
+        <input type="checkbox">
+        <span>I confirm these contacts <b>explicitly opted in</b> to receive emails from Khukri Spices. Importing scraped or purchased lists violates SendMyMail's terms and Nepal's Advertisement Act 2076.</span>
+      </label>
+      <div class="note" style="margin-top:12px;">
+        <i class="ti ti-shield-check"></i>
+        <span><b>Quality check.</b> On import we automatically reject lists with more than 10% role accounts (info@, admin@) or scraped patterns, and dedupe by email — this protects your sender reputation.</span>
+      </div>
+    </div>
+
+    <div class="foot">
+      <button class="btn" onclick="location.href='contacts.html'">Cancel</button>
+      <button class="btn btn-primary"><i class="ti ti-download"></i> Map &amp; import 1,240 contacts</button>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

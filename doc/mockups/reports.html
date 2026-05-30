@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Reports</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:11px; font-size:13px; } .bar-row:last-child { margin-bottom:0; }
+  .bar-row .bl { width:96px; color:var(--muted); } .bar-row .bv { width:64px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body data-page="reports">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="head">
+      <div><h1>Reports</h1><p class="sub">Performance across all Khukri Spices campaigns &amp; flows</p></div>
+      <div class="actions"><div class="seg"><button>7d</button><button class="on">30d</button><button>90d</button></div><button class="btn"><i class="ti ti-download"></i> Export</button></div>
+    </div>
+    <div class="row metrics">
+      <div class="card metric"><div class="top"><span class="ico teal"><i class="ti ti-send"></i></span><span class="lbl">Emails sent</span></div><div class="val tnum">142K <span class="rate">+18%</span></div></div>
+      <div class="card metric"><div class="top"><span class="ico indigo"><i class="ti ti-mail-opened"></i></span><span class="lbl">Avg open</span></div><div class="val tnum">36.4%</div></div>
+      <div class="card metric"><div class="top"><span class="ico green"><i class="ti ti-click"></i></span><span class="lbl">Avg click</span></div><div class="val tnum">4.8%</div></div>
+      <div class="card metric"><div class="top"><span class="ico amber"><i class="ti ti-cash"></i></span><span class="lbl">Revenue</span></div><div class="val tnum">रू 8.7L</div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="tbl-head"><h3>Campaign performance</h3></div>
+      <table>
+        <thead><tr><th>Campaign</th><th class="r">Sent</th><th class="r">Open</th><th class="r">Click</th><th class="r">Revenue</th></tr></thead>
+        <tbody>
+          <tr class="clickable" onclick="location.href='campaign_report.html'"><td>Dashain Festive Offer</td><td class="r tnum">8,612</td><td class="r tnum">38.0%</td><td class="r tnum">5.7%</td><td class="r tnum">रू 1.2L</td></tr>
+          <tr class="clickable" onclick="location.href='campaign_report.html'"><td>VIP exclusive: new arrivals</td><td class="r tnum">1,140</td><td class="r tnum">48.6%</td><td class="r tnum">9.2%</td><td class="r tnum">रू 2.1L</td></tr>
+          <tr class="clickable" onclick="location.href='campaign_report.html'"><td>October newsletter</td><td class="r tnum">12,400</td><td class="r tnum">34.2%</td><td class="r tnum">4.1%</td><td class="r tnum">रू 84K</td></tr>
+          <tr class="clickable" onclick="location.href='campaign_report.html'"><td>Pre-Dashain teaser</td><td class="r tnum">8,200</td><td class="r tnum">32.8%</td><td class="r tnum">3.4%</td><td class="r tnum">रू 54K</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row grid-2">
+      <div class="card pad">
+        <p class="card-title">List growth</p>
+        <div class="bar-row"><span class="bl">New signups</span><div class="bar" style="flex:1;"><i style="width:78%;background:var(--green);"></i></div><span class="bv">+892</span></div>
+        <div class="bar-row"><span class="bl">Unsubscribes</span><div class="bar" style="flex:1;"><i style="width:9%;background:var(--soft);"></i></div><span class="bv">−94</span></div>
+        <div class="bar-row"><span class="bl">Bounces</span><div class="bar" style="flex:1;"><i style="width:5%;background:var(--amber);"></i></div><span class="bv">−58</span></div>
+        <p style="margin-top:14px;font-size:13px;color:var(--muted);"><b style="color:var(--green);">Net +740</b> contacts this month</p>
+      </div>
+      <div class="card pad">
+        <p class="card-title">Deliverability health</p>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;"><div style="font-size:28px;font-weight:700;color:var(--green);">94</div><span class="pill green">Excellent</span></div>
+        <p class="muted" style="font-size:12.5px;margin:0 0 12px;">Engagement-weighted, last 30 days.</p>
+        <div class="kv"><span class="k">Gmail inbox</span><span class="v tnum">96.4%</span></div>
+        <div class="kv"><span class="k">Outlook inbox</span><span class="v tnum">91.2%</span></div>
+        <div class="kv"><span class="k">Hard bounce</span><span class="v tnum">0.4%</span></div>
+        <div class="kv"><span class="k">Complaint</span><span class="v tnum">0.02%</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

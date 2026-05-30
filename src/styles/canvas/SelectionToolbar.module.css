@@ -1,0 +1,89 @@
+.toolbar {
+  position: absolute;
+  top: -34px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  background: #1a73e8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 28px;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  margin-right: 2px;
+  padding-right: 2px;
+  opacity: 0.85;
+  transition: opacity 80ms ease, background 80ms ease;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.grip:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.grip:active {
+  cursor: grabbing;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.gripDragging {
+  cursor: grabbing;
+  opacity: 0.4;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 80ms ease;
+  padding: 0;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.danger:hover:not(:disabled) {
+  background: #d11a2a;
+}

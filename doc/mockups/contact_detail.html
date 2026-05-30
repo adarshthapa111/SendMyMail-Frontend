@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Contact</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .head { align-items:center; }
+  .id { display:flex; align-items:center; gap:14px; }
+  .id h1 { margin:0 0 2px; font-size:23px; font-weight:600; letter-spacing:-0.02em; }
+  .id .sub { margin:0; color:var(--muted); font-size:13px; }
+  .split { grid-template-columns:1fr 1.2fr; }
+  .kv .k { width:88px; }
+  .list-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-top:1px solid var(--line-soft); font-size:13.5px; } .list-row:first-of-type { border-top:0; } .list-row b { font-weight:600; }
+  .tl { position:relative; }
+  .tl-item { display:flex; gap:13px; position:relative; padding-bottom:18px; } .tl-item:last-child { padding-bottom:0; }
+  .tl-item:not(:last-child)::before { content:''; position:absolute; left:15px; top:32px; bottom:-2px; width:2px; background:var(--line); }
+  .tl-ic { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:grid; place-items:center; font-size:16px; position:relative; z-index:1; }
+  .tl-ic.indigo{background:var(--primary-light);color:var(--primary);} .tl-ic.teal{background:#E1F3F1;color:var(--teal);} .tl-ic.green{background:var(--green-bg);color:var(--green);} .tl-ic.gray{background:var(--surface);color:var(--muted);}
+  .tl-body { padding-top:5px; } .tl-body .t { font-size:13.5px; font-weight:500; } .tl-body .t b { font-weight:600; } .tl-body .time { font-size:11.5px; color:var(--soft); margin-top:1px; }
+</style>
+</head>
+<body data-page="contacts">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div class="back" onclick="location.href='contacts.html'"><i class="ti ti-arrow-left"></i> Back to contacts</div>
+    <div class="head">
+      <div class="id">
+        <span class="av av-lg" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">AS</span>
+        <div><h1>Aastha Shrestha</h1><p class="sub">aastha.shrestha@gmail.com · added via WooCommerce · 2 days ago</p></div>
+      </div>
+      <div class="actions">
+        <button class="btn"><i class="ti ti-edit"></i> Edit</button>
+        <button class="btn btn-danger"><i class="ti ti-mail-off"></i> Unsubscribe</button>
+      </div>
+    </div>
+
+    <div class="row tiles">
+      <div class="card tile"><div class="top"><span class="ico indigo"><i class="ti ti-shopping-bag"></i></span><span class="lbl">Lifetime orders</span></div><div class="val tnum">7</div></div>
+      <div class="card tile"><div class="top"><span class="ico amber"><i class="ti ti-cash"></i></span><span class="lbl">Total spent</span></div><div class="val tnum">रू 23,400</div></div>
+      <div class="card tile"><div class="top"><span class="ico teal"><i class="ti ti-receipt"></i></span><span class="lbl">Avg order</span></div><div class="val tnum">रू 3,343</div></div>
+      <div class="card tile"><div class="top"><span class="ico red"><i class="ti ti-shopping-cart"></i></span><span class="lbl">Cart abandoned</span></div><div class="val tnum">2</div></div>
+    </div>
+
+    <div class="row split">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card pad">
+          <p class="card-title">Profile</p>
+          <div class="kv"><span class="k">Email</span><span class="v">aastha.shrestha@gmail.com</span></div>
+          <div class="kv"><span class="k">Phone</span><span class="v">+977-9841234567</span></div>
+          <div class="kv"><span class="k">City</span><span class="v">Kathmandu</span></div>
+          <div class="kv"><span class="k">Birthday</span><span class="v">15 Mar 1994</span></div>
+          <div class="kv"><span class="k">Status</span><span class="v"><span class="pill green">Active</span></span></div>
+          <div class="kv"><span class="k">Tags</span><span class="v"><span class="pill purple">vip</span> <span class="pill gray">kathmandu</span></span></div>
+          <div class="kv"><span class="k">Source</span><span class="v">WooCommerce</span></div>
+        </div>
+        <div class="card pad">
+          <p class="card-title">Lists &amp; subscriptions</p>
+          <div class="list-row"><b>Newsletter</b><span class="pill green">Subscribed</span></div>
+          <div class="list-row"><b>VIP buyers</b><span class="pill green">Subscribed</span></div>
+          <div class="list-row"><b>Promotions</b><span class="pill gray">Unsubscribed</span></div>
+        </div>
+      </div>
+      <div class="card pad">
+        <p class="card-title">Recent activity</p>
+        <div class="tl">
+          <div class="tl-item"><span class="tl-ic indigo"><i class="ti ti-mail-opened"></i></span><div class="tl-body"><div class="t">Opened <b>"Dashain Festive Offer"</b></div><div class="time">2 hours ago</div></div></div>
+          <div class="tl-item"><span class="tl-ic gray"><i class="ti ti-mail"></i></span><div class="tl-body"><div class="t">Received <b>"Dashain Festive Offer"</b></div><div class="time">2 hours ago</div></div></div>
+          <div class="tl-item"><span class="tl-ic teal"><i class="ti ti-click"></i></span><div class="tl-body"><div class="t">Clicked <b>"View order #2402"</b> link</div><div class="time">3 days ago</div></div></div>
+          <div class="tl-item"><span class="tl-ic green"><i class="ti ti-shopping-bag"></i></span><div class="tl-body"><div class="t">Placed <b>order #2402</b> · रू 4,200</div><div class="time">9 days ago</div></div></div>
+          <div class="tl-item"><span class="tl-ic gray"><i class="ti ti-user-plus"></i></span><div class="tl-body"><div class="t">Joined <b>Newsletter</b> list</div><div class="time">2 weeks ago via WooCommerce</div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>
