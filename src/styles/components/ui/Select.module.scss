@@ -1,0 +1,38 @@
+.select {
+  width: 100%;
+  height: 38px;
+  padding: 0 32px 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13.5px;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  outline: 0;
+  transition: border-color .15s ease, box-shadow .15s ease;
+
+  /* Custom chevron — replaces the OS default arrow. */
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394928A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.select:hover:not(:disabled):not(:focus) {
+  border-color: rgba(43, 38, 32, 0.22);
+}
+.select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(197, 106, 51, 0.16);
+}
+.select:disabled {
+  background-color: var(--surface);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.error { border-color: var(--red); }
+.error:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(181, 70, 58, 0.18);
+}

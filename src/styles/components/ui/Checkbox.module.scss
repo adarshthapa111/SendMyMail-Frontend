@@ -1,0 +1,26 @@
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1.5;
+}
+.row.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+  cursor: inherit;
+}
+
+.label {
+  color: var(--ink);
+}

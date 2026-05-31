@@ -1,0 +1,41 @@
+.note {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  border: 1px solid;
+}
+.note > :global(svg) {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Variants */
+.info {
+  background: var(--blue-bg);
+  border-color: #C3DBF2;
+  color: var(--blue);
+}
+.success {
+  background: var(--green-bg);
+  border-color: #BFE3CC;
+  color: var(--green-tx);
+}
+.warning {
+  background: var(--amber-bg);
+  border-color: #EAD2A4;
+  color: var(--amber-tx);
+}
+.danger {
+  background: var(--red-bg);
+  border-color: #E8C9C4;
+  color: var(--red);
+}
+.neutral {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
+}

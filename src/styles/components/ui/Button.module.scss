@@ -1,0 +1,112 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 10px;
+  font-weight: 600;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .15s ease, box-shadow .15s ease,
+              background .15s ease, color .15s ease, border-color .15s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.btn:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(197, 106, 51, 0.22);
+}
+
+/* ─── Sizes ─── */
+.sm { height: 30px; padding: 0 11px; font-size: 12px; }
+.md { height: 38px; padding: 0 14px; font-size: 13px; }
+.lg { height: 44px; padding: 0 18px; font-size: 14px; }
+
+/* ─── Variants ─── */
+
+/* Primary — solid terracotta. */
+.primary {
+  background: var(--primary);
+  color: #FFF7EE;
+  border-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary — white card with border. The "default" button. */
+.secondary {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.secondary:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--line-strong);
+}
+
+/* Ghost — transparent until hover. For tertiary actions. */
+.ghost {
+  background: transparent;
+  color: var(--muted);
+  border-color: transparent;
+}
+.ghost:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* Danger — red border / red text. Hover wash to red-bg. */
+.danger {
+  background: var(--card);
+  color: var(--red);
+  border-color: #E8C9C4;
+}
+.danger:hover:not(:disabled) {
+  background: var(--red-bg);
+  border-color: var(--red);
+}
+
+/* Full width — pairs with btn-block patterns in auth screens. */
+.block {
+  width: 100%;
+}
+
+/* Loading state — hides the label, shows a spinner via ::after. */
+.loading {
+  color: transparent;
+  pointer-events: none;
+}
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  color: var(--ink);
+  animation: spin 0.6s linear infinite;
+}
+.primary.loading::after { color: #FFF7EE; }
+.danger.loading::after  { color: var(--red); }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
