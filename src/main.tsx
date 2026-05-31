@@ -1,17 +1,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { store } from './store';
 import App from './App';
 import './index.css';
+
+/* react-hot-toast's <Toaster /> is mounted inside AppShell (so it has the right z-index
+   and respects the chrome). Public/auth pages render it via PublicShell when needed. */
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <App />
-      <ToastContainer position="bottom-right" autoClose={3000} />
     </Provider>
   </StrictMode>
 );

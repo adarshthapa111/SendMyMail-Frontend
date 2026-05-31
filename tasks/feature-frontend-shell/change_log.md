@@ -78,6 +78,57 @@
 
 ## Changes (newest first)
 
+### 2026-05-31 · ✅ Done — shell PR implemented (code-complete, ready for `npm install`)
+
+**What shipped**
+
+| Layer | Files |
+|---|---|
+| Config | `package.json` (deps updated), `vite.config.ts` (Tailwind plugin added — `@styles` alias was already present) |
+| Tokens / globals | `src/index.css` rewritten: `@import "tailwindcss"` + `@theme` block (Tailwind utilities) + `:root` block (CSS custom properties for SCSS / raw CSS) + Bricolage + General Sans font imports + body reset + `.display` mapping. **The v2 warm palette is now in the real app** (was stuck at "Rollout status: pending" in [theme.md](../../doc/theme/theme.md)). |
+| App chrome | `src/components/shell/AppShell.tsx` · `Topbar.tsx` · `Sidebar.tsx` · `UserMenu.tsx` · `ClientSwitcher.tsx` + matching `.module.scss` files in `src/styles/components/shell/` |
+| Routing | `src/router/index.tsx` — every route from [routes.md](../../doc/architecture/routes.md), lazy-loaded per the §5 chunk table. `src/router/guards/index.tsx` — stub `Public` / `AuthOnly` / `AgencyReady` / `ClientScoped` / `RoleGated` guards (all return true; real logic lands with auth feature). |
+| Placeholders | `src/pages/_shared/Placeholder.tsx` (in-app) + `PublicPlaceholder.tsx` (no chrome). One file per code-split chunk under `src/pages/{auth,setup,clients,contacts,templates,campaigns,flows,forms,public}/`. Single-file chunks for `dashboard`, `reports`, `team`, `audit`, `integrations`, `billing`, `whitelabel`, `settings`, `help`, `notifications`. |
+| Editor folded | `src/pages/templates/Builder.tsx` re-exports the existing `EditorShell` so the MJML editor mounts at `/clients/:clientId/templates/:templateId/edit`. Existing `IntegrationsScreen` mounts at `/integrations` (via `src/pages/integrations.tsx`). |
+| 404 + Unsubscribe | `src/pages/public/NotFound.tsx` (warm 404 with link back to dashboard) + `Unsubscribe.tsx` (public landing for `/u/:unsubToken`) |
+| Entry | `src/main.tsx` cleaned (removed `ToastContainer` — `<Toaster />` from `react-hot-toast` now lives in `AppShell`). `src/App.tsx` now just renders `<AppRouter />`. |
+
+**File count:** **~35 new files added, 6 modified** (`package.json`, `vite.config.ts`, `src/index.css`, `src/main.tsx`, `src/App.tsx`, `src/components/integrations/ExportDropdown.tsx`).
+
+**Decisions made during implementation (deviations from the plan)**
+
+- **`react-icons` is NOT dropped in this PR.** Reason: [`src/integrations/registry.ts`](../../src/integrations/registry.ts) uses `react-icons/si` for the ESP brand logos (SiMailchimp, SiSendgrid, SiBrevo, etc.) that `@tabler/icons-react` doesn't have. Refactoring the registry was out of scope. The shell + new code uses `@tabler/icons-react`; `react-icons` stays in `package.json` until the integrations feature PR replaces it.
+- **`react-toastify` IS dropped.** Single import (in `ExportDropdown.tsx`) swapped to `react-hot-toast` — same `toast.success/.error` API, no behavior change. `react-toastify` removed from `package.json`.
+- **`tsconfig.app.json` did not need changes** — the `@styles/*` path was already configured.
+- **Vite `@styles` alias was already configured** — only the Tailwind plugin needed adding to `vite.config.ts`.
+- **The old `app.view` Redux field is now unused** but the slice stays — cleanup deferred to a later "tidy" PR so this one stays focused on shell mechanics.
+- **`useLocation()` in `RootRedirect` is read but unused** for now (prefixed with `_loc`) — placeholder for the real "if signed in → dashboard, else → login" logic that lands with auth.
+
+**What the IDE warning means** (you'll see this in `src/index.css`)
+- `Unknown at rule @theme` — IDE CSS validators don't recognize Tailwind v4's `@theme` directive yet. The Vite Tailwind plugin processes it at build time. **Safe to ignore.** Will compile fine.
+
+---
+
+**To verify it works** (run from `/Users/adarshthapa/sendmymail/sendmymail-frontend`):
+
+```bash
+npm install              # pulls the new + removed deps
+npm run build            # type-check + Vite build — should pass
+npm run dev              # open http://localhost:5173
+```
+
+Then in the browser:
+1. Root URL `/` redirects to `/dashboard`
+2. Sidebar links navigate between routes (check Network tab — each chunk is a separate `.js`)
+3. Topbar bell → `/notifications`, user avatar → menu opens, "Profile & settings" → `/settings`
+4. Help link in sidebar footer → `/help`
+5. Navigate to `/clients/cli_khukri/templates/tpl_1/edit` — the existing MJML editor mounts
+6. Navigate to `/integrations` — the existing integrations screen mounts
+7. Type any nonsense URL — warm 404 page
+8. Cmd+K (Mac) / Ctrl+K (Win) on the search button — opens nothing yet (that's V1.1)
+
+If `npm run build` fails, paste the error back.
+
 ### 2026-05-31 · 📋 Planning — initial scope locked
 
 The plan above is what this PR delivers. Next step: review with the team (or just confirm to proceed), then start implementation.

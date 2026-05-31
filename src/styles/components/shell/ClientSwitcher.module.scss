@@ -1,0 +1,32 @@
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.switcher:hover {
+  background: var(--surface);
+}
+.switcher .av {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 10px;
+  display: grid;
+  place-items: center;
+}
+.switcher .chev {
+  color: var(--soft);
+  margin-left: 2px;
+}

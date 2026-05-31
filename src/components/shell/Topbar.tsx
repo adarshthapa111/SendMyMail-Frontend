@@ -1,0 +1,44 @@
+import { useNavigate } from 'react-router-dom';
+import { IconSearch, IconBell, IconPlus } from '@tabler/icons-react';
+import { ClientSwitcher } from './ClientSwitcher';
+import { UserMenu } from './UserMenu';
+import styles from '@styles/components/shell/Topbar.module.scss';
+
+export function Topbar() {
+  const navigate = useNavigate();
+  return (
+    <div className={styles.topnav}>
+      <div className={styles.left}>
+        <div className={styles.brand}>
+          <span className={styles.mark}>S</span>
+          SendMyMail
+          <span className={styles.sep}>/</span>
+          <span className={styles.agency}>Nirvana Agency</span>
+        </div>
+        <ClientSwitcher />
+      </div>
+
+      <div className={styles.right}>
+        <button className={styles.iconBtn} title="Search (⌘K)">
+          <IconSearch size={18} />
+        </button>
+        <button
+          className={styles.iconBtn}
+          title="Notifications"
+          onClick={() => navigate('/notifications')}
+        >
+          <IconBell size={18} />
+          <span className={styles.bellDot} />
+        </button>
+        <button
+          className={styles.primaryBtn}
+          onClick={() => navigate('/clients/cli_khukri/campaigns/new')}
+        >
+          <IconPlus size={16} />
+          New campaign
+        </button>
+        <UserMenu />
+      </div>
+    </div>
+  );
+}

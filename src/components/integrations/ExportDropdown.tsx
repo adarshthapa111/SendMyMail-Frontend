@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import { useAppSelector } from '../../store/hooks';
 import { renderTemplate } from '../../api/renderTemplate';
 import { platformRegistry, type PlatformDef } from '../../integrations/registry';

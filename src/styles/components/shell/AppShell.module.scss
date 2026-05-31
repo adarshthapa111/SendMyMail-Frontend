@@ -1,0 +1,28 @@
+/* Top bar height drives the .shell height calc — keep in sync with Topbar.module.scss */
+
+.shell {
+  display: flex;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 30px 56px;
+}
+
+/* Cap content column width; never put max-width on .main itself (would push scrollbar in). */
+.main > * {
+  width: 100%;
+  max-width: 1180px;
+}
+
+@media (max-width: 992px) {
+  .main { padding: 22px 22px 40px; }
+}

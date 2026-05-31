@@ -1,51 +1,135 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* ============================================================
+   SendMyMail — global stylesheet
+   Canonical reference: doc/theme/theme.md (the warm editorial v2)
+   ─────────────────────────────────────────────────────────────
+   This file does FOUR things and nothing else:
+     1. @import "tailwindcss"                — pulls Tailwind v4 base
+     2. @theme { … }                          — exposes our tokens as Tailwind utilities
+                                                (bg-primary / text-ink / border-line / …)
+     3. :root  { … }                          — same tokens for SCSS / raw CSS
+                                                (reference with var(--token))
+     4. body reset + .display font mapping    — minimal globals
+   Everything else lives in component SCSS Modules under src/styles/.
+   ============================================================ */
+
+/* fonts — display: Bricolage Grotesque · body: General Sans (Hanken fallback) */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
+
+@import "tailwindcss";
 
 /* ============================================================
-   SendMyMail design tokens — single source of truth.
-   Canonical reference: doc/theme/theme.md (keep in sync).
-   Components reference these via var(--token); never hardcode hex.
+   @theme — exposes ONLY our tokens as Tailwind utilities.
+   No defaults. If a screen needs a new color, add it HERE first
+   (and to :root below + doc/theme/theme.md §11), then use it.
+   Reject any PR that uses bg-blue-500 / text-zinc-900 / etc.
    ============================================================ */
-:root {
-  /* brand */
-  --primary: #534AB7;
-  --primary-dark: #3C3489;
-  --primary-light: #EEEDFE;
-  --teal: #1FA39B;
+@theme {
+  /* primary (warm terracotta) */
+  --color-primary:        #C56A33;
+  --color-primary-dark:   #A8521F;
+  --color-primary-light:  #F5E7D9;
+  --color-primary-ink:    #964B22;
+
+  /* brand mark / secondary */
+  --color-indigo:         #4B43A8;
+  --color-indigo-soft:    #ECEAFB;
+  --color-teal:           #1FA39B;
 
   /* neutrals (warm) */
-  --ink: #26241F;
-  --muted: #5F5E58;
-  --soft: #94928A;
-  --bg: #FAFAF7;
-  --card: #FFFFFF;
-  --surface: #F2F0EA;
-  --line: rgba(20, 18, 14, 0.08);
-  --line-strong: rgba(20, 18, 14, 0.14);
+  --color-ink:            #2B2620;
+  --color-muted:          #6E6860;
+  --color-soft:           #9C958A;
+  --color-bg:             #FAF6EF;
+  --color-card:           #FFFFFF;
+  --color-surface:        #F2EEE4;
+  --color-line:           rgba(43,38,32,0.11);
+  --color-line-strong:    rgba(43,38,32,0.16);
+  --color-line-soft:      rgba(43,38,32,0.06);
 
-  /* semantic */
-  --green: #1D9E75;  --green-bg: #E8F4EC;  --green-tx: #1B7A52;
-  --amber: #C07A12;  --amber-bg: #FBF0DC;  --amber-tx: #8A560C;
-  --red: #C0392B;    --red-bg: #FBEAE7;
-  --blue: #2D6FB8;   --blue-bg: #E8F0FA;
+  /* semantic — 3-tone sets */
+  --color-green:          #2E8B5E;
+  --color-green-bg:       #E5F0E7;
+  --color-green-tx:       #1F6B47;
+  --color-amber:          #B07A1A;
+  --color-amber-bg:       #F6ECD6;
+  --color-amber-tx:       #8A560C;
+  --color-red:            #B5463A;
+  --color-red-bg:         #FBEAE7;
+  --color-blue:           #2D6FB8;
+  --color-blue-bg:        #E8F0FA;
 
   /* radii */
-  --r-sm: 10px;
-  --r: 14px;
-  --r-lg: 18px;
+  --radius-sm:            12px;
+  --radius:               14px;
+  --radius-lg:            20px;
+
+  /* shadows (warm — never cool grey) */
+  --shadow-sm:            0 1px 2px rgba(43,38,32,0.05);
+  --shadow:               0 1px 2px rgba(43,38,32,0.04), 0 14px 30px -22px rgba(43,38,32,0.30);
+  --shadow-lg:            0 2px 6px rgba(43,38,32,0.06), 0 30px 60px -30px rgba(43,38,32,0.35);
+
+  /* fonts — registers families for the `font-display` Tailwind utility */
+  --font-display:         "Bricolage Grotesque", "Hanken Grotesk", sans-serif;
+  --font-sans:            "General Sans", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ============================================================
+   :root — the same tokens, this time as plain CSS custom properties
+   so SCSS Modules and raw CSS can use var(--token).
+   ============================================================ */
+:root {
+  /* primary (warm terracotta) */
+  --primary:        #C56A33;
+  --primary-dark:   #A8521F;
+  --primary-light:  #F5E7D9;
+  --primary-ink:    #964B22;
+
+  /* brand mark / secondary */
+  --indigo:         #4B43A8;
+  --indigo-soft:    #ECEAFB;
+  --teal:           #1FA39B;
+
+  /* neutrals (warm) */
+  --ink:            #2B2620;
+  --muted:          #6E6860;
+  --soft:           #9C958A;
+  --bg:             #FAF6EF;
+  --card:           #FFFFFF;
+  --surface:        #F2EEE4;
+  --line:           rgba(43,38,32,0.11);
+  --line-strong:    rgba(43,38,32,0.16);
+  --line-soft:      rgba(43,38,32,0.06);
+
+  /* semantic — 3-tone sets */
+  --green:          #2E8B5E;
+  --green-bg:       #E5F0E7;
+  --green-tx:       #1F6B47;
+  --amber:          #B07A1A;
+  --amber-bg:       #F6ECD6;
+  --amber-tx:       #8A560C;
+  --red:            #B5463A;
+  --red-bg:         #FBEAE7;
+  --blue:           #2D6FB8;
+  --blue-bg:        #E8F0FA;
+
+  /* radii */
+  --r-sm:           12px;
+  --r:              14px;
+  --r-lg:           20px;
 
   /* shadows */
-  --shadow-sm: 0 1px 2px rgba(20, 18, 14, 0.04), 0 1px 1px rgba(20, 18, 14, 0.03);
-  --shadow-md: 0 1px 2px rgba(20, 18, 14, 0.04), 0 12px 28px -18px rgba(20, 18, 14, 0.22);
-  --shadow-lg: 0 2px 4px rgba(20, 18, 14, 0.05), 0 24px 48px -24px rgba(20, 18, 14, 0.28);
+  --shadow-sm:      0 1px 2px rgba(43,38,32,0.05);
+  --shadow-md:      0 1px 2px rgba(43,38,32,0.04), 0 14px 30px -22px rgba(43,38,32,0.30);
+  --shadow-lg:      0 2px 6px rgba(43,38,32,0.06), 0 30px 60px -30px rgba(43,38,32,0.35);
 }
 
-* {
-  box-sizing: border-box;
-}
+/* ============================================================
+   Minimal globals
+   ============================================================ */
+* { box-sizing: border-box; }
 
-html,
-body,
-#root {
+html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -53,12 +137,25 @@ body,
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "General Sans", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
   color: var(--ink);
   background: var(--bg);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* .display — for headings + big numbers (Bricolage Grotesque) */
+.display,
+h1, h2, h3,
+.page-title, .card-title,
+.metric .val, .tile .val,
+.section-h h2 {
+  font-family: "Bricolage Grotesque", "Hanken Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
 }
 
 /* tabular numerals for figures that change (metrics, money, %) */
