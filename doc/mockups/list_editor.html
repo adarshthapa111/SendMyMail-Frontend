@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Edit segment</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="lists">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main narrow">
+
+    <div class="back" onclick="location.href='lists.html'"><i class="ti ti-arrow-left"></i> Back to lists</div>
+
+    <div class="head">
+      <div>
+        <h1>Edit segment: Active buyers</h1>
+        <p class="sub">Dynamic segment · auto-updates as contacts match · 4,820 contacts currently</p>
+      </div>
+    </div>
+
+    <!-- BASICS -->
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Basics</p>
+      <div class="row-pair">
+        <div class="field"><label class="label">Name</label><input class="input" value="Active buyers"></div>
+        <div class="field"><label class="label">Type</label>
+          <div class="scope-radio-group">
+            <label class="scope-radio">
+              <input type="radio" name="type" value="static">
+              <div class="sr-body"><b>Static</b><small>Fixed snapshot of contacts. Add / remove by hand or via form.</small></div>
+            </label>
+            <label class="scope-radio">
+              <input type="radio" name="type" value="dynamic" checked>
+              <div class="sr-body"><b>Dynamic</b><small>Rule-based. Auto-updates whenever a contact matches.</small></div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label class="label">Description <span style="color:var(--soft); font-weight:500;">(optional)</span></label><input class="input" value="Anyone who's purchased in the last 60 days"></div>
+    </div>
+
+    <!-- CONDITIONS -->
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Conditions</p>
+      <p class="sd" style="color:var(--muted); font-size:13px; margin:0 0 14px;">Show contacts where <b>all</b> of the following are true.</p>
+
+      <div class="cond-row">
+        <select class="input">
+          <option>Lifetime orders</option>
+          <option>Total spent</option>
+          <option>Last purchased</option>
+          <option>City</option>
+          <option>Tags</option>
+          <option>Custom: signup_source</option>
+        </select>
+        <select class="input">
+          <option>is at least</option>
+          <option>is at most</option>
+          <option>equals</option>
+        </select>
+        <input class="input" value="1">
+        <button class="x" title="Remove condition"><i class="ti ti-x"></i></button>
+      </div>
+
+      <div class="cond-joiner">AND</div>
+
+      <div class="cond-row">
+        <select class="input">
+          <option selected>Last purchased</option>
+          <option>Total spent</option>
+          <option>City</option>
+        </select>
+        <select class="input">
+          <option selected>in the last</option>
+          <option>before</option>
+          <option>after</option>
+        </select>
+        <div style="display:flex; gap:8px;">
+          <input class="input" value="60" style="width:80px;">
+          <select class="input"><option>days</option><option>weeks</option><option>months</option></select>
+        </div>
+        <button class="x" title="Remove condition"><i class="ti ti-x"></i></button>
+      </div>
+
+      <div class="cond-joiner">AND</div>
+
+      <div class="cond-row">
+        <select class="input">
+          <option selected>Subscription status</option>
+        </select>
+        <select class="input">
+          <option selected>is</option>
+        </select>
+        <select class="input">
+          <option selected>Subscribed to Newsletter</option>
+        </select>
+        <button class="x" title="Remove condition"><i class="ti ti-x"></i></button>
+      </div>
+
+      <button class="btn btn-ghost" style="margin-top:6px;"><i class="ti ti-plus"></i> Add condition</button>
+
+      <!-- LIVE PREVIEW -->
+      <div class="preview-box">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div class="pv-count">4,820</div>
+            <div class="pv-lbl">contacts match these conditions right now</div>
+          </div>
+          <span class="pill green dot">Live</span>
+        </div>
+        <div class="pv-sample">aastha@example.com · bibek@example.com · chandni@example.com · +4,817 more</div>
+      </div>
+    </div>
+
+    <!-- AUTO-SYNC -->
+    <div class="card pad" style="margin-bottom:16px;">
+      <p class="card-title">Sync &amp; usage</p>
+      <div class="check-row"><i class="ti ti-check ci"></i><div class="ct"><b>Re-evaluate on every contact update</b><small>Adds and removes contacts as they qualify. No manual refresh needed.</small></div></div>
+      <div class="check-row"><i class="ti ti-check ci"></i><div class="ct"><b>Available in campaigns &amp; flows</b><small>Pick this segment as an audience when building a campaign.</small></div></div>
+      <div class="check-row"><i class="ti ti-check ci"></i><div class="ct"><b>Used in 1 active flow</b><small>"Win-back" flow uses this segment as an entry condition.</small></div></div>
+    </div>
+
+    <div class="foot">
+      <button class="btn btn-danger"><i class="ti ti-trash"></i> Delete segment</button>
+      <div style="display:flex; gap:9px; margin-left:auto;">
+        <button class="btn" onclick="location.href='lists.html'">Cancel</button>
+        <button class="btn btn-primary"><i class="ti ti-device-floppy"></i> Save changes</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Help &amp; Support</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="help">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main narrow">
+
+    <div class="help-hero">
+      <span class="eyebrow"><span class="dot"></span> Help &amp; support</span>
+      <h1>Hi Prasiddha 👋 — what can we help with?</h1>
+      <p class="sub">Search the docs, browse by topic, or reply to your welcome email. Sushant answers in under an hour, usually less.</p>
+      <div class="help-search">
+        <i class="ti ti-search"></i>
+        <input placeholder="Search for &quot;import contacts&quot;, &quot;SPF&quot;, &quot;Khalti billing&quot;…">
+        <kbd>⌘ K</kbd>
+      </div>
+    </div>
+
+    <h2 class="help-section-title">Browse by topic</h2>
+    <div class="tilegrid">
+      <div class="help-tile">
+        <div class="ic" style="background:var(--primary-light); color:var(--primary);"><i class="ti ti-rocket"></i></div>
+        <h3>Getting started</h3>
+        <p>Your first client, first domain, first import — the 10-minute setup walkthrough.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 6 articles · 4 videos</div>
+      </div>
+      <div class="help-tile">
+        <div class="ic" style="background:var(--indigo-soft); color:var(--indigo);"><i class="ti ti-users-group"></i></div>
+        <h3>Contacts &amp; lists</h3>
+        <p>CSV imports, WooCommerce sync, segments, suppression lists, and Nepal-specific consent rules.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 9 articles</div>
+      </div>
+      <div class="help-tile">
+        <div class="ic" style="background:var(--green-bg); color:var(--green);"><i class="ti ti-send"></i></div>
+        <h3>Campaigns</h3>
+        <p>Building emails in the editor, scheduling, A/B testing, and reading the reports.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 14 articles · 6 videos</div>
+      </div>
+      <div class="help-tile">
+        <div class="ic" style="background:#E1F3F1; color:var(--teal);"><i class="ti ti-shield-check"></i></div>
+        <h3>Deliverability</h3>
+        <p>SPF, DKIM, DMARC, sender reputation, what to do when Gmail throttles you.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 7 articles</div>
+      </div>
+      <div class="help-tile">
+        <div class="ic" style="background:var(--amber-bg); color:var(--amber-tx);"><i class="ti ti-cash"></i></div>
+        <h3>Billing &amp; NPR</h3>
+        <p>Plan changes, eSewa / Khalti / IME Pay setup, PAN-backed VAT invoices, trial questions.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 5 articles</div>
+      </div>
+      <div class="help-tile">
+        <div class="ic" style="background:var(--blue-bg); color:var(--blue);"><i class="ti ti-plug"></i></div>
+        <h3>Integrations</h3>
+        <p>Connecting Mailchimp, MailerLite, Brevo, SendGrid, HubSpot, Klaviyo + webhook escape hatch.</p>
+        <div class="meta"><i class="ti ti-book-2"></i> 8 articles</div>
+      </div>
+    </div>
+
+    <div class="card pad" style="padding:24px 26px;">
+      <h2 class="help-section-title" style="margin-bottom:6px;">Top questions this week</h2>
+      <div class="faq-item open" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>How long does SPF &amp; DKIM verification take after I update DNS?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">Usually 15 minutes to 4 hours, occasionally up to 24. Once your DNS provider publishes the new records, hit "Re-check" on the domain page — we verify in real time. NTC and Worldlink propagate fastest in Nepal; some smaller ISPs cache longer.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>Can I import a contact list I bought from a vendor?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">No, and we'll actively block it. Lists with &gt; 10% role accounts (info@, admin@) or scraped patterns are rejected at import. Beyond our terms, sending to unconsented lists violates Nepal's Advertisement Act 2076 and tanks your sender reputation across Gmail / Outlook.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>Why are my open rates lower in the report than I expected?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">Apple Mail Privacy Protection masks opens — if &gt; 40% of your list reads on iPhone, true open rate is higher than reported. Use clicks and revenue as the trustier signals.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>How does billing in NPR work with eSewa / Khalti?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">We auto-charge your saved eSewa or Khalti account on your billing date. Invoices include your PAN and VAT line items so they're audit-ready. You can switch payment methods anytime from the Billing page.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>Can my client log in to see only their own reports?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">Yes — invite them as a <b>Viewer</b> scoped to just their client from the Team page. They'll see reports for that one client and nothing else.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="fq"><span>What happens when my 14-day trial ends?</span><i class="ti ti-chevron-down"></i></div>
+        <div class="fa">Sending pauses until you add a payment method. Your contacts, templates, and campaigns stay safe — nothing is deleted for 90 days.</div>
+      </div>
+    </div>
+
+    <div class="talkto">
+      <div class="ic"><i class="ti ti-message-heart"></i></div>
+      <div style="flex:1;">
+        <h3>Couldn't find what you needed?</h3>
+        <p>Reply to your welcome email and Sushant (founder) will get back to you personally — usually within an hour during Kathmandu daytime. We also do Viber and WhatsApp for quick questions.</p>
+        <div class="opts">
+          <button class="btn"><i class="ti ti-mail"></i> Email support</button>
+          <button class="btn"><i class="ti ti-brand-whatsapp"></i> WhatsApp +977 9841-XXX-XXX</button>
+          <button class="btn"><i class="ti ti-calendar"></i> Book a 15-min call</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-line">
+      <span class="sd"></span>
+      All systems operational · checked 3 minutes ago · <a class="auth-link" style="color:var(--soft);">View status page</a>
+    </div>
+
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

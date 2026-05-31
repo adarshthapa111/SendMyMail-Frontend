@@ -15,6 +15,9 @@ docs in this folder cover what's *between* them.
 | [state.md](./state.md) | Redux slice ownership for V1 and the **active-client** model — what lives in store vs URL vs server vs localStorage |
 | [api-conventions.md](./api-conventions.md) | Shared HTTP contract: base URL, headers, error shape, pagination, idempotency. Feature endpoints follow this contract by default. |
 | [auth-tenancy.md](./auth-tenancy.md) | The multi-tenant hierarchy (agency → clients → resources), the role + scope matrix, and where scoping is enforced. |
+| [auth-flow-and-schema.md](./auth-flow-and-schema.md) | The end-to-end **auth process** (agency signup, verify, login, Google OAuth, team invites, viewer-scoped client logins) + full **DB schema** (agencies, users, oauth_identities, clients, invitations, password_resets, email_verifications, audit_log). |
+| [roles-and-permissions.md](./roles-and-permissions.md) | The **canonical role × capability matrix** — Owner / Admin / Member / Viewer × ~80 capabilities, grouped by area (agency, team, billing, white-label, domain, contacts, templates, campaigns, flows, forms, reports, integrations, self). The single source of truth — every other doc references this. |
+| [invite-flow.md](./invite-flow.md) | The **full end-to-end invite flow** — who can invite whom, every screen, every API call, every DB write, every email, every audit entry. Includes the invitation state machine (pending → accepted / revoked / expired / superseded) and 12 edge cases. |
 
 ---
 

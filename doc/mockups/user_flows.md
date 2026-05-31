@@ -139,13 +139,14 @@ Sidebar: Integrations             → integrations.html
 ## Flow 8 · Verify a sending domain (deliverability)
 
 ```
-Sidebar: Sending domain           → domain.html
+User menu (avatar): Profile & settings  → settings.html
+  Left rail: Agency → Sending domain    → in-page tab (right panel)
   copy the 4 DNS records (SPF, DKIM×2, DMARC) to your registrar
   "Recheck now"  (also auto-rechecks hourly)
   status → Verified → sending unblocked
 ```
 
-- [domain.html](domain.html) — until all required records pass, broadcasts from this client are blocked (the gate referenced in Flow 2's Review step).
+- [settings.html](settings.html) (tab: **Sending domain**) — until all required records pass, broadcasts from this client are blocked (the gate referenced in Flow 2's Review step).
 
 ---
 
@@ -192,7 +193,7 @@ Sidebar: White-label   → whitelabel.html   (custom domain + SSL, branding, cli
 |--------|---------|--------------|---------|
 | [agency_dashboard.html](agency_dashboard.html) | Agency overview | sidebar · login | clients, campaigns, contacts, reports |
 | [clients_list.html](clients_list.html) | All clients | sidebar · dashboard | a client's context, add client |
-| [domain.html](domain.html) | Domain verification | sidebar | — (gate for sending) |
+| [settings.html](settings.html) (tab: Sending domain) | Domain verification | user menu → Settings → Sending domain | — (gate for sending) |
 | [contacts.html](contacts.html) | Contact list | sidebar | contact_detail, contact_import |
 | [contact_detail.html](contact_detail.html) | One contact | contacts row | back to contacts |
 | [contact_import.html](contact_import.html) | CSV import | contacts | back to contacts |

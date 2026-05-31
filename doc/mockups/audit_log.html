@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Activity log</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="audit">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+
+    <div class="head">
+      <div>
+        <h1>Activity log</h1>
+        <p class="sub">Every action across Nirvana Agency · Owner &amp; Admins only · 30-day retention</p>
+      </div>
+      <div class="actions">
+        <button class="btn"><i class="ti ti-download"></i> Export CSV</button>
+        <button class="btn"><i class="ti ti-calendar"></i> Last 7 days</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="seg">
+        <button class="on">All <span class="n">214</span></button>
+        <button>Auth <span class="n">62</span></button>
+        <button>Team <span class="n">18</span></button>
+        <button>Clients <span class="n">12</span></button>
+        <button>Campaigns <span class="n">84</span></button>
+        <button>Billing <span class="n">6</span></button>
+        <button>Integrations <span class="n">32</span></button>
+      </div>
+      <div class="search"><i class="ti ti-search"></i><input placeholder="Search by actor, target, or action..."></div>
+    </div>
+
+    <!-- TODAY -->
+    <div class="audit-day">
+      <h4>Today · 31 May 2026</h4>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill campaign">campaign.sent</span>
+          <b>Prasiddha Karki</b> sent campaign <span class="target">"Dashain Festive Offer"</span> to 8,612 recipients (Khukri Spices)
+        </div>
+        <div class="meta">14:32 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill auth">auth.login</span>
+          <b>Prasiddha Karki</b> signed in via Google
+        </div>
+        <div class="meta">09:02 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">AS</span>
+        <div class="body">
+          <span class="audit-action-pill">contact.import</span>
+          <b>Aastha Shrestha</b> imported <span class="target">247 contacts</span> via CSV (Khukri Spices · Newsletter list)
+        </div>
+        <div class="meta">08:18 · 27.34.78.x · Safari / iPhone</div>
+      </div>
+    </div>
+
+    <!-- YESTERDAY -->
+    <div class="audit-day">
+      <h4>Yesterday · 30 May 2026</h4>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill team">team.invite_sent</span>
+          <b>Prasiddha Karki</b> invited <span class="target">roshan@nirvanaagency.com</span> as Admin (all clients)
+        </div>
+        <div class="meta">16:45 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(145deg,#27B98A,#149068);">ST</span>
+        <div class="body">
+          <span class="audit-action-pill team">team.invitation_accepted</span>
+          <b>Sushma Tamang</b> accepted invitation, joined as Admin
+        </div>
+        <div class="meta">11:48 · 202.51.74.x · Firefox / Linux</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill client">client.created</span>
+          <b>Prasiddha Karki</b> created client <span class="target">"Lumbini Crafts"</span>
+        </div>
+        <div class="meta">10:12 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">AS</span>
+        <div class="body">
+          <span class="audit-action-pill">flow.activated</span>
+          <b>Aastha Shrestha</b> activated flow <span class="target">"Abandoned cart 24h"</span> for Khukri Spices
+        </div>
+        <div class="meta">09:48 · 27.34.78.x · Safari / iPhone</div>
+      </div>
+    </div>
+
+    <!-- 2 DAYS AGO -->
+    <div class="audit-day">
+      <h4>2 days ago · 29 May 2026</h4>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill billing">billing.payment_method_added</span>
+          <b>Prasiddha Karki</b> added eSewa as the default payment method
+        </div>
+        <div class="meta">19:24 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill">integration.connected</span>
+          <b>Prasiddha Karki</b> connected <span class="target">Brevo</span> for ESP export
+        </div>
+        <div class="meta">17:03 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill">domain.verified</span>
+          <b>Prasiddha Karki</b> verified sending domain <span class="target">mail.newabites.com</span> (SPF + DKIM)
+        </div>
+        <div class="meta">14:52 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">AS</span>
+        <div class="body">
+          <span class="audit-action-pill auth">auth.failed_login</span>
+          <b>Aastha Shrestha</b> failed sign-in attempt (wrong password · 1 of 5)
+        </div>
+        <div class="meta">08:14 · 27.34.78.x · Safari / iPhone</div>
+      </div>
+    </div>
+
+    <!-- 3 DAYS AGO -->
+    <div class="audit-day">
+      <h4>3 days ago · 28 May 2026</h4>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill team">team.role_changed</span>
+          <b>Prasiddha Karki</b> changed <span class="target">Aastha Shrestha</span>'s role from Viewer → Member · scope: Khukri Spices, Pashmina Co.
+        </div>
+        <div class="meta">15:30 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+
+      <div class="audit-row">
+        <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span>
+        <div class="body">
+          <span class="audit-action-pill">whitelabel.updated</span>
+          <b>Prasiddha Karki</b> updated white-label branding (logo + primary color)
+        </div>
+        <div class="meta">11:20 · 103.5.150.x · Chrome / macOS</div>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding:24px 0; color:var(--soft); font-size:12px;">
+      Showing 214 of 214 events · 30-day retention · <a class="auth-link" style="color:var(--muted);">Export full archive</a>
+    </div>
+
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

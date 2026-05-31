@@ -81,6 +81,10 @@ src/
 ├── main.tsx                ← app entry: mounts <App/> in Redux <Provider>
 ├── App.tsx                 ← top-level view switch (editor vs integrations)
 ├── index.css               ← global styles (the ONLY global CSS)
+│                              · @import "tailwindcss"
+│                              · @theme { ...tokens... }     (exposes tokens as Tailwind utilities)
+│                              · :root  { ...same tokens... } (for SCSS / raw CSS via var(--…))
+│                              · body reset + .display font mapping
 │
 ├── tree/                   ← DOMAIN CORE — the email as an IMjmlNode tree (pure TS)
 │   ├── types.ts            ← IMjmlNode, NodePath (the core types)

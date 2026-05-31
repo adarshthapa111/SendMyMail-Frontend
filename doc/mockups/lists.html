@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Lists &amp; segments</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .list-name { display:flex; align-items:center; gap:11px; }
+  .list-name .ic { width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex-shrink:0; font-size:16px; }
+  .list-name .ic.static { background:var(--surface); color:var(--muted); }
+  .list-name .ic.dynamic { background:var(--primary-light); color:var(--primary); }
+  .list-name b { font-weight:600; font-size:14px; }
+  .list-name small { display:block; color:var(--soft); font-size:11.5px; margin-top:1px; }
+  .type-pill { font-size:11px; padding:2px 8px; border-radius:6px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
+  .type-pill.static { background:var(--surface); color:var(--muted); }
+  .type-pill.dynamic { background:var(--primary-light); color:var(--primary-ink); }
+</style>
+</head>
+<body data-page="lists">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+
+    <div class="head">
+      <div>
+        <h1>Lists &amp; segments</h1>
+        <p class="sub">Khukri Spices · 9 lists · 12,420 unique contacts</p>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="location.href='suppression.html'"><i class="ti ti-mail-off"></i> Suppression list</button>
+        <button class="btn btn-primary" onclick="location.href='list_editor.html'"><i class="ti ti-plus"></i> New list</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="seg">
+        <button class="on">All <span class="n">9</span></button>
+        <button>Static <span class="n">3</span></button>
+        <button>Dynamic <span class="n">6</span></button>
+      </div>
+      <div class="search"><i class="ti ti-search"></i><input placeholder="Search lists..."></div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>List</th><th>Type</th><th class="r">Contacts</th><th>Last used in</th><th>Updated</th><th></th></tr>
+        </thead>
+        <tbody>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>Active buyers</b><small>Auto-updates · purchase in last 60 days</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">4,820</td>
+            <td>Dashain Festive Offer · 2h ago</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm" onclick="location.href='list_editor.html'"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic static"><i class="ti ti-list"></i></div><div><b>Newsletter</b><small>Manually maintained · default opt-in</small></div></div></td>
+            <td><span class="type-pill static">Static</span></td>
+            <td class="r tnum">12,184</td>
+            <td>October newsletter · 3 days ago</td>
+            <td>By Aastha · 5 days ago</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>VIP buyers</b><small>Lifetime value > रू 25,000</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">1,140</td>
+            <td>VIP exclusive: new arrivals · 8 Oct</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>Cart abandoners (24h)</b><small>Added to cart, no checkout in 24h</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">312</td>
+            <td>Abandoned cart flow · running</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>Kathmandu &amp; Lalitpur</b><small>City IN (Kathmandu, Lalitpur, Bhaktapur)</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">7,830</td>
+            <td>Pre-Dashain teaser · 5 Oct</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>Sleeping (90d)</b><small>No open in last 90 days · re-engagement target</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">2,180</td>
+            <td>Win-back flow · paused</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic static"><i class="ti ti-list"></i></div><div><b>Wholesale enquiries</b><small>From the "Wholesale" form · since Aug</small></div></div></td>
+            <td><span class="type-pill static">Static</span></td>
+            <td class="r tnum">186</td>
+            <td>Wholesale Q4 update · 12 days ago</td>
+            <td>From form · 2h ago</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic dynamic"><i class="ti ti-filter"></i></div><div><b>Vegetarian shoppers</b><small>Tag IN (vegetarian) · WooCommerce</small></div></div></td>
+            <td><span class="type-pill dynamic">Dynamic</span></td>
+            <td class="r tnum">3,490</td>
+            <td>—</td>
+            <td>Live</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+          <tr class="clickable">
+            <td><div class="list-name"><div class="ic static"><i class="ti ti-list"></i></div><div><b>Beta testers — Tihar drop</b><small>Hand-picked for feedback</small></div></div></td>
+            <td><span class="type-pill static">Static</span></td>
+            <td class="r tnum">48</td>
+            <td>—</td>
+            <td>By Prasiddha · 1 day ago</td>
+            <td class="r"><button class="btn btn-sm"><i class="ti ti-edit"></i></button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin-top:16px;">
+      <i class="ti ti-info-circle"></i>
+      <span><b>Static vs Dynamic</b> — Static lists are fixed snapshots, edited by hand or grown via forms. Dynamic lists are filter-rules ("WHERE city = Kathmandu") that auto-update whenever a contact matches. Dynamic = less maintenance, always fresh.</span>
+    </div>
+
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

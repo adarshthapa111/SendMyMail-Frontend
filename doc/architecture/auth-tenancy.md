@@ -42,42 +42,30 @@ The JWT lives in `localStorage['sendmymail_jwt']` and is attached to every API c
 
 ## 3. Role matrix
 
-The 4 roles in V1. Every UI permission check resolves to one of these comparisons.
+**The canonical role × capability matrix lives in [roles-and-permissions.md](./roles-and-permissions.md).** That doc owns every cell — every UI guard, server check, and JWT decision must agree with it. Don't duplicate the matrix here; update the canonical doc and reference it.
 
-| Capability | Owner | Admin | Member | Viewer |
+Short overview of what each role gets:
+
+| Role | One-line summary | Scope |
+|---|---|:---:|
+| **Owner** | Full control, including billing, white-label, and ownership transfer. Exactly one per agency. | Always `all` |
+| **Admin** | Almost everything except billing, white-label, and managing other Admins/Owners. | Always `all` |
+| **Member** | Day-to-day operator — campaigns, contacts, templates, flows, forms. No team / billing. | `all` or scoped to specific clients |
+| **Viewer** | Read-mostly. The role for "client portal" accounts (scoped to one client). | `all` or scoped to specific clients |
+
+Quick "what makes each role distinct" cheat-sheet:
+
+| | Owner | Admin | Member | Viewer |
 |---|:---:|:---:|:---:|:---:|
-| **Agency** | | | | |
-| View dashboard, all clients, all reports | ✅ | ✅ | scope-limited | scope-limited |
-| Create / archive / delete clients | ✅ | ✅ | — | — |
-| Invite / remove team members | ✅ | ✅ | — | — |
-| Change another user's role | ✅ | admins only | — | — |
-| Transfer ownership | ✅ | — | — | — |
-| **Billing** | | | | |
-| View invoices | ✅ | — | — | — |
-| Change plan / payment method | ✅ | — | — | — |
-| **White-label** | | | | |
-| Configure branding | ✅ | — | — | — |
-| **Domain** (per client) | | | | |
-| Add / verify sending domain | ✅ | ✅ | ✅ | — |
-| **Contacts / lists** | | | | |
-| View | ✅ | ✅ | ✅ | ✅ |
-| Import, edit, delete, tag | ✅ | ✅ | ✅ | — |
-| Bulk export | ✅ | ✅ | — | — |
-| **Templates** | | | | |
-| View, edit, duplicate | ✅ | ✅ | ✅ | view-only |
-| Delete | ✅ | ✅ | — | — |
-| **Campaigns** | | | | |
-| Draft, edit | ✅ | ✅ | ✅ | view-only |
-| Send / schedule | ✅ | ✅ | ✅ | — |
-| Send a test | ✅ | ✅ | ✅ | ✅ |
-| View reports | ✅ | ✅ | ✅ | ✅ |
-| **Flows** | | | | |
-| Create, edit, activate | ✅ | ✅ | ✅ | view-only |
-| **Forms** | | | | |
-| Create, edit, publish | ✅ | ✅ | ✅ | view-only |
-| **Integrations** | | | | |
-| Connect / disconnect | ✅ | ✅ | — | — |
-| **Notes** | The first user in an agency is owner. There is exactly one owner per agency. | Admins can do almost everything except billing, white-label, and managing other admins/owners. | A "doer" role — runs the day-to-day for the clients they're scoped to. | Read-mostly. The role to give to clients themselves if they want to log in and watch reports. |
+| Billing | ✅ | ❌ | ❌ | ❌ |
+| White-label | ✅ | ❌ | ❌ | ❌ |
+| Manage team | ✅ | limited | ❌ | ❌ |
+| Connect integrations | ✅ | ✅ | ❌ | ❌ |
+| Send campaigns | ✅ | ✅ | ✅ | ❌ |
+| Edit content (templates / flows / forms) | ✅ | ✅ | ✅ | ❌ |
+| Can be client-scoped | ❌ | ❌ | ✅ | ✅ |
+
+For the full ~80-row matrix per capability area (agency, team, billing, white-label, domain, contacts, templates, campaigns, flows, forms, reports, integrations, self), go to **[roles-and-permissions.md](./roles-and-permissions.md)**.
 
 ## 4. Scope enforcement — three layers
 
@@ -154,4 +142,4 @@ None of these are stored in localStorage. They appear in URLs, are consumed once
 - **Multiple agencies per user?** V1 is "one user, one agency at a time." If a freelancer wants to belong to two agencies, they sign up twice with different emails. If this becomes a frequent ask, add an agency switcher in V2 — design implications: JWT carries an array of memberships, switcher reissues a scoped JWT per agency.
 - **Client-as-user logins** — the `viewer` role exists so an agency can grant a client read-only access to their own data. Open question: should we surface this as a "client portal" with its own branded login screen? Defer to post-V1 unless asked.
 - **2FA** — out of scope for V1; spec'd to add as a `/settings/security` flow later. The JWT shape already supports an `mfa_required` claim for the future.
-- **SSO (Google Workspace, Microsoft)** — Google sign-in button is in [signup.html](../mockups/signup.html) and [login.html](../mockups/login.html); the *flow* (OAuth, account linking) needs its own spec when prioritized.
+- **SSO** — Google is **in V1** (full flow + schema spec'd in [auth-flow-and-schema.md §3](./auth-flow-and-schema.md#3-google-oauth-signup-or-sign-in--same-endpoint)). Microsoft / Workspace SSO are deferred — same `oauth_identities` table, different provider value.

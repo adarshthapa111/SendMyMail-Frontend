@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Suppression list</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .sup-email { font-family:ui-monospace,monospace; font-size:12.5px; color:var(--ink); }
+  .sup-reason-detail { color:var(--soft); font-size:11.5px; margin-top:1px; font-family:'General Sans',sans-serif; }
+  .stat-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:0; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 0; margin-bottom:16px; }
+  .ss-cell { text-align:center; padding:0 18px; border-right:1px solid var(--line-soft); }
+  .ss-cell:last-child { border-right:0; }
+  .ss-cell .lbl { font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--soft); }
+  .ss-cell .val { font-family:'Bricolage Grotesque',sans-serif; font-size:24px; font-weight:600; letter-spacing:-0.015em; margin-top:4px; font-variant-numeric:tabular-nums; color:var(--ink); }
+  .ss-cell.red .val { color:var(--red); }
+  .ss-cell.amber .val { color:var(--amber); }
+  .ss-cell.blue .val { color:var(--blue); }
+</style>
+</head>
+<body data-page="contacts">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+
+    <div class="back" onclick="location.href='contacts.html'"><i class="ti ti-arrow-left"></i> Back to contacts</div>
+
+    <div class="head">
+      <div>
+        <h1>Suppression list</h1>
+        <p class="sub">Khukri Spices · these addresses will never receive your campaigns, even if they appear in a list</p>
+      </div>
+      <div class="actions">
+        <button class="btn"><i class="ti ti-download"></i> Export CSV</button>
+        <button class="btn btn-primary"><i class="ti ti-plus"></i> Add to suppression</button>
+      </div>
+    </div>
+
+    <!-- COUNTS -->
+    <div class="stat-strip">
+      <div class="ss-cell"><div class="lbl">Total suppressed</div><div class="val">387</div></div>
+      <div class="ss-cell amber"><div class="lbl">Bounces</div><div class="val">142</div></div>
+      <div class="ss-cell red"><div class="lbl">Complaints</div><div class="val">8</div></div>
+      <div class="ss-cell blue"><div class="lbl">Unsubscribes (30d)</div><div class="val">237</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="seg">
+        <button class="on">All <span class="n">387</span></button>
+        <button>Bounces <span class="n">142</span></button>
+        <button>Complaints <span class="n">8</span></button>
+        <button>Unsubscribed <span class="n">237</span></button>
+        <button>Manual <span class="n">12</span></button>
+        <button>Role accounts <span class="n">28</span></button>
+      </div>
+      <div class="search"><i class="ti ti-search"></i><input placeholder="Search address..."></div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Email address</th><th>Reason</th><th>Suppressed</th><th>Source</th><th></th></tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td><div class="sup-email">deepak.maharjan@yahoo.com</div><div class="sup-reason-detail">Mailbox full — SMTP 552, retried 3 times</div></td>
+            <td><span class="reason-pill bounce"><i class="ti ti-arrow-back-up"></i> Hard bounce</span></td>
+            <td>2 hours ago</td>
+            <td>Dashain Festive Offer</td>
+            <td class="r"><button class="btn btn-sm" title="Override and re-include">Override</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">noreply@example.com</div><div class="sup-reason-detail">Domain bounces all mail</div></td>
+            <td><span class="reason-pill bounce"><i class="ti ti-arrow-back-up"></i> Hard bounce</span></td>
+            <td>2 hours ago</td>
+            <td>Dashain Festive Offer</td>
+            <td class="r"><button class="btn btn-sm" disabled title="Cannot override — domain is blacklisted">Locked</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">spam-trap-42@gmail.com</div><div class="sup-reason-detail">Marked as spam — protects your sender reputation across the platform</div></td>
+            <td><span class="reason-pill complaint"><i class="ti ti-alert-triangle"></i> Complaint</span></td>
+            <td>Yesterday</td>
+            <td>October newsletter</td>
+            <td class="r"><button class="btn btn-sm" disabled title="Cannot override — complaints are permanent">Locked</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">rajesh.thapa@gmail.com</div><div class="sup-reason-detail">Clicked the unsubscribe link in your last campaign</div></td>
+            <td><span class="reason-pill unsub"><i class="ti ti-mail-off"></i> Unsubscribed</span></td>
+            <td>Yesterday</td>
+            <td>VIP exclusive: new arrivals</td>
+            <td class="r"><button class="btn btn-sm" title="They unsubscribed — only re-add after explicit re-opt-in">Manage</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">info@khukrispices.com</div><div class="sup-reason-detail">Role account — auto-suppressed at import to protect deliverability</div></td>
+            <td><span class="reason-pill role"><i class="ti ti-mail-question"></i> Role account</span></td>
+            <td>3 days ago</td>
+            <td>CSV import (subscribers.csv)</td>
+            <td class="r"><button class="btn btn-sm">Override</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">competitor@theirstore.com</div><div class="sup-reason-detail">Added manually by Prasiddha · "tracks our promos"</div></td>
+            <td><span class="reason-pill manual"><i class="ti ti-hand-stop"></i> Manual block</span></td>
+            <td>5 days ago</td>
+            <td>By Prasiddha</td>
+            <td class="r"><button class="btn btn-sm">Remove</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">bibek.k@outlook.com</div><div class="sup-reason-detail">Mailbox rejected — SMTP 550 user unknown</div></td>
+            <td><span class="reason-pill bounce"><i class="ti ti-arrow-back-up"></i> Hard bounce</span></td>
+            <td>5 days ago</td>
+            <td>Pre-Dashain teaser</td>
+            <td class="r"><button class="btn btn-sm">Override</button></td>
+          </tr>
+
+          <tr>
+            <td><div class="sup-email">admin@himalayatrek.com</div><div class="sup-reason-detail">Role account — auto-suppressed at import</div></td>
+            <td><span class="reason-pill role"><i class="ti ti-mail-question"></i> Role account</span></td>
+            <td>1 week ago</td>
+            <td>CSV import (subscribers.csv)</td>
+            <td class="r"><button class="btn btn-sm">Override</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin-top:16px;">
+      <i class="ti ti-shield-check"></i>
+      <span><b>Why this list matters.</b> Sending to suppressed addresses tanks your sender reputation at Gmail / Outlook, which hurts every send for every client you manage. Complaints are permanent (you can't override). Bounces and role accounts can be overridden if you're confident the issue is resolved — but think twice. Nepal's Advertisement Act 2076 also requires honoring unsubscribes.</span>
+    </div>
+
+  </main>
+</div>
+<script src="_shell.js"></script>
+</body>
+</html>

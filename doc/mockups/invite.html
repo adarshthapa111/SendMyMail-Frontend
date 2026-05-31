@@ -2,25 +2,79 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SendMyMail — Accept invite</title>
+<title>SendMyMail — Accept invitation</title>
 <link rel="stylesheet" href="_shared.css">
+<style>
+  .invite-context { display:flex; gap:14px; padding:18px; background:linear-gradient(165deg,var(--primary-light) 0%,#FBF1E5 100%); border:1px solid rgba(197,106,51,0.18); border-radius:14px; margin-bottom:22px; }
+  .invite-context .av-lg { width:54px; height:54px; font-size:19px; border-radius:15px; flex-shrink:0; }
+  .invite-context .ic-body { flex:1; }
+  .invite-context .ic-eyebrow { font-size:10.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--primary-ink); margin-bottom:4px; }
+  .invite-context h3 { font-family:'Bricolage Grotesque',sans-serif; font-size:18px; font-weight:600; letter-spacing:-0.015em; margin:0 0 6px; color:var(--ink); }
+  .invite-context .ic-meta { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .invite-context .ic-meta b { color:var(--ink); font-weight:600; }
+  .inviter-note { margin-top:12px; padding:12px 14px; background:rgba(255,255,255,0.7); border-left:3px solid var(--primary); border-radius:8px; font-size:13px; line-height:1.55; font-style:italic; color:var(--ink); }
+  .inviter-note .sig { font-style:normal; color:var(--muted); font-size:12px; display:block; margin-top:6px; }
+</style>
 </head>
 <body>
 <div class="auth-wrap">
-  <div class="auth-card single" style="max-width:500px;">
+  <div class="auth-card single" style="max-width:520px;">
     <div class="auth-form">
+
       <div class="logo"><span class="mark">S</span> SendMyMail</div>
-      <div style="display:flex;align-items:center;gap:12px;background:var(--primary-light);border:1px solid #D9D5F7;border-radius:12px;padding:14px;margin-bottom:20px;">
-        <div class="av av-md" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">N</div>
-        <div><div style="font-size:11px;color:var(--primary-dark);text-transform:uppercase;letter-spacing:.04em;font-weight:600;">You've been invited</div><div style="font-weight:600;margin-top:1px;">Join Nirvana Agency</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">Prasiddha invited you as a <span class="pill purple">Member</span></div></div>
+
+      <!-- INVITATION CONTEXT -->
+      <div class="invite-context">
+        <div class="av av-lg" style="background:linear-gradient(145deg,#C56A33,#A8521F);">NA</div>
+        <div class="ic-body">
+          <div class="ic-eyebrow">You've been invited</div>
+          <h3>Nirvana Agency</h3>
+          <div class="ic-meta">
+            by <b>Sushant Karki</b> · as <span class="pill blue">Admin</span> · <span style="color:var(--soft);">all clients</span>
+          </div>
+          <div class="inviter-note">
+            "Joining you as admin so you can help me with Khukri Spices and the Tihar campaigns. Holler if you need anything!"
+            <span class="sig">— Sushant Karki · sushant@nirvanaagency.com</span>
+          </div>
+        </div>
       </div>
-      <h2 style="font-size:20px;">Create your account</h2>
-      <p class="subtitle">You'll join Nirvana Agency once you finish setup.</p>
-      <div class="field"><label class="label">Your name</label><input class="input" placeholder="Sushmita Karki"></div>
-      <div class="field"><label class="label">Email (can't be changed)</label><input class="input" value="sushmita@nirvanaagency.com" disabled style="background:var(--surface);color:var(--muted);"></div>
-      <div class="field"><label class="label">Set a password</label><input class="input" type="password" value="************"></div>
-      <label class="checkbox" style="margin-bottom:16px;"><input type="checkbox" checked> I agree to the <a class="auth-link">Terms</a> &amp; <a class="auth-link">Privacy Policy</a></label>
-      <button class="btn btn-primary btn-block btn-lg" onclick="location.href='agency_dashboard.html'">Join Nirvana Agency</button>
+
+      <h2 style="font-size:22px;">Set up your account</h2>
+      <p class="subtitle">You'll join Nirvana Agency the moment you finish this.</p>
+
+      <!-- GOOGLE PATH -->
+      <button class="btn btn-block" style="margin-bottom:14px;"><i class="ti ti-brand-google"></i> Continue with Google</button>
+      <div class="divider">or set a password</div>
+
+      <!-- EMAIL + PASSWORD PATH -->
+      <div class="field">
+        <label class="label">Your name</label>
+        <input class="input" placeholder="Sushma Tamang">
+      </div>
+      <div class="field">
+        <label class="label">Email <span style="color:var(--soft); font-weight:500;">— can't be changed</span></label>
+        <input class="input" value="sushma@nirvanaagency.com" disabled style="background:var(--surface); color:var(--muted);">
+        <div class="helper">This is the email Sushant sent the invite to.</div>
+      </div>
+      <div class="field">
+        <label class="label">Set a password</label>
+        <input class="input" type="password" placeholder="At least 8 chars, 1 number, 1 symbol">
+        <div class="helper">Choose something strong — you'll be helping run real client campaigns.</div>
+      </div>
+
+      <label class="checkbox" style="margin-bottom:18px;">
+        <input type="checkbox" checked>
+        <span>I agree to the <a class="auth-link">Terms</a> &amp; <a class="auth-link">Privacy Policy</a>, and I'll only email people who opted in.</span>
+      </label>
+
+      <button class="btn btn-primary btn-block btn-lg" onclick="location.href='agency_dashboard.html'">
+        Join Nirvana Agency <i class="ti ti-arrow-right" style="font-size:16px;"></i>
+      </button>
+
+      <p style="text-align:center; margin-top:18px; font-size:12px; color:var(--soft); line-height:1.5;">
+        This invitation expires <b>in 5 days</b>. If something looks off, reply to Sushant directly.
+      </p>
+
     </div>
   </div>
 </div>

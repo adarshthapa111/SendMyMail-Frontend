@@ -21,7 +21,8 @@
 | `/verify` | [verify.html](../mockups/verify.html) | AuthOnly (email not yet confirmed) | same |
 | `/forgot` | [forgot.html](../mockups/forgot.html) | Public | same |
 | `/reset/:token` | [reset.html](../mockups/reset.html) | Public · token validated server-side | same |
-| `/invite/:token` | [invite.html](../mockups/invite.html) | Public · token validated server-side, sign-up inline | same |
+| `/invite/:token` | [invite.html](../mockups/invite.html) (success) · [invite_error.html](../mockups/invite_error.html) (gallery of 4 error states) | Public · token validated server-side, sign-up inline | same |
+| `/u/:unsubToken` | [unsubscribe.html](../mockups/unsubscribe.html) | Public · token in URL, no auth | [feature-deliverability-trust-layer.md](../implementation_doc/feature-deliverability-trust-layer.md) |
 | **First-run (signed in, agency may not be ready)** | | | |
 | `/workspace-setup` | [workspace_setup.html](../mockups/workspace_setup.html) | AuthOnly · only if agency profile is incomplete | [feature-authentication-workspace.md](../implementation_doc/feature-authentication-workspace.md) |
 | `/onboarding` | [onboarding.html](../mockups/onboarding.html) | AgencyReady · only if checklist incomplete | [feature-onboarding-wizard.md](../implementation_doc/feature-onboarding-wizard.md) |
@@ -31,15 +32,18 @@
 | `/clients` | [clients_list.html](../mockups/clients_list.html) | AgencyReady | [feature-client-management.md](../implementation_doc/feature-client-management.md) |
 | `/clients/new` | [client_create.html](../mockups/client_create.html) | RoleGated · owner/admin only | same |
 | `/team` | [team.html](../mockups/team.html) | RoleGated · owner/admin only | [feature-authentication-workspace.md](../implementation_doc/feature-authentication-workspace.md) |
+| `/audit` | [audit_log.html](../mockups/audit_log.html) | RoleGated · owner/admin only | same |
 | `/integrations` | [integrations.html](../mockups/integrations.html) | AgencyReady | [feature-integrations.md](../implementation_doc/feature-integrations.md) |
 | `/billing` | [billing.html](../mockups/billing.html) | RoleGated · owner only | [feature-billing.md](../implementation_doc/feature-billing.md) |
 | `/whitelabel` | [whitelabel.html](../mockups/whitelabel.html) | RoleGated · owner only | [feature-white-label.md](../implementation_doc/feature-white-label.md) |
 | **Client-scoped (need `:clientId` + access to that client)** | | | |
 | `/clients/:clientId` | — | redirect → `/clients/:clientId/contacts` | — |
-| `/clients/:clientId/domain` | [domain.html](../mockups/domain.html) | ClientScoped | [feature-sending-domain-verification.md](../implementation_doc/feature-sending-domain-verification.md) |
 | `/clients/:clientId/contacts` | [contacts.html](../mockups/contacts.html) | ClientScoped | [feature-contacts-lists.md](../implementation_doc/feature-contacts-lists.md) |
 | `/clients/:clientId/contacts/import` | [contact_import.html](../mockups/contact_import.html) | ClientScoped | same |
 | `/clients/:clientId/contacts/:contactId` | [contact_detail.html](../mockups/contact_detail.html) | ClientScoped | same |
+| `/clients/:clientId/lists` | [lists.html](../mockups/lists.html) | ClientScoped | same |
+| `/clients/:clientId/lists/:listId/edit` | [list_editor.html](../mockups/list_editor.html) | ClientScoped | same |
+| `/clients/:clientId/suppression` | [suppression.html](../mockups/suppression.html) | RoleGated · owner/admin only | [feature-deliverability-trust-layer.md](../implementation_doc/feature-deliverability-trust-layer.md) |
 | `/clients/:clientId/templates` | [templates.html](../mockups/templates.html) | ClientScoped | [feature-email-builder.md](../implementation_doc/feature-email-builder.md) |
 | `/clients/:clientId/templates/:templateId/edit` | [builder.html](../mockups/builder.html) | ClientScoped | same |
 | `/clients/:clientId/campaigns` | [campaigns_list.html](../mockups/campaigns_list.html) | ClientScoped | [feature-campaign-engine.md](../implementation_doc/feature-campaign-engine.md) |
@@ -55,6 +59,15 @@
 | `/clients/:clientId/forms` | [forms.html](../mockups/forms.html) | ClientScoped | [feature-signup-forms.md](../implementation_doc/feature-signup-forms.md) |
 | `/clients/:clientId/forms/:formId/edit` | [form_builder.html](../mockups/form_builder.html) | ClientScoped | same |
 | `/clients/:clientId/reports` | [reports.html](../mockups/reports.html) | ClientScoped | [feature-reporting-analytics.md](../implementation_doc/feature-reporting-analytics.md) |
+| **Cross-cutting (reached via user menu / chrome)** | | | |
+| `/settings` | [settings.html](../mockups/settings.html) (default tab: Profile) | AgencyReady | [feature-authentication-workspace.md](../implementation_doc/feature-authentication-workspace.md) |
+| `/settings/profile` | [settings.html](../mockups/settings.html) (tab=profile) | AgencyReady | same |
+| `/settings/notifications` | [settings.html](../mockups/settings.html) (tab=notifications) | AgencyReady | same |
+| `/settings/security` | [settings.html](../mockups/settings.html) (tab=security) | AgencyReady | same |
+| `/settings/agency` | [settings.html](../mockups/settings.html) (tab=agency) | RoleGated · owner/admin only | same |
+| `/settings/domain` | [settings.html](../mockups/settings.html) (tab=domain) — uses active client from top-bar switcher | ClientScoped · owner/admin/member only (per [roles-and-permissions.md §E](./roles-and-permissions.md#e-sending-domain-per-client)) | [feature-sending-domain-verification.md](../implementation_doc/feature-sending-domain-verification.md) |
+| `/help` | [help.html](../mockups/help.html) | AgencyReady | — |
+| `/notifications` | [notifications.html](../mockups/notifications.html) | AgencyReady | — |
 
 **Non-routes** — demo / overlay files in `doc/mockups/` that don't get their own URL:
 - [modals.html](../mockups/modals.html) — modal component variants. Rendered inline over whatever page triggers them.
@@ -101,6 +114,9 @@ Each row in this table is one lazy-loaded chunk:
 | `integrations` | `/integrations` |
 | `billing` | `/billing` |
 | `whitelabel` | `/whitelabel` |
+| `settings` | all `/settings/*` (one bundle, all tabs render inside `settings.html`) |
+| `help` | `/help` |
+| `notifications` | `/notifications` |
 
 The shared shell (sidebar, top-bar, design tokens) is in the main bundle.
 

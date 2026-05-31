@@ -29,6 +29,10 @@ If a feature spec contradicts these, fix the contradiction in the same change (u
 
 🚀 New machine or new contributor? See [doc/setup/setup.md](doc/setup/setup.md) — prereqs (Node 20/22), clone/install/env/run, useful commands, and a troubleshooting table.
 
+## Tasks (per-feature work logs)
+
+📋 **Per-feature working logs live in [tasks/feature-{name}/change_log.md](tasks/README.md)** — they track the planning → in-progress → done lifecycle of each feature's actual implementation (separate from the spec in `doc/implementation_doc/`). When you start work on a feature, create its folder and log there; when you change something in an existing feature, update its log.
+
 ## Commands
 
 ```bash
@@ -103,4 +107,4 @@ Credentials and connection state are **localStorage-only**, namespaced in [integ
 
 ## Stack notes
 
-React 19 + TypeScript + Vite, Redux Toolkit (with immer), `@dnd-kit` for drag-and-drop, `react-hot-toast` for notifications, SCSS Modules for component styling. See [doc/tech_stack/tech_stack.md](doc/tech_stack/tech_stack.md) for the full stack rationale and V1 additions.
+React 19 + TypeScript + Vite, Redux Toolkit (with immer), `@dnd-kit` for drag-and-drop, `react-hot-toast` for notifications, **SCSS Modules + Tailwind v4** (both reference the same `var(--token)` design tokens — see [doc/theme/theme.md §12](doc/theme/theme.md)) for component styling. See [doc/tech_stack/tech_stack.md](doc/tech_stack/tech_stack.md) for the full stack rationale and V1 additions.

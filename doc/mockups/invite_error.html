@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitation — error states (gallery)</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+
+<div class="auth-wrap" style="align-items:flex-start; padding-top:40px; padding-bottom:40px;">
+  <div class="err-gallery">
+
+    <!-- LOGO + GALLERY HEADER -->
+    <div class="logo" style="justify-content:center;"><span class="mark">S</span> SendMyMail</div>
+    <p style="text-align:center; color:var(--soft); font-size:12px; margin:-8px 0 12px; letter-spacing:0.04em;">Invitation error variants — what the invitee sees when their link can't be used</p>
+
+    <!-- 1. INVALID TOKEN (404) -->
+    <div class="err-card">
+      <span class="err-state-label">404 · invitation_invalid</span>
+      <div class="ic-big" style="background:var(--surface); color:var(--soft);"><i class="ti ti-link-off"></i></div>
+      <h2>This invitation link isn't valid.</h2>
+      <p>The link may be malformed, or the invitation may have been revoked. Double-check the email you received, or ask the person who invited you to send a new one.</p>
+      <button class="btn btn-primary btn-lg" onclick="location.href='login.html'"><i class="ti ti-arrow-right"></i> Sign in instead</button>
+    </div>
+
+    <!-- 2. EXPIRED (410) -->
+    <div class="err-card">
+      <span class="err-state-label">410 · invitation_expired</span>
+      <div class="ic-big" style="background:var(--amber-bg); color:var(--amber-tx);"><i class="ti ti-clock-exclamation"></i></div>
+      <h2>This invitation expired.</h2>
+      <p>Invitations are valid for 7 days. This one was sent on <b style="color:var(--ink);">22 May 2026</b> by <b style="color:var(--ink);">Sushant Karki</b>. Ask Sushant to resend it — they can do that from the Team page in one click.</p>
+      <button class="btn btn-primary btn-lg"><i class="ti ti-mail"></i> Email Sushant to resend</button>
+      <p style="font-size:12px; color:var(--soft); margin-top:14px;">Or sign in if you already have an account — <a class="auth-link" onclick="location.href='login.html'">Sign in</a></p>
+    </div>
+
+    <!-- 3. REVOKED (410) -->
+    <div class="err-card">
+      <span class="err-state-label">410 · invitation_revoked</span>
+      <div class="ic-big" style="background:var(--red-bg); color:var(--red);"><i class="ti ti-shield-x"></i></div>
+      <h2>This invitation was revoked.</h2>
+      <p>The inviter cancelled this invitation. If you think that was a mistake, reach out to them directly — they can issue a fresh invitation any time.</p>
+      <button class="btn btn-primary btn-lg" onclick="location.href='login.html'"><i class="ti ti-arrow-right"></i> Sign in instead</button>
+    </div>
+
+    <!-- 4. ALREADY ACCEPTED (410) -->
+    <div class="err-card">
+      <span class="err-state-label">410 · invitation_already_accepted</span>
+      <div class="ic-big green"><i class="ti ti-circle-check"></i></div>
+      <h2>You've already accepted this.</h2>
+      <p>You joined <b style="color:var(--ink);">Nirvana Agency</b> on <b style="color:var(--ink);">29 May 2026</b>. Sign in with the email you set up and you're good to go.</p>
+      <button class="btn btn-primary btn-lg" onclick="location.href='login.html'"><i class="ti ti-arrow-right"></i> Sign in</button>
+      <p style="font-size:12px; color:var(--soft); margin-top:14px;">Forgot your password? <a class="auth-link" onclick="location.href='forgot.html'">Reset it</a></p>
+    </div>
+
+    <p style="text-align:center; color:var(--soft); font-size:11.5px; margin-top:8px; line-height:1.6;">
+      In production, only ONE of these renders at /invite/&lt;token&gt; based on the server's response.<br>
+      This file shows all four for design review.
+    </p>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SendMyMail — Settings</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body data-page="settings">
+<div id="topnav"></div>
+<div class="shell">
+  <aside id="sidebar"></aside>
+  <main class="main">
+
+    <div class="head">
+      <div>
+        <h1>Settings</h1>
+        <p class="sub">Manage your profile, notifications, security, and agency preferences.</p>
+      </div>
+    </div>
+
+    <div class="settings-grid">
+
+      <!-- LEFT — vertical tab nav -->
+      <aside class="settings-nav">
+        <div class="sn-label">Personal</div>
+        <div class="sn-item active" onclick="switchTab('profile', this)"><i class="ti ti-user"></i> Profile</div>
+        <div class="sn-item" onclick="switchTab('notifications', this)"><i class="ti ti-bell"></i> Notifications</div>
+        <div class="sn-item" onclick="switchTab('security', this)"><i class="ti ti-shield-lock"></i> Security</div>
+
+        <div class="sn-label">Agency</div>
+        <div class="sn-item" onclick="switchTab('agency', this)"><i class="ti ti-building"></i> Agency profile</div>
+        <div class="sn-item" onclick="switchTab('domain', this)"><i class="ti ti-world-check"></i> Sending domain</div>
+        <div class="sn-item" onclick="location.href='team.html'"><i class="ti ti-users"></i> Team <i class="ti ti-arrow-up-right" style="margin-left:auto;font-size:13px;color:var(--soft);"></i></div>
+        <div class="sn-item" onclick="location.href='billing.html'"><i class="ti ti-credit-card"></i> Billing <i class="ti ti-arrow-up-right" style="margin-left:auto;font-size:13px;color:var(--soft);"></i></div>
+        <div class="sn-item" onclick="location.href='whitelabel.html'"><i class="ti ti-palette"></i> White-label <i class="ti ti-arrow-up-right" style="margin-left:auto;font-size:13px;color:var(--soft);"></i></div>
+      </aside>
+
+      <!-- RIGHT — tab panels -->
+      <div>
+
+        <!-- PROFILE -->
+        <div class="settings-panel active" data-tab="profile">
+          <div class="s-section">
+            <h3>Profile</h3>
+            <p class="sd">This is how teammates and your clients see you across SendMyMail.</p>
+
+            <div class="avatar-edit">
+              <span class="av av-lg" style="background:linear-gradient(150deg,#7A71D8,#4B43A8); width:64px; height:64px; font-size:22px;">PK</span>
+              <div class="ae-meta">
+                <b>Your photo</b>
+                <small>PNG or JPG · max 2MB · square recommended</small>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn"><i class="ti ti-upload"></i> Upload</button>
+                <button class="btn btn-ghost">Remove</button>
+              </div>
+            </div>
+
+            <div class="row-pair">
+              <div class="field"><label class="label">Full name</label><input class="input" value="Prasiddha Karki"></div>
+              <div class="field"><label class="label">Work title</label><input class="input" value="Founder, Nirvana Agency"></div>
+            </div>
+            <div class="row-pair">
+              <div class="field"><label class="label">Email</label><input class="input" value="prasiddha@nirvanaagency.com" readonly><div class="helper">Changing your email requires re-verification.</div></div>
+              <div class="field"><label class="label">Language</label><select class="input"><option>English (US)</option><option>नेपाली (coming soon)</option></select></div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:9px; margin-top:18px;">
+              <button class="btn">Cancel</button>
+              <button class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="settings-panel" data-tab="notifications">
+          <div class="s-section">
+            <h3>Notifications</h3>
+            <p class="sd">Choose how SendMyMail keeps you in the loop. Sushant promises not to spam.</p>
+
+            <div class="notif-pref-row">
+              <div class="npr-h">Notify me about…</div>
+              <div class="npr-h" style="text-align:center;">Email</div>
+              <div class="npr-h" style="text-align:center;">In-app</div>
+            </div>
+
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Campaign sent</b><small>When a scheduled campaign finishes sending</small></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Campaign report ready</b><small>Once a report has 24 h of data</small></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Integration synced</b><small>WooCommerce, ESP, webhook activity</small></div>
+              <div style="text-align:center;"><span class="toggle"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Team activity</b><small>Invites accepted, roles changed</small></div>
+              <div style="text-align:center;"><span class="toggle"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Billing alerts</b><small>Trial ending, payment due, plan changes</small></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Deliverability warning</b><small>Bounce / complaint thresholds breached</small></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+            </div>
+            <div class="notif-pref-row">
+              <div class="npr-lbl"><b>Product updates from SendMyMail</b><small>Monthly — feature releases, founder notes</small></div>
+              <div style="text-align:center;"><span class="toggle on"></span></div>
+              <div style="text-align:center;"><span class="toggle"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="settings-panel" data-tab="security">
+          <div class="s-section">
+            <h3>Password</h3>
+            <p class="sd">Use a strong, unique password. We hash with argon2id and never store it in plain text.</p>
+            <div class="row-pair">
+              <div class="field"><label class="label">Current password</label><input class="input" type="password" placeholder="••••••••••"></div>
+              <div class="field"><label class="label">New password</label><input class="input" type="password" placeholder="At least 8 chars, 1 number, 1 symbol"><div class="helper">Strong passwords protect every client's contact list.</div></div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+              <button class="btn btn-primary">Update password</button>
+            </div>
+          </div>
+
+          <div class="s-section">
+            <h3>Connected accounts</h3>
+            <p class="sd">Sign in faster with Google. You can sign in with your password too — both work.</p>
+            <div class="session-row">
+              <div class="ic"><i class="ti ti-brand-google"></i></div>
+              <div class="body"><b>Google</b><small>prasiddha@nirvanaagency.com · linked 12 May 2026</small></div>
+              <button class="btn btn-sm">Unlink</button>
+            </div>
+            <div class="session-row" style="opacity:.6;">
+              <div class="ic"><i class="ti ti-brand-windows"></i></div>
+              <div class="body"><b>Microsoft</b><small>Coming soon</small></div>
+              <button class="btn btn-sm" disabled>Not available</button>
+            </div>
+          </div>
+
+          <div class="s-section">
+            <h3>Active sessions</h3>
+            <p class="sd">Devices where you're currently signed in. Sign out remotely if anything looks off.</p>
+            <div class="session-row">
+              <div class="ic"><i class="ti ti-device-laptop"></i></div>
+              <div class="body"><b>MacBook Pro · Chrome 130</b><small>Kathmandu, Nepal · current session</small></div>
+              <span class="now">● ACTIVE</span>
+            </div>
+            <div class="session-row">
+              <div class="ic"><i class="ti ti-device-mobile"></i></div>
+              <div class="body"><b>iPhone 15 · Safari</b><small>Kathmandu, Nepal · 4 hours ago</small></div>
+              <button class="btn btn-sm">Sign out</button>
+            </div>
+            <div class="session-row">
+              <div class="ic"><i class="ti ti-device-laptop"></i></div>
+              <div class="body"><b>MacBook Pro · Chrome 130</b><small>Pokhara, Nepal · 3 days ago</small></div>
+              <button class="btn btn-sm">Sign out</button>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+              <button class="btn btn-ghost"><i class="ti ti-logout"></i> Sign out all other sessions</button>
+            </div>
+          </div>
+
+          <div class="s-section danger-zone">
+            <h3>Delete account</h3>
+            <p class="sd">Removes you from Nirvana Agency. You'll need to transfer ownership first if you're the only Owner. This cannot be undone.</p>
+            <button class="btn btn-danger"><i class="ti ti-trash"></i> Delete my account</button>
+          </div>
+        </div>
+
+        <!-- AGENCY -->
+        <div class="settings-panel" data-tab="agency">
+          <div class="s-section">
+            <h3>Agency profile</h3>
+            <p class="sd">How your agency appears across SendMyMail. Only Owners and Admins can change these.</p>
+
+            <div class="avatar-edit">
+              <span class="av av-lg" style="background:linear-gradient(150deg,#C56A33,#A8521F); width:64px; height:64px; font-size:22px;">NA</span>
+              <div class="ae-meta">
+                <b>Nirvana Agency</b>
+                <small>Created 12 May 2026 · 8 clients · 7 team members</small>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn"><i class="ti ti-upload"></i> Upload logo</button>
+              </div>
+            </div>
+
+            <div class="row-pair">
+              <div class="field"><label class="label">Agency name</label><input class="input" value="Nirvana Agency"></div>
+              <div class="field"><label class="label">Country</label><select class="input"><option>Nepal</option><option>India</option><option>Bangladesh</option></select></div>
+            </div>
+            <div class="row-pair">
+              <div class="field"><label class="label">Billing email</label><input class="input" value="billing@nirvanaagency.com"></div>
+              <div class="field"><label class="label">PAN / VAT number</label><input class="input" value="601234567" placeholder="Required for invoices"></div>
+            </div>
+            <div class="field"><label class="label">Default sender footer</label><textarea class="input" style="min-height:80px;">Nirvana Agency · Pulchowk, Lalitpur 44700 · You're receiving this because you opted in.</textarea><div class="helper">Auto-appended to campaigns that don't override it. Required for CAN-SPAM and Nepal's Advertisement Act 2076.</div></div>
+
+            <div style="display:flex; justify-content:flex-end; gap:9px; margin-top:18px;">
+              <button class="btn">Cancel</button>
+              <button class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SENDING DOMAIN -->
+        <div class="settings-panel" data-tab="domain">
+          <div class="s-section">
+            <h3>Sending domain</h3>
+            <p class="sd"><span style="font-family:ui-monospace,monospace; color:var(--ink); font-weight:500;">mail.khukrispices.com</span> · <span class="pill amber dot">3 of 4 verified</span> · last checked 12 minutes ago</p>
+
+            <div style="display:flex; gap:9px; margin:0 0 18px;">
+              <button class="btn"><i class="ti ti-refresh"></i> Recheck now</button>
+              <button class="btn"><i class="ti ti-edit"></i> Change domain</button>
+            </div>
+
+            <p class="card-title" style="font-size:13px; font-weight:600; margin:0 0 12px;">Add these 4 DNS records at your registrar</p>
+
+            <div class="dns-row">
+              <span class="type">TXT</span>
+              <div>
+                <div class="nm">SPF</div>
+                <span class="vl">v=spf1 include:amazonses.com ~all</span>
+              </div>
+              <button class="copy" title="Copy"><i class="ti ti-copy"></i></button>
+              <span class="pill green dot">Verified</span>
+            </div>
+
+            <div class="dns-row">
+              <span class="type">CNAME</span>
+              <div>
+                <div class="nm">DKIM 1</div>
+                <span class="vl">a7x2k._domainkey → a7x2k.dkim.amazonses.com</span>
+              </div>
+              <button class="copy" title="Copy"><i class="ti ti-copy"></i></button>
+              <span class="pill green dot">Verified</span>
+            </div>
+
+            <div class="dns-row">
+              <span class="type">CNAME</span>
+              <div>
+                <div class="nm">DKIM 2</div>
+                <span class="vl">b9m4n._domainkey → b9m4n.dkim.amazonses.com</span>
+              </div>
+              <button class="copy" title="Copy"><i class="ti ti-copy"></i></button>
+              <span class="pill green dot">Verified</span>
+            </div>
+
+            <div class="dns-row">
+              <span class="type">TXT</span>
+              <div>
+                <div class="nm">DMARC</div>
+                <span class="vl">v=DMARC1; p=quarantine; rua=mailto:dmarc@khukrispices.com</span>
+              </div>
+              <button class="copy" title="Copy"><i class="ti ti-copy"></i></button>
+              <span class="pill amber dot">Pending</span>
+            </div>
+          </div>
+
+          <div class="note">
+            <i class="ti ti-info-circle"></i>
+            <span><b>Required since Feb 2024.</b> Gmail and Yahoo require SPF, DKIM, DMARC and one-click unsubscribe for senders over 5,000 emails/day. SendMyMail blocks sending from unverified domains and re-checks pending records hourly.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="_shell.js"></script>
+<script>
+  function switchTab(tab, el){
+    document.querySelectorAll('.settings-nav .sn-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.settings-panel[data-tab="'+tab+'"]').classList.add('active');
+  }
+  // toggle switches
+  document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
+</script>
+</body>
+</html>

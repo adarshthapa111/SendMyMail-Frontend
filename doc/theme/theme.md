@@ -293,9 +293,41 @@ Paste into the one global stylesheet (`src/index.css`) and the mockup shared sty
 ---
 
 ## 12. Using the theme in React (this repo)
-- Tokens live once in `src/index.css :root` (the only global CSS) + the two font `<link>`s in `index.html`.
-- Components use **SCSS Modules in `src/styles/`** (`*.module.scss`) via the `@styles` alias (see folder_structure.md); reference tokens with `var(--token)`. SCSS variables are for local computed values only — never shadow design tokens. Add `.display` for headings/numbers; body inherits General Sans.
-- **Never hardcode a hex** in a component — add to §3 + §11 first.
+
+The token block from §11 lives **twice** in `src/index.css`:
+1. In `:root { … }` — so SCSS Modules + raw CSS can reference `var(--primary)` etc.
+2. In `@theme { … }` — so Tailwind v4 exposes utilities like `bg-primary`, `text-ink`, `border-line`, `rounded-lg`, `shadow` (mapped from the same hex values).
+
+Plus the two font `<link>`s in `index.html`. That's all the global CSS.
+
+**Two ways to apply a style — pick the right one per case:**
+
+| Use **Tailwind utilities** for | Use **SCSS Modules** for |
+|---|---|
+| Layout (`flex`, `grid`, `gap-4`, `p-6`, `mt-auto`) | Reusable component classes (`.card`, `.btn`, `.pill`) |
+| Spacing & sizing one-offs | Hover / focus / active states beyond a single utility |
+| Colors via tokens (`bg-primary`, `text-ink`, `border-line`) | Nested selectors, mixins, complex `&::before` patterns |
+| Quick state classes (`opacity-50`, `cursor-pointer`) | Anything with shared structure across many components |
+
+```tsx
+// idiomatic component
+import styles from '@styles/components/Card.module.scss';
+
+export function Card({ title, children }) {
+  return (
+    <div className={`${styles.card} flex flex-col gap-4 p-6`}>
+      <h2 className="text-ink display">{title}</h2>
+      <p className="text-muted">{children}</p>
+    </div>
+  );
+}
+```
+
+**Hard rules:**
+- **Never hardcode a hex** in a component — add the token to §3 + §11 (and the `@theme` block in `src/index.css`) first, then use it via `var(--token)` or `bg-tokenName`.
+- **Never use a Tailwind color/border/shadow utility that isn't in our `@theme` block.** No `bg-blue-500`, no `text-zinc-900`, no `border-gray-300`. Layout utilities (`flex`, `gap-*`, `p-*`) are fine — they have no palette concern.
+- **SCSS variables** (`$foo`) are for local computed values only (e.g. `$step: 4px`) — they must never shadow a design token.
+- Add `.display` for headings/big numbers; body inherits General Sans.
 
 ---
 
@@ -312,6 +344,8 @@ Paste into the one global stylesheet (`src/index.css`) and the mockup shared sty
 | `.main` full-width, content capped via `.main > *` | Put `max-width` on the scroll container |
 | Tabular numerals on figures | Let metrics shift width |
 | Warm shadows (`43,38,32`) | Cool/grey shadows |
+| Tailwind utilities from our `@theme` block (`bg-primary`, `text-ink`) + layout (`flex`, `gap-4`) | Tailwind defaults like `bg-blue-500`, `text-zinc-900`, `border-gray-300` |
+| Mix Tailwind utilities with SCSS Module classes in `className` | Reach for inline `style={{ ... }}` when a token-mapped utility exists |
 
 ---
 

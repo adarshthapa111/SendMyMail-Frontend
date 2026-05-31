@@ -4,34 +4,227 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SendMyMail — Team</title>
 <link rel="stylesheet" href="_shared.css">
-<style> .member { display:flex; align-items:center; gap:11px; } .member b { font-weight:600; } .member small { display:block; color:var(--soft); font-size:11.5px; } </style>
+<style>
+  .member { display:flex; align-items:center; gap:11px; }
+  .member b { font-weight:600; }
+  .member small { display:block; color:var(--soft); font-size:11.5px; }
+  .scope-cell { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted); }
+  .scope-cell.limited { color:var(--primary-ink); font-weight:600; }
+  .scope-cell i { font-size:14px; }
+  .row-action-menu { position:relative; }
+  .invite-warn { background:var(--amber-bg); color:var(--amber-tx); }
+  .scope-picker { display:none; padding:14px; margin-top:8px; background:var(--surface); border-radius:10px; border:1px solid var(--line); }
+  .scope-picker.active { display:block; }
+  .scope-check { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:13px; cursor:pointer; }
+  .scope-check input { accent-color:var(--primary); width:15px; height:15px; }
+  .scope-check .av-sm { width:22px; height:22px; font-size:9px; border-radius:6px; }
+  .scope-radio-group { display:flex; gap:8px; }
+  .scope-radio { flex:1; display:flex; gap:10px; padding:13px 14px; border:1px solid var(--line); border-radius:11px; cursor:pointer; transition:border-color .15s, background .15s; }
+  .scope-radio:has(input:checked) { border-color:var(--primary); background:var(--primary-light); }
+  .scope-radio input { accent-color:var(--primary); margin-top:1px; flex-shrink:0; }
+  .scope-radio .sr-body b { display:block; font-weight:600; font-size:13px; color:var(--ink); }
+  .scope-radio .sr-body small { display:block; color:var(--muted); font-size:12px; margin-top:2px; line-height:1.4; }
+</style>
 </head>
 <body data-page="team">
 <div id="topnav"></div>
 <div class="shell">
   <aside id="sidebar"></aside>
   <main class="main">
-    <div class="head"><div><h1>Team</h1><p class="sub">2 members · Pro plan supports up to 5</p></div><div class="actions"><button class="btn btn-primary"><i class="ti ti-user-plus"></i> Invite member</button></div></div>
+
+    <div class="head">
+      <div>
+        <h1>Team</h1>
+        <p class="sub">4 members · 2 pending invites · Pro plan supports up to 10 seats</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="document.getElementById('inviteModal').classList.remove('hidden')">
+          <i class="ti ti-user-plus"></i> Invite member
+        </button>
+      </div>
+    </div>
+
+    <!-- ACTIVE MEMBERS -->
     <div class="card" style="margin-bottom:16px;">
       <table>
-        <thead><tr><th>Member</th><th>Email</th><th>Role</th><th>Last active</th><th></th></tr></thead>
+        <thead>
+          <tr><th>Member</th><th>Email</th><th>Role</th><th>Client scope</th><th>Last active</th><th></th></tr>
+        </thead>
         <tbody>
-          <tr><td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#E08A5B,#C9613A);">PG</span><div><b>Prasiddha Gyawali</b><small>You</small></div></div></td><td>prasiddha@nirvanaagency.com</td><td><span class="pill purple">Admin</span></td><td>Now</td><td></td></tr>
-          <tr><td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#27B98A,#149068);">SK</span><div><b>Sushmita Karki</b></div></div></td><td>sushmita@nirvanaagency.com</td><td><span class="pill gray">Member</span></td><td>2 hours ago</td><td class="r"><button class="btn btn-sm"><i class="ti ti-trash"></i></button></td></tr>
+
+          <tr>
+            <td><div class="member"><span class="av av-md" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PK</span><div><b>Prasiddha Karki</b><small>You · joined 12 May 2026</small></div></div></td>
+            <td>prasiddha@nirvanaagency.com</td>
+            <td><span class="pill purple">Owner</span></td>
+            <td><span class="scope-cell"><i class="ti ti-world"></i> All clients</span></td>
+            <td>Active now</td>
+            <td class="r"></td>
+          </tr>
+
+          <tr>
+            <td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#27B98A,#149068);">ST</span><div><b>Sushma Tamang</b><small>Joined 29 May 2026</small></div></div></td>
+            <td>sushma@nirvanaagency.com</td>
+            <td><span class="pill blue">Admin</span></td>
+            <td><span class="scope-cell"><i class="ti ti-world"></i> All clients</span></td>
+            <td>2 hours ago</td>
+            <td class="r"><button class="btn btn-sm" title="Manage"><i class="ti ti-dots-vertical"></i></button></td>
+          </tr>
+
+          <tr>
+            <td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">AS</span><div><b>Aastha Shrestha</b><small>Joined 18 May 2026</small></div></div></td>
+            <td>aastha@nirvanaagency.com</td>
+            <td><span class="pill gray">Member</span></td>
+            <td><span class="scope-cell limited" title="Khukri Spices, Pashmina Co."><i class="ti ti-filter"></i> 2 clients</span></td>
+            <td>Yesterday</td>
+            <td class="r"><button class="btn btn-sm" title="Manage"><i class="ti ti-dots-vertical"></i></button></td>
+          </tr>
+
+          <tr>
+            <td><div class="member"><span class="av av-md" style="background:linear-gradient(145deg,#4F95E0,#2D6FB8);">BG</span><div><b>Bibek Gurung</b><small>Client portal · joined 25 May 2026</small></div></div></td>
+            <td>marketing@khukrispices.com</td>
+            <td><span class="pill green">Viewer</span></td>
+            <td><span class="scope-cell limited" title="Khukri Spices"><i class="ti ti-building-store"></i> Khukri Spices only</span></td>
+            <td>3 days ago</td>
+            <td class="r"><button class="btn btn-sm" title="Manage"><i class="ti ti-dots-vertical"></i></button></td>
+          </tr>
+
         </tbody>
       </table>
     </div>
+
+    <!-- PENDING INVITES -->
     <div class="card">
-      <div class="tbl-head"><h3>Pending invites (1)</h3></div>
+      <div class="tbl-head"><h3>Pending invites <span style="color:var(--soft); font-weight:500; font-size:13px;">(2)</span></h3></div>
       <table>
-        <thead><tr><th>Email</th><th>Role</th><th>Invited</th><th></th></tr></thead>
+        <thead>
+          <tr><th>Email</th><th>Role</th><th>Client scope</th><th>Invited</th><th>Expires</th><th></th></tr>
+        </thead>
         <tbody>
-          <tr><td>roshan@nirvanaagency.com</td><td><span class="pill gray">Member</span></td><td>2 days ago · expires in 5 days</td><td class="r"><button class="btn btn-sm"><i class="ti ti-refresh"></i> Resend</button> <button class="btn btn-sm"><i class="ti ti-x"></i> Revoke</button></td></tr>
+
+          <tr>
+            <td>roshan@nirvanaagency.com</td>
+            <td><span class="pill blue">Admin</span></td>
+            <td><span class="scope-cell"><i class="ti ti-world"></i> All clients</span></td>
+            <td>2 days ago<br><small style="color:var(--soft);">by Prasiddha</small></td>
+            <td>In 5 days</td>
+            <td class="r" style="white-space:nowrap;">
+              <button class="btn btn-sm"><i class="ti ti-refresh"></i> Resend</button>
+              <button class="btn btn-sm"><i class="ti ti-edit"></i></button>
+              <button class="btn btn-sm btn-danger"><i class="ti ti-x"></i></button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>finance@khukrispices.com</td>
+            <td><span class="pill green">Viewer</span></td>
+            <td><span class="scope-cell limited"><i class="ti ti-building-store"></i> Khukri Spices only</span></td>
+            <td>6 days ago<br><small style="color:var(--soft);">by Sushma</small></td>
+            <td><span class="pill amber dot">In 18 hours</span></td>
+            <td class="r" style="white-space:nowrap;">
+              <button class="btn btn-sm"><i class="ti ti-refresh"></i> Resend</button>
+              <button class="btn btn-sm"><i class="ti ti-edit"></i></button>
+              <button class="btn btn-sm btn-danger"><i class="ti ti-x"></i></button>
+            </td>
+          </tr>
+
         </tbody>
       </table>
     </div>
+
+    <!-- Hint about roles -->
+    <div class="note" style="margin-top:16px;">
+      <i class="ti ti-info-circle"></i>
+      <span><b>About roles:</b> Owners do everything (incl. billing &amp; white-label). Admins do everything except billing &amp; managing other admins. Members run the day-to-day for clients they're scoped to. Viewers are read-mostly — use this for clients who want to log in and check their own reports.
+        <a class="auth-link" onclick="location.href='help.html'">Learn more →</a></span>
+    </div>
+
   </main>
 </div>
+
+<!-- ============ INVITE MEMBER MODAL ============ -->
+<div class="modal-backdrop hidden" id="inviteModal">
+  <div class="modal" style="max-width:540px;">
+
+    <div class="modal-header">
+      <h3>Invite to Nirvana Agency</h3>
+      <button class="close-x" onclick="document.getElementById('inviteModal').classList.add('hidden')"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="field">
+        <label class="label">Work email</label>
+        <input class="input" type="email" placeholder="teammate@nirvanaagency.com">
+        <div class="helper">They'll receive a link valid for 7 days.</div>
+      </div>
+
+      <div class="field">
+        <label class="label">Role</label>
+        <select class="input" id="roleSelect" onchange="toggleScopeForRole()">
+          <option value="admin">Admin · everything except billing &amp; white-label</option>
+          <option value="member" selected>Member · day-to-day operator</option>
+          <option value="viewer">Viewer · read-mostly (great for client portal access)</option>
+        </select>
+      </div>
+
+      <div class="field" id="scopeField">
+        <label class="label">Client scope</label>
+        <div class="scope-radio-group">
+          <label class="scope-radio">
+            <input type="radio" name="scope" value="all" checked onchange="document.getElementById('scopePicker').classList.remove('active')">
+            <div class="sr-body"><b>All clients</b><small>Sees every client in your agency</small></div>
+          </label>
+          <label class="scope-radio">
+            <input type="radio" name="scope" value="clients" onchange="document.getElementById('scopePicker').classList.add('active')">
+            <div class="sr-body"><b>Specific clients</b><small>Pick which clients they can see</small></div>
+          </label>
+        </div>
+
+        <div class="scope-picker" id="scopePicker">
+          <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--soft); margin-bottom:8px;">Select clients · 8 total</div>
+          <label class="scope-check"><input type="checkbox" checked> <span class="av av-sm" style="background:linear-gradient(145deg,#27B98A,#149068);">KS</span> Khukri Spices</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#EA7B4F,#C9542C);">HT</span> Himalaya Trekking</label>
+          <label class="scope-check"><input type="checkbox" checked> <span class="av av-sm" style="background:linear-gradient(150deg,#7A71D8,#4B43A8);">PC</span> Pashmina Co.</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#D8628F,#B23E6B);">SK</span> Sajilo Kitchen</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#4F95E0,#2D6FB8);">NB</span> Newa Bites</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#C79A2E,#A07A12);">YS</span> Yak Studios</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#3FA8A0,#1FA39B);">EG</span> Everest Gear</label>
+          <label class="scope-check"><input type="checkbox"> <span class="av av-sm" style="background:linear-gradient(145deg,#8A6FE0,#6A4FC9);">LC</span> Lumbini Crafts</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Personal note <span style="color:var(--soft); font-weight:500;">(optional)</span></label>
+        <textarea class="input" style="min-height:74px;" placeholder="Hey Roshan — joining you as admin so you can help me with Khukri Spices and the Tihar campaigns. Holler if you need anything!"></textarea>
+        <div class="helper">Shows up in the email and on their acceptance screen.</div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('inviteModal').classList.add('hidden')">Cancel</button>
+      <button class="btn btn-primary"><i class="ti ti-send"></i> Send invitation</button>
+    </div>
+
+  </div>
+</div>
+
 <script src="_shell.js"></script>
+<script>
+  // Hide scope-picker when role = admin (admins are always scope=all)
+  function toggleScopeForRole(){
+    var role = document.getElementById('roleSelect').value;
+    var scopeField = document.getElementById('scopeField');
+    if (role === 'admin') {
+      scopeField.style.opacity = '0.5';
+      scopeField.style.pointerEvents = 'none';
+      scopeField.querySelectorAll('input[name=scope]').forEach(r => { if (r.value === 'all') r.checked = true; });
+      document.getElementById('scopePicker').classList.remove('active');
+    } else {
+      scopeField.style.opacity = '1';
+      scopeField.style.pointerEvents = 'auto';
+    }
+  }
+</script>
 </body>
 </html>
