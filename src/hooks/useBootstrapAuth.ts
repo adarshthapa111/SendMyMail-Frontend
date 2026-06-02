@@ -21,7 +21,7 @@ export function useBootstrapAuth(): void {
     // Global handler: when any apiCall response includes X-Refreshed-Token,
     // the api/client already stored it — we just need to know in case we want
     // to re-hydrate (defer to next /me; for now no-op).
-    registerJwtRefreshListener((_jwt) => {
+    registerJwtRefreshListener(() => {
       // optional: dispatch a re-hydrate. For V1 the JWT swap is enough.
     });
 
