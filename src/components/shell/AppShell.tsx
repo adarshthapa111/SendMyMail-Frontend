@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import { Topbar } from './Topbar';
 import { Sidebar } from './Sidebar';
 import styles from '@styles/components/shell/AppShell.module.scss';
+
+/* <Toaster /> lives in App.tsx (not here) so it's mounted on public/auth
+   routes too — those render outside this shell. */
 
 export function AppShell() {
   return (
@@ -14,7 +16,6 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
-      <Toaster position="bottom-right" toastOptions={{ duration: 3500 }} />
     </>
   );
 }

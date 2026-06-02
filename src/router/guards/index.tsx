@@ -1,67 +1,98 @@
 /* Auth gates from doc/architecture/routes.md §3.
    ─────────────────────────────────────────────
-   STUB IMPLEMENTATION — every gate returns true for now.
-   Real logic lands with the auth feature PR (tasks/feature-auth/),
-   which adds:
-     - JWT read from localStorage['sendmymail_jwt']
-     - JWT decode (sub, role, scope, agency_id, email_verified, agency_setup)
-     - The `auth` Redux slice that hydrates from the JWT
-     - The actual scope / role / agency-readiness checks
-   These stubs let the router land + every route resolve, without
-   blocking on the backend.
-*/
+   Real logic — reads from the auth slice, redirects appropriately.
+
+   While the slice is `authenticating` (we're still resolving /me on first load
+   with a stored JWT), guards render null instead of redirecting — so the user
+   doesn't see a flash of /login before /dashboard. */
 
 import type { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 
 interface GuardProps {
   children: ReactNode;
 }
 
-/* Public — always allowed. Real logic: if already signed-in, redirect to /dashboard. */
+const ROLE_RANK = { viewer: 0, member: 1, admin: 2, owner: 3 } as const;
+
+/* Public — for /login /signup /forgot etc.
+   If the user is already signed in + verified + agency set up → bounce to /dashboard.
+   We do NOT treat status='authenticating' specially here — that status is set during
+   the active login submit, and unmounting the form mid-click would flash the page blank
+   (looks like a full refresh). The form's own `submitting` state handles loading UI. */
 export function Public({ children }: GuardProps) {
+  const { status, user, agency } = useAppSelector((s) => s.auth);
+  if (status === 'authed' && user?.emailVerified && agency?.setupComplete) {
+    return <Navigate to="/dashboard" replace />;
+  }
   return <>{children}</>;
 }
 
-/* AuthOnly — JWT present + valid + email verified.
-   Real logic: redirect → /login?next=<path> if no JWT. */
+/* AuthOnly — needs a JWT but accepts un-verified / un-setup users.
+   Used by /verify (you need to be signed in to enter a verify code). */
 export function AuthOnly({ children }: GuardProps) {
-  // const auth = useAppSelector(s => s.auth);
-  // if (auth.status === 'anonymous') return <Navigate to={`/login?next=${pathname}`} />;
+  const { status } = useAppSelector((s) => s.auth);
+  const { pathname } = useLocation();
+  if (status === 'authenticating') return null;
+  if (status === 'anonymous') {
+    return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />;
+  }
   return <>{children}</>;
 }
 
-/* AgencyReady — AuthOnly + agency workspace-setup complete.
-   Real logic: redirect → /workspace-setup if !agency_setup. */
+/* AgencyReady — AuthOnly + email_verified + agency.setup_complete.
+   The standard guard for in-app screens. Redirects unverified → /verify
+   and unsetup → /workspace-setup. */
 export function AgencyReady({ children }: GuardProps) {
-  // const auth = useAppSelector(s => s.auth);
-  // if (!auth.agency?.setup_complete) return <Navigate to="/workspace-setup" />;
+  const { status, user, agency } = useAppSelector((s) => s.auth);
+  const { pathname } = useLocation();
+  if (status === 'authenticating') return null;
+  if (status === 'anonymous') {
+    return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />;
+  }
+  if (!user?.emailVerified) return <Navigate to="/verify" replace />;
+  if (!agency?.setupComplete) return <Navigate to="/workspace-setup" replace />;
   return <>{children}</>;
 }
 
-/* ClientScoped — AgencyReady + :clientId exists + user has access to that client.
-   Real logic: 404 if client doesn't exist; redirect → /clients if no access. */
+/* ClientScoped — AgencyReady + :clientId in JWT scope (or scope=all).
+   Decoded JWT scope isn't in the Redux slice yet (slice only carries user/agency);
+   for V1 we read directly from the JWT in localStorage. */
+import { decodeJwt } from '../../lib/api/jwt';
+
 export function ClientScoped({ children }: GuardProps) {
-  // const { clientId } = useParams();
-  // const auth = useAppSelector(s => s.auth);
-  // if (!auth.scope.canAccess(clientId)) return <Navigate to="/clients" />;
-  return <>{children}</>;
+  const { status } = useAppSelector((s) => s.auth);
+  const { clientId } = useParams();
+  if (status === 'authenticating') return null;
+  if (status === 'anonymous') return <Navigate to="/login" replace />;
+  if (!clientId) return <Navigate to="/clients" replace />;
+  const claims = decodeJwt();
+  if (!claims) return <Navigate to="/login" replace />;
+  if (claims.scope.type === 'all') return <>{children}</>;
+  if (claims.scope.ids.includes(clientId)) return <>{children}</>;
+  // intentionally / : never leak that the client exists in another agency
+  return <Navigate to="/clients" replace />;
 }
 
-/* RoleGated — AgencyReady + user's role meets the route's minimum.
-   Use as <RoleGated min="admin"><Page /></RoleGated>. */
+/* RoleGated — AgencyReady + minimum role. */
 interface RoleGatedProps extends GuardProps {
   min: 'owner' | 'admin' | 'member' | 'viewer';
 }
-export function RoleGated({ children, min: _min }: RoleGatedProps) {
-  // const auth = useAppSelector(s => s.auth);
-  // if (!roleAtLeast(auth.user.role, min)) return <NoPermission />;
+export function RoleGated({ children, min }: RoleGatedProps) {
+  const { status, user } = useAppSelector((s) => s.auth);
+  if (status === 'authenticating') return null;
+  if (status === 'anonymous' || !user) return <Navigate to="/login" replace />;
+  if (ROLE_RANK[user.role] < ROLE_RANK[min]) {
+    return <Navigate to="/dashboard" replace />; // 403-style; UI surfaces a toast
+  }
   return <>{children}</>;
 }
 
-/* Tiny placeholder for "/" → routed based on auth state. */
+/* Root "/" → dashboard if signed in, login otherwise. */
 export function RootRedirect() {
-  const _loc = useLocation();
-  /* Real logic: dashboard if signed-in, /login otherwise. */
-  return <Navigate to="/dashboard" replace />;
+  const { status } = useAppSelector((s) => s.auth);
+  if (status === 'authenticating') return null;
+  if (status === 'authed') return <Navigate to="/dashboard" replace />;
+  return <Navigate to="/login" replace />;
 }

@@ -1,10 +1,34 @@
-/* App root — delegates to the router.
-   The previous `app.view` switching (editor vs integrations) has moved to the router:
-     - editor:        /clients/:clientId/templates/:templateId/edit
-     - integrations:  /integrations
-   The `app.view` field in appSlice is now unused (kept for now; cleanup in a later PR). */
+/* App root — delegates to the router after bootstrapping auth from localStorage.
+   The previous `app.view` switching (editor vs integrations) lives in the router now.
+
+   <Toaster /> is mounted HERE (not inside AppShell) so toasts also show on
+   public / auth pages which render outside the chrome. */
+import { Toaster } from 'react-hot-toast';
 import { AppRouter } from './router';
+import { useBootstrapAuth } from './hooks/useBootstrapAuth';
 
 export default function App() {
-  return <AppRouter />;
+  useBootstrapAuth();
+  return (
+    <>
+      <AppRouter />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: 'var(--card)',
+            color: 'var(--ink)',
+            border: '1px solid var(--line)',
+            borderRadius: 'var(--r)',
+            boxShadow: 'var(--shadow-md)',
+            fontSize: 13.5,
+            padding: '12px 14px',
+          },
+          success: { iconTheme: { primary: 'var(--green)', secondary: '#fff' } },
+          error:   { iconTheme: { primary: 'var(--red)',   secondary: '#fff' }, duration: 5000 },
+        }}
+      />
+    </>
+  );
 }

@@ -2,18 +2,24 @@ import { useNavigate } from 'react-router-dom';
 import { IconSearch, IconBell, IconPlus } from '@tabler/icons-react';
 import { ClientSwitcher } from './ClientSwitcher';
 import { UserMenu } from './UserMenu';
+import { useAuth } from '../../hooks/useAuth';
 import styles from '@styles/components/shell/Topbar.module.scss';
 
 export function Topbar() {
   const navigate = useNavigate();
+  const { agency } = useAuth();
   return (
     <div className={styles.topnav}>
       <div className={styles.left}>
         <div className={styles.brand}>
           <span className={styles.mark}>S</span>
           SendMyMail
-          <span className={styles.sep}>/</span>
-          <span className={styles.agency}>Nirvana Agency</span>
+          {agency?.name && (
+            <>
+              <span className={styles.sep}>/</span>
+              <span className={styles.agency}>{agency.name}</span>
+            </>
+          )}
         </div>
         <ClientSwitcher />
       </div>
