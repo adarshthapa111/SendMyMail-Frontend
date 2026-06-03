@@ -1,3 +1,5 @@
+.wrap { position: relative; }
+
 .switcher {
   display: inline-flex;
   align-items: center;
@@ -11,12 +13,20 @@
   font-weight: 500;
   color: var(--ink);
   cursor: pointer;
-  transition: background .15s ease;
+  transition: background .15s ease, border-color .15s ease;
+  max-width: 260px;
 }
-.switcher:hover {
-  background: var(--surface);
+.switcher:hover { background: var(--surface); border-color: var(--line-strong); }
+.switcher:disabled { cursor: default; opacity: .9; }
+
+.label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
-.switcher .av {
+
+.av {
   width: 22px;
   height: 22px;
   border-radius: 6px;
@@ -25,8 +35,96 @@
   font-size: 10px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
-.switcher .chev {
+.avAdd { background: var(--primary-light); color: var(--primary); }
+
+.chev { color: var(--soft); margin-left: 2px; }
+
+/* ─── Dropdown menu ──────────────────────────────────────────────────── */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 280px;
+  max-width: 340px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 50;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  text-align: left;
+}
+.menuItem:hover { background: var(--surface); }
+
+.menuItemActive { background: var(--primary-light); }
+.menuItemActive:hover { background: var(--primary-light); }
+
+.menuItemLabel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.menuItemName {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.menuItemSub {
+  font-size: 11.5px;
   color: var(--soft);
-  margin-left: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.tick { color: var(--primary); flex-shrink: 0; }
+
+.menuItemCreate {
+  margin-top: 4px;
+  border-top: 1px solid var(--line-soft);
+  border-radius: 0 0 8px 8px;
+  padding-top: 10px;
+  color: var(--primary-ink);
+  font-weight: 500;
+}
+.menuItemCreate:hover { background: var(--surface); }
+
+/* ─── Skeleton (loading state) ───────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { opacity: .6; }
+  50%  { opacity: .9; }
+  100% { opacity: .6; }
+}
+.skeleton {
+  background: var(--surface);
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+.skeletonText {
+  display: inline-block;
+  width: 90px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--surface);
+  animation: shimmer 1.2s ease-in-out infinite;
 }

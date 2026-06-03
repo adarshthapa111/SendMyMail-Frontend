@@ -1,0 +1,54 @@
+/* Shared layout for the Create + Edit pages.
+   Matches doc/mockups/client_create.html — .back link, .head, .card.pad, .foot. */
+
+.narrow {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 14px;
+  transition: color .12s ease;
+}
+.back:hover { color: var(--ink); }
+
+.head {
+  margin-bottom: 22px;
+}
+.sub {
+  margin-top: 4px;
+}
+.slug {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ink);
+  font-weight: 600;
+  padding: 1px 6px;
+  background: var(--surface);
+  border-radius: 5px;
+  font-size: 12.5px;
+}
+
+.spinner {
+  padding: 60px 0;
+  display: grid;
+  place-items: center;
+}
+
+/* Danger zone — sits below the form on the edit page */
+.danger {
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 16px);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+.dangerTitle { margin: 0 0 4px; }
+.dangerBody  { margin: 0 0 14px; }

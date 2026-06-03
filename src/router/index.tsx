@@ -34,6 +34,7 @@ const Dashboard      = lazy(() => import('../pages/dashboard').then(m => ({ defa
 const Clients = {
   List:   lazy(() => import('../pages/clients').then(m => ({ default: m.ClientsList }))),
   Create: lazy(() => import('../pages/clients').then(m => ({ default: m.ClientCreate }))),
+  Edit:   lazy(() => import('../pages/clients').then(m => ({ default: m.ClientEdit }))),
 };
 
 const Contacts = {
@@ -123,6 +124,7 @@ export const router = createBrowserRouter([
       /* Clients */
       { path: '/clients',                                      element: withSuspense(<Clients.List />) },
       { path: '/clients/new',                                  element: <RoleGated min="admin">{withSuspense(<Clients.Create />)}</RoleGated> },
+      { path: '/clients/:clientId/edit',                       element: <RoleGated min="admin"><ClientScoped>{withSuspense(<Clients.Edit />)}</ClientScoped></RoleGated> },
 
       /* Per-client */
       { path: '/clients/:clientId/contacts',                   element: <ClientScoped>{withSuspense(<Contacts.List />)}</ClientScoped> },

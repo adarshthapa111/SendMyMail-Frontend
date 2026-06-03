@@ -6,9 +6,11 @@
    with a stored JWT), guards render null instead of redirecting — so the user
    doesn't see a flash of /login before /dashboard. */
 
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setActive } from '../../store/slices/clientsSlice';
+import { writeActiveClientId } from '../../hooks/useClients';
 
 interface GuardProps {
   children: ReactNode;
@@ -62,8 +64,20 @@ export function AgencyReady({ children }: GuardProps) {
 import { decodeJwt } from '../../lib/api/jwt';
 
 export function ClientScoped({ children }: GuardProps) {
+  const dispatch = useAppDispatch();
   const { status } = useAppSelector((s) => s.auth);
+  const activeClientId = useAppSelector((s) => s.clients.activeClientId);
   const { clientId } = useParams();
+
+  // Sync the URL :clientId into the clients slice so the topbar switcher
+  // reflects the route. Side effect — must run in useEffect.
+  useEffect(() => {
+    if (clientId && clientId !== activeClientId) {
+      writeActiveClientId(clientId);
+      dispatch(setActive(clientId));
+    }
+  }, [clientId, activeClientId, dispatch]);
+
   if (status === 'authenticating') return null;
   if (status === 'anonymous') return <Navigate to="/login" replace />;
   if (!clientId) return <Navigate to="/clients" replace />;

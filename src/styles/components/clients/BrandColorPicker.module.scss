@@ -1,0 +1,27 @@
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  box-shadow: 0 1px 2px rgba(43, 38, 32, 0.08);
+}
+.swatch:hover { transform: scale(1.06); }
+.swatch:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.selected {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--ink);
+}
+.selected:hover { transform: none; }

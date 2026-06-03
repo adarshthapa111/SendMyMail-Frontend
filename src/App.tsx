@@ -6,9 +6,11 @@
 import { Toaster } from 'react-hot-toast';
 import { AppRouter } from './router';
 import { useBootstrapAuth } from './hooks/useBootstrapAuth';
+import { useClientsBootstrap } from './hooks/useClientsBootstrap';
 
 export default function App() {
   useBootstrapAuth();
+  useClientsBootstrap();
   return (
     <>
       <AppRouter />

@@ -1,0 +1,167 @@
+/* Real <table> styled to match doc/mockups/clients_list.html.
+   The wrapper card gets the rounded border + shadow; the table itself
+   sits inside with collapsed borders + per-cell padding. */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 16px);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;          /* clip the table corners cleanly */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding: 14px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table thead th.r { text-align: right; }
+
+.table tbody td {
+  padding: 16px 18px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink);
+  vertical-align: middle;
+}
+.table tbody td.r { text-align: right; }
+
+.row { cursor: pointer; transition: background .12s ease; }
+.row:hover { background: var(--surface); }
+.row:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* ─── Client cell (avatar + name + small) ─────────────────────────── */
+
+.colClient { min-width: 220px; }
+
+.client {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.av {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  flex-shrink: 0;
+}
+.clientText { min-width: 0; }
+.clientText b {
+  font-weight: 600;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+.clientText small {
+  display: block;
+  color: var(--soft);
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+/* ─── Metric cells ────────────────────────────────────────────────── */
+
+.tnum { font-variant-numeric: tabular-nums; }
+.dash { color: var(--soft); }
+
+.openrate {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.minibar {
+  width: 60px;
+  height: 6px;
+  background: var(--surface);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.minibar > i {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+.score {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Status pill (matches mockup .pill.* variants) ──────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.pillDot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.pillGreen { background: var(--green-bg); color: var(--green-tx); }
+.pillBlue  { background: var(--blue-bg);  color: var(--blue);     }
+.pillGray  { background: var(--surface);  color: var(--muted);    }
+.pillRed   { background: var(--red-bg);   color: var(--red);      }
+
+/* ─── Hover-revealed "Open →" link ───────────────────────────────── */
+
+.openLink {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 12.5px;
+  opacity: 0;
+  transition: opacity .12s ease;
+  white-space: nowrap;
+}
+.row:hover .openLink,
+.row:focus-visible .openLink { opacity: 1; }
+
+/* ─── Mobile — collapse to a vertical card list ──────────────────── */
+
+@media (max-width: 920px) {
+  .table thead { display: none; }
+  .table tbody td { display: none; }
+  .table tbody td:first-child,
+  .table tbody td:nth-last-child(2),     /* status pill */
+  .table tbody td:last-child {           /* open link */
+    display: table-cell;
+  }
+  .clientText b, .clientText small { max-width: 60vw; }
+}
