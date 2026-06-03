@@ -1,0 +1,63 @@
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title { margin: 0; }
+.pmeta {
+  color: var(--soft);
+  font-size: 12.5px;
+  margin-top: 2px;
+}
+
+.legend {
+  display: flex;
+  gap: 15px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dotIndigo,
+.dotTerra {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.dotIndigo { background: var(--indigo, #4B43A8); }
+.dotTerra  { background: var(--primary); }
+
+.svg {
+  display: block;
+  margin-top: 6px;
+}
+
+.notAdded {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--soft);
+  letter-spacing: -0.01em;
+  padding: 80px 0 90px;
+  text-align: center;
+  background: linear-gradient(180deg, var(--card) 0%, var(--surface) 100%);
+  border-radius: 12px;
+  margin-top: 8px;
+}

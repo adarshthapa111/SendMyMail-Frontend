@@ -1,0 +1,22 @@
+.split {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 22px;
+  margin-bottom: 26px;
+}
+
+@media (max-width: 1080px) {
+  .split { grid-template-columns: 1fr; }
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.spinner {
+  padding: 80px 0;
+  display: grid;
+  place-items: center;
+}

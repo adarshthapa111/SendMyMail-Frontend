@@ -1,0 +1,77 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1080px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.tile {
+  padding: 22px 24px;
+  border-left: 1px solid var(--line-soft);
+  border-top:  0;
+}
+.tile:first-child { border-left: 0; }
+
+@media (max-width: 1080px) {
+  .tile:nth-child(2n+1) { border-left: 0; }
+  .tile:nth-child(n+3)  { border-top: 1px solid var(--line-soft); }
+}
+
+.lbl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.lbl svg { color: var(--soft); }
+
+.num {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.05;
+  margin-top: 12px;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  word-break: break-word;
+}
+.accent .num { color: var(--primary); }
+
+.foot {
+  font-size: 12px;
+  color: var(--soft);
+  margin-top: 6px;
+}
+.up   { color: var(--green-tx); font-weight: 600; }
+.down { color: var(--red);      font-weight: 600; }
+.footMuted { color: var(--soft); }
+
+/* ─── Empty-tile variant ─────────────────────────────────────────────
+   When a metric isn't available yet (Feature 10 dependency), we keep the
+   label but swap the big number for a quiet "Not added yet" line. */
+
+.tileEmpty {
+  background: linear-gradient(180deg, var(--card) 0%, var(--surface) 100%);
+}
+.tileEmpty .lbl {
+  color: var(--soft);
+}
+.notAdded {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--soft);
+  margin-top: 14px;
+  letter-spacing: -0.01em;
+}

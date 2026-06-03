@@ -1,0 +1,42 @@
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  color: var(--primary);
+  margin-bottom: 9px;
+}
+
+.sub {
+  margin-top: 12px;
+  max-width: 540px;
+  line-height: 1.55;
+}
+.sub b { color: var(--ink); font-weight: 600; }
+
+.rangePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .14s, transform .12s;
+}
+.rangePill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}

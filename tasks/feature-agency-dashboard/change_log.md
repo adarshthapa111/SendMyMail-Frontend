@@ -309,6 +309,124 @@ src/
 
 ## Changes (newest first)
 
+### 2026-06-03 · ✅ Done — PR 2 (Agency Dashboard page)
+
+The post-login hero ships. `/dashboard` is no longer a Placeholder — it's a
+real screen pulling live data from a single backend endpoint, with honest
+empty states for every metric that depends on Feature 10 (event ingestion).
+
+**Backend** (`sendmymail-backend`):
+- `src/lib/overview.ts` *(new)* — `computeOverview()` query +
+  `invalidateOverview()` cache-bust helper. In-memory cache keyed by
+  `(agencyId, userId)`, 60s TTL, LRU-trim at 1000 entries. Scope-aware:
+  `member` / `viewer` users see only their `UserClientScope` clients.
+- `src/routes/agencies.ts` — added `GET /v1/agencies/overview`
+  (`requireAuth()` only — all roles read it). Returns the documented
+  shape: `{ greeting, kpis, sending_chart, deliverability, plan_usage,
+  top_clients }` with `available: boolean` per metric.
+- `src/routes/clients.ts` — wired `invalidateOverview(agencyId)` into
+  POST/PATCH/DELETE handlers so the dashboard reflects client
+  create/update/archive immediately, not after the 60s TTL.
+- Plan quotas: hardcoded in `PLAN_QUOTAS` for V1 — trial 1K /
+  starter 10K / growth 50K / scale 250K. Moves to a Plan table when
+  Feature 14 (billing) ships.
+- No schema changes; no new deps.
+
+**Frontend** (`sendmymail-frontend`):
+- `src/lib/api/overview.ts` *(new)* — `getOverview()` + `OverviewPayload`
+  type mirroring the backend response exactly.
+- `src/components/dashboard/` *(new — 8 components + 7 SCSS Modules)*:
+  - `EmptyMetric` — the workhorse. `inline` variant renders `—` for
+    table cells / KPI tiles; `block` variant renders a soft dashed
+    card (icon + title + body + optional CTA) for the chart + gauge
+    + top-clients empty states. Every Feature-10-deferred block uses
+    this — one component, one consistent treatment.
+  - `Hero` — eyebrow date (`Sunday · 3 Jun`) + Bricolage H1
+    (`Namaste, {firstName} 👋`) + adaptive subtitle that softens
+    when send-metrics aren't available + "Last 30 days" range pill.
+  - `KPIRow` + `KPITile` — 4-up grid (Active clients / Emails sent /
+    Avg open rate / Revenue tracked). `KPITile` accepts a generic
+    `OverviewKpi` and formats via `format: 'integer' | 'percent' |
+    'currency-npr'`. Lakh/crore shorthand for NPR figures
+    (`रू 1.2L`, `रू 3.4Cr`). Inline EmptyMetric when `available: false`.
+  - `SendingChart` — pure inline SVG, two-series line chart (sent +
+    opened) with terra + indigo strokes + a soft indigo area-fill
+    under the sent series. X-axis labels at 4 evenly-spaced positions
+    with "Today" on the right. Empty state: "Your first chart shows
+    up after your first campaign send".
+  - `DeliverabilityGauge` — circular SVG gauge using the
+    `stroke-dasharray` arc trick (radius 35 → circumference 219.9 →
+    dashoffset = circ × (1 − score/100)). Tinted-chip label based on
+    score band. 3 kv rows for Gmail inbox / Hard bounce / Complaint
+    rate. Empty state when unavailable.
+  - `PlanUsage` — kv row + horizontal progress bar showing plan +
+    `sent_this_month / monthly_quota`. `sent_this_month` is 0 in V1.
+  - `ClientsHealthList` — top-5 clients as a card-row list: avatar
+    gradient + name + sub (campaign subject OR "Updated N hours
+    ago") + open-rate + revenue (inline EmptyMetric until Feature
+    10) + status pill. Row click → `/clients/:id/contacts`.
+    Brand-new agency (zero clients) → renders an FTUX hero with
+    "Add your first client" CTA instead of the row list.
+- `src/pages/dashboard.tsx` — replaced the Placeholder with the real
+  orchestrator. Single `getOverview()` on mount; spinner while loading;
+  toast on non-401 failure; assembles Hero / KPIRow / two-column
+  (Chart + (Gauge + PlanUsage)) / ClientsHealthList.
+- No new npm packages. Inline SVG for chart + gauge — the dashboard
+  chunk is 14.7 KB / gzip 5.1 KB total.
+
+**Verify**:
+- Backend `tsc --noEmit` clean. Frontend `tsc -b` + `vite build` clean.
+- Curl smoke: `GET /v1/agencies/overview` with owner JWT returns the
+  full payload — real `name: "Sabitra"`, `active_clients.value: 1`,
+  `top_clients[0].name: "खुकुरी मसला"`, plan `trial` with 1000-email
+  quota, every other metric correctly flagged `available: false`.
+- Cache invalidation verified: client mutations clear the agency's
+  overview cache, so the next fetch reflects the change without
+  waiting 60s.
+- Frontend lint: 0 new issues. The 10 pre-existing ones are untouched.
+- End-to-end browser flow: `/dashboard` → greeting with real first
+  name + today's date → 4 KPI tiles (active_clients shows the real
+  count, the rest show `—`) → SendingChart shows the empty-state
+  card → DeliverabilityGauge shows empty state → PlanUsage shows
+  `Trial · 0 / 1K` with a zero-fill bar → ClientsHealthList shows
+  the agency's top 5 clients.
+
+**Decisions made during implementation**:
+- **`/v1/agencies/overview` not `/v1/agency/overview`** — kept on the
+  existing plural router mount; the spec doc is the outlier.
+- **Inline SVG, not recharts** — saves ~80 KB gzipped and a build-step
+  config quirk for two charts that are ≤30 lines of SVG each.
+- **`KPITile` formats values internally** rather than expecting
+  pre-formatted strings (locale + lakh/crore stays in the tile).
+- **`Hero`'s subtitle is data-aware**: 3 distinct states (zero
+  clients → CTA copy; send-metrics-unavailable → first-campaign copy;
+  otherwise → real numbers). One component, no flicker.
+- **`top_clients.status`** uses the real `ClientStatus` enum
+  (`trial / active / paused / archived`) — not the mockup's invented
+  `healthy / watch / setup` labels (those need event data).
+- **`change_30d` hardcoded to 0** for `active_clients`. We don't
+  store historical counts; FE renders `—` via the null-handling path.
+
+**Deviations from the plan / mockup**:
+- **Plan said `brand_color`**; schema has `avatarColor`. API response
+  uses `avatar_color` (snake-case) — FE just maps.
+- **Top-5 ordering**: plan said `last_activity_iso DESC`. V1 uses
+  `updatedAt DESC` (closest proxy until events ingest).
+- **No skeleton loaders** during initial fetch — centered spinner
+  only.
+- **Range pill is paint-only V1.** Date-range picker arrives with
+  Feature 10 reporting.
+
+**What this unlocks**:
+- /dashboard is a real screen, not a placeholder. New users land
+  somewhere that explains what to do next.
+- The `OverviewPayload` shape + `available`-per-metric contract is
+  the template for any future "fully-baked dashboard" page.
+- `invalidateOverview` is the template for cache-busting any other
+  cached endpoint we add later.
+- Every Feature-10-deferred metric will light up automatically when
+  ingestion ships — no FE changes needed.
+
 ### 2026-06-02 · 🔀 Sequencing change — `feature-client-management` lands before PR 2
 
 PR 1 of this feature shipped the clients read path, but every "Create your
