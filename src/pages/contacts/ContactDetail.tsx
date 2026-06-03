@@ -12,7 +12,7 @@ import { useContacts } from '../../hooks/useContacts';
 import { useLists }    from '../../hooks/useLists';
 import { listTags, type Tag } from '../../lib/api/tags';
 import { getContact, type Contact } from '../../lib/api/contacts';
-import { addContactsToList } from '../../lib/api/lists';
+import { addContactsToList, updateMembershipStatus } from '../../lib/api/lists';
 import { useAppDispatch } from '../../store/hooks';
 import { upsertContact } from '../../store/slices/contactsSlice';
 import { bumpMemberCount } from '../../store/slices/listsSlice';
@@ -58,6 +58,7 @@ export function ContactDetail() {
   const [submitting,  setSubmitting]  = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [tags,        setTags]        = useState<Tag[]>([]);
+  const [subBusyListId, setSubBusyListId] = useState<string | null>(null);
 
   const contact: Contact | null = cached ?? fetched;
   const loading = !contact && fetching;
@@ -149,6 +150,31 @@ export function ContactDetail() {
     finally { setSubmitting(false); }
   }
 
+  /* Flip per-list subscription status. Toast feedback; optimistic update of
+     `fetched` so the pill + button flip instantly without a refetch. */
+  async function onToggleSubscription(listId: string, currentStatus: 'subscribed' | 'unsubscribed' | 'pending') {
+    if (!contact || !clientId) return;
+    const next = currentStatus === 'subscribed' ? 'unsubscribed' : 'subscribed';
+    setSubBusyListId(listId);
+    try {
+      await withFormToast(
+        updateMembershipStatus(clientId, listId, contact.id, next),
+        {
+          loading: next === 'unsubscribed' ? 'Unsubscribing…' : 'Re-subscribing…',
+          success: next === 'unsubscribed' ? 'Unsubscribed from list' : 'Re-subscribed to list',
+        },
+      );
+      // Optimistically update the contact's list memberships locally
+      const updated: Contact = {
+        ...contact,
+        lists: contact.lists.map((l) => l.listId === listId ? { ...l, status: next } : l),
+      };
+      setFetched(updated);
+      dispatch(upsertContact(updated));
+    } catch { /* toast shown */ }
+    finally { setSubBusyListId(null); }
+  }
+
   const subscribedListIds = contact.lists.filter((l) => l.status === 'subscribed').map((l) => l.listId);
 
   return (
@@ -202,12 +228,22 @@ export function ContactDetail() {
                 {contact.lists.map((l) => (
                   <div key={l.listId} className={styles.listRow}>
                     <Link to={`/clients/${clientId}/lists`} className={styles.listName}>{l.listName}</Link>
-                    {l.status === 'subscribed'
-                      ? <Pill variant="green">Subscribed</Pill>
-                      : l.status === 'pending'
-                        ? <Pill variant="amber">Pending</Pill>
-                        : <Pill variant="gray">Unsubscribed</Pill>
-                    }
+                    <div className={styles.listRight}>
+                      {l.status === 'subscribed'
+                        ? <Pill variant="green">Subscribed</Pill>
+                        : l.status === 'pending'
+                          ? <Pill variant="amber">Pending</Pill>
+                          : <Pill variant="gray">Unsubscribed</Pill>
+                      }
+                      <button
+                        type="button"
+                        className={styles.subBtn}
+                        disabled={subBusyListId === l.listId}
+                        onClick={() => onToggleSubscription(l.listId, l.status)}
+                      >
+                        {l.status === 'subscribed' ? 'Unsubscribe' : 'Re-subscribe'}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

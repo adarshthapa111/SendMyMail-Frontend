@@ -5,11 +5,13 @@ import styles from '@styles/components/contacts/ContactsTable.module.scss';
 
 interface Props {
   items: Contact[];
+  /** Optional bulk-select state. If omitted, the checkbox column is hidden. */
+  selectedIds?: Set<string>;
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: () => void;
 }
 
-/* Maps the `source` value to a small icon + label.
-   Only `manual` + `csv_import` are produced in V1 — the rest light up with
-   their respective features. */
+/* Maps the `source` value to a small icon + label. */
 function SourceCell({ source }: { source: string | null }) {
   if (source === 'csv_import') return <span className={styles.src}><IconFileImport size={15} /> CSV import</span>;
   if (source === 'form')       return <span className={styles.src}><IconForms       size={15} /> Form</span>;
@@ -38,15 +40,33 @@ function nameOf(c: Contact): string {
   return parts.join(' ') || '—';
 }
 
-export function ContactsTable({ items }: Props) {
+export function ContactsTable({ items, selectedIds, onToggleSelect, onToggleSelectAll }: Props) {
   const navigate = useNavigate();
   const { clientId } = useParams<{ clientId: string }>();
+  const showCheckbox = !!selectedIds && !!onToggleSelect;
+
+  // Header checkbox state: all selected on page / some selected / none
+  const allOnPageSelected = showCheckbox && items.length > 0 && items.every((c) => selectedIds!.has(c.id));
+  const someSelected      = showCheckbox && items.some((c) => selectedIds!.has(c.id));
 
   return (
     <div className={styles.card}>
       <table className={styles.table}>
         <thead>
           <tr>
+            {showCheckbox ? (
+              <th className={styles.checkboxCell}>
+                <input
+                  type="checkbox"
+                  aria-label={allOnPageSelected ? 'Deselect all on this page' : 'Select all on this page'}
+                  checked={allOnPageSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = someSelected && !allOnPageSelected;
+                  }}
+                  onChange={() => onToggleSelectAll?.()}
+                />
+              </th>
+            ) : null}
             <th>Email</th>
             <th>Name</th>
             <th>Tags</th>
@@ -57,47 +77,64 @@ export function ContactsTable({ items }: Props) {
           </tr>
         </thead>
         <tbody>
-          {items.map((c) => (
-            <tr
-              key={c.id}
-              className={styles.row}
-              tabIndex={0}
-              onClick={() => navigate(`/clients/${clientId}/contacts/${c.id}`)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  navigate(`/clients/${clientId}/contacts/${c.id}`);
-                }
-              }}
-            >
-              <td className={styles.email}>{c.email}</td>
-              <td>{nameOf(c)}</td>
-              <td>
-                {c.tags.length === 0 ? (
-                  <span className={styles.dash}>—</span>
-                ) : (
-                  <div className={styles.tags}>
-                    {c.tags.slice(0, 3).map((t) => (
-                      <span key={t} className={`${styles.pill} ${styles.pillPurple}`}>{t}</span>
-                    ))}
-                    {c.tags.length > 3 ? <span className={styles.more}>+{c.tags.length - 3}</span> : null}
-                  </div>
-                )}
-              </td>
-              <td>
-                {c.lists.length === 0 ? (
-                  <span className={styles.dash}>—</span>
-                ) : (
-                  c.lists.map((l) => l.listName).join(', ')
-                )}
-              </td>
-              <td className={styles.muted}>{fmtAdded(c.createdAt)}</td>
-              <td><SourceCell source={c.source} /></td>
-              <td className={styles.r}>
-                <span className={styles.openLink}>Open →</span>
-              </td>
-            </tr>
-          ))}
+          {items.map((c) => {
+            const isSelected = showCheckbox && selectedIds!.has(c.id);
+            return (
+              <tr
+                key={c.id}
+                className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}
+                tabIndex={0}
+                onClick={() => navigate(`/clients/${clientId}/contacts/${c.id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    navigate(`/clients/${clientId}/contacts/${c.id}`);
+                  }
+                }}
+              >
+                {showCheckbox ? (
+                  <td
+                    className={styles.checkboxCell}
+                    onClick={(e) => { e.stopPropagation(); onToggleSelect!(c.id); }}
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${c.email}`}
+                      checked={isSelected}
+                      onChange={() => onToggleSelect!(c.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </td>
+                ) : null}
+                <td className={styles.email}>{c.email}</td>
+                <td>{nameOf(c)}</td>
+                <td>
+                  {c.tags.length === 0 ? (
+                    <span className={styles.dash}>—</span>
+                  ) : (
+                    <div className={styles.tags}>
+                      {c.tags.slice(0, 3).map((t) => (
+                        <span key={t} className={`${styles.pill} ${styles.pillPurple}`}>{t}</span>
+                      ))}
+                      {c.tags.length > 3 ? <span className={styles.more}>+{c.tags.length - 3}</span> : null}
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {c.lists.length === 0 ? (
+                    <span className={styles.dash}>—</span>
+                  ) : (
+                    c.lists.map((l) => l.listName).join(', ')
+                  )}
+                </td>
+                <td className={styles.muted}>{fmtAdded(c.createdAt)}</td>
+                <td><SourceCell source={c.source} /></td>
+                <td className={styles.r}>
+                  <span className={styles.openLink}>Open →</span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

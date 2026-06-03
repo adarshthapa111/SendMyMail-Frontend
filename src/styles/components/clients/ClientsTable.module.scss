@@ -153,6 +153,54 @@
 .row:hover .openLink,
 .row:focus-visible .openLink { opacity: 1; }
 
+/* ─── Row-level Archive / Restore actions ─────────────────────────── */
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font: inherit;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .12s ease, color .12s ease, border-color .12s ease, opacity .12s ease;
+}
+
+/* Archive: hover-revealed on active rows (less visual noise in the normal case) */
+.actionArchive {
+  color: var(--muted);
+  opacity: 0;
+}
+.row:hover .actionArchive,
+.row:focus-visible .actionArchive { opacity: 1; }
+.actionArchive:hover {
+  background: var(--red-bg);
+  color: var(--red);
+  border-color: rgba(190, 70, 40, 0.30);
+}
+
+/* Restore: always visible on archived rows (the action is the only useful
+   thing you can do from the row in this state). */
+.actionRestore {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary-dark);
+}
+.actionRestore:hover { background: var(--primary-dark); }
+
+/* Archived rows get a subtle muted treatment so they're visually distinct */
+.rowArchived {
+  background: var(--surface);
+  opacity: 0.85;
+}
+.rowArchived:hover { opacity: 1; background: var(--surface); }
+.rowArchived .clientText b { color: var(--muted); }
+
 /* ─── Mobile — collapse to a vertical card list ──────────────────── */
 
 @media (max-width: 920px) {

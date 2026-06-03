@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   setLoading, setPage, setError,
-  setSearch as setSearchAction, setListFilter, setTagFilter,
+  setSearch as setSearchAction, setListFilter, setTagFilter, gotoPage,
   addContact, upsertContact, removeContact, clearContacts,
 } from '../store/slices/contactsSlice';
 import {
@@ -51,6 +51,7 @@ export function useContacts(clientId: string | null) {
   const setSearch     = useCallback((q: string)        => dispatch(setSearchAction(q)),     [dispatch]);
   const setList       = useCallback((id: string | null) => dispatch(setListFilter(id)),     [dispatch]);
   const setTag        = useCallback((t: string | null) => dispatch(setTagFilter(t)),        [dispatch]);
+  const goToPage      = useCallback((n: number)        => dispatch(gotoPage(n)),            [dispatch]);
 
   const create = useCallback(async (body: ContactCreateBody) => {
     if (!clientId) throw new Error('No active client');
@@ -79,6 +80,7 @@ export function useContacts(clientId: string | null) {
     setSearch,
     setList,
     setTag,
+    goToPage,
     create,
     update,
     remove,

@@ -1,5 +1,7 @@
 import { useCallback, useEffect } from 'react';
+import { useStore } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import type { RootState } from '../store';
 import {
   setLoading, setLists, setError,
   addList, upsertList, removeList, bumpMemberCount, clearLists,
@@ -18,12 +20,22 @@ import { ApiError } from '../lib/api/client';
 /* Hook for lists CRUD + membership. Loads on first use (per client). */
 export function useLists(clientId: string | null) {
   const dispatch = useAppDispatch();
+  const store = useStore<RootState>();
   const state = useAppSelector((s) => s.lists);
 
-  // Fetch once per (clientId) — won't re-fetch when items mutate (slice handles that)
+  // Fetch lists for a clientId when needed. We deliberately do NOT include
+  // state.clientId / state.status in the deps — dispatch(setLoading)
+  // changes state.status, which would re-run this effect, which would
+  // cleanup-cancel the in-flight request, dispatching nothing and leaving
+  // status stuck on 'loading' forever. Instead we read the latest slice
+  // state via store.getState() inside the effect (which doesn't subscribe),
+  // so the effect only re-runs when clientId itself changes.
   useEffect(() => {
     if (!clientId) return;
-    if (state.clientId === clientId && state.status !== 'idle') return;
+    const slice = store.getState().lists;
+    if (slice.clientId === clientId && (slice.status === 'loaded' || slice.status === 'loading')) {
+      return;     // already have data (or a fetch is already in flight)
+    }
     let cancelled = false;
     dispatch(setLoading({ clientId }));
     listLists(clientId)
@@ -34,7 +46,7 @@ export function useLists(clientId: string | null) {
         dispatch(setError(err instanceof Error ? err.message : 'Failed to load lists'));
       });
     return () => { cancelled = true; };
-  }, [clientId, state.clientId, state.status, dispatch]);
+  }, [clientId, dispatch, store]);
 
   const create = useCallback(async (body: ListCreateBody) => {
     if (!clientId) throw new Error('No active client');

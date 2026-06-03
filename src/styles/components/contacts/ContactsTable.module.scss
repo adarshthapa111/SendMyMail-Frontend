@@ -42,6 +42,24 @@
   outline: 2px solid var(--primary);
   outline-offset: -2px;
 }
+.rowSelected {
+  background: var(--primary-light) !important;
+}
+.rowSelected:hover {
+  background: var(--primary-light) !important;
+}
+
+.checkboxCell {
+  width: 44px;
+  padding-left: 18px !important;
+  padding-right: 0 !important;
+}
+.checkboxCell input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
 
 .email {
   font-weight: 600;

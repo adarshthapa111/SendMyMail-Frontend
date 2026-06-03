@@ -8,3 +8,11 @@ export { ContactTagInput }      from './ContactTagInput';
 export { ListsTable }           from './ListsTable';
 export { ListFormDialog }       from './ListFormDialog';
 export { AddToListDialog }      from './AddToListDialog';
+
+/* PR 2 additions */
+export { FileDropZone, type ParsedPreview } from './FileDropZone';
+export { ColumnMapper }         from './ColumnMapper';
+export { ImportProgressDialog } from './ImportProgressDialog';
+export { ImportHistoryDialog }  from './ImportHistoryDialog';
+export { BulkActionBar }        from './BulkActionBar';
+export { ConfirmDialog }        from './ConfirmDialog';

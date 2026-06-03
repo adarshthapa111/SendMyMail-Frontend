@@ -26,6 +26,10 @@ export function ClientSwitcher() {
   const navigate = useNavigate();
   const location = useLocation();
   const { status, items, active, setActive } = useClients();
+  /* Archived clients are kept in the slice (so the /clients Archived tab can
+     show them), but the topbar switcher only lists ACTIVE clients — you
+     can't operationally switch into an archived workspace. */
+  const liveItems = items.filter((c) => c.status !== 'archived');
 
   function pickClient(id: string) {
     setActive(id);
@@ -53,14 +57,15 @@ export function ClientSwitcher() {
     );
   }
 
-  // No clients yet — single CTA button
-  if (items.length === 0) {
+  // No ACTIVE clients — single CTA button (the user might have archived all
+  // of them, but we still want the "Add your first" surface to be obvious).
+  if (liveItems.length === 0) {
     return (
       <button
         className={styles.switcher}
         type="button"
-        onClick={() => navigate('/clients/new')}
-        title="You don't have any clients yet"
+        onClick={() => navigate('/clients?new=1')}
+        title={items.length === 0 ? "You don't have any clients yet" : "All your clients are archived"}
       >
         <span className={styles.av} style={{ background: FALLBACK_GRADIENT }}>
           <IconPlus size={12} />
@@ -70,7 +75,7 @@ export function ClientSwitcher() {
     );
   }
 
-  const display = active ?? items[0]!;
+  const display = active && active.status !== 'archived' ? active : liveItems[0]!;
 
   return (
     <div className={styles.wrap} ref={wrapRef}>
@@ -90,7 +95,7 @@ export function ClientSwitcher() {
 
       {open ? (
         <div className={styles.menu} role="listbox">
-          {items.map((c) => {
+          {liveItems.map((c) => {
             const isActive = c.id === display.id;
             return (
               <button
@@ -116,7 +121,7 @@ export function ClientSwitcher() {
           <button
             type="button"
             className={`${styles.menuItem} ${styles.menuItemCreate}`}
-            onClick={() => { setOpen(false); navigate('/clients/new'); }}
+            onClick={() => { setOpen(false); navigate('/clients?new=1'); }}
           >
             <span className={`${styles.av} ${styles.avAdd}`}>
               <IconPlus size={12} />

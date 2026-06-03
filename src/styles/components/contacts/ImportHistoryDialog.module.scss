@@ -1,0 +1,60 @@
+.spinner {
+  padding: 40px 0;
+  display: grid;
+  place-items: center;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  margin-bottom: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background .12s ease, border-color .12s ease;
+}
+.row:hover { background: var(--surface); border-color: var(--line-strong); }
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.main { min-width: 0; }
+.filename {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sub {
+  color: var(--soft);
+  font-size: 12px;
+  margin-top: 2px;
+}

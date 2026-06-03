@@ -4,7 +4,7 @@ import { Heading, Text, Card, Button, Spinner } from '../../components/ui';
 import { IconArrowLeft, IconArchive } from '@tabler/icons-react';
 import { ClientForm, ArchiveDialog, type ClientFormValues } from '../../components/clients';
 import { updateClient, archiveClient } from '../../lib/api/clients';
-import { upsertClient, removeClient } from '../../store/slices/clientsSlice';
+import { upsertClient } from '../../store/slices/clientsSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { useClients } from '../../hooks/useClients';
 import { withFormToast } from '../../lib/toast';
@@ -61,14 +61,17 @@ export function ClientEdit() {
     if (!client) return;
     setArchiving(true);
     try {
-      await withFormToast(
+      const res = await withFormToast(
         archiveClient(client.id),
         {
           loading: 'Archiving client…',
           success: `Archived ${client.name}`,
         },
       );
-      dispatch(removeClient(client.id));
+      // upsertClient (not removeClient) — archived clients stay in the slice
+      // so the /clients page's Archived tab can show them. The slice handles
+      // active-id fallback automatically when an archived row was active.
+      dispatch(upsertClient(res.data.client));
       navigate('/clients');
     } catch { /* toast shown */ }
     finally { setArchiving(false); setArchiveOpen(false); }

@@ -30,21 +30,26 @@ const clientsSlice = createSlice({
       state.status = 'loading';
       state.error = null;
     },
-    /* Load the list. If activeClientId is still in the new list, keep it;
-       otherwise default to the first item (or null when the list is empty). */
+    /* Load the list. If activeClientId is still in the new list AND it's
+       not archived, keep it; otherwise default to the first NON-ARCHIVED
+       item (or null when there are none). Archived clients are now kept in
+       items[] for the Archived tab — but they're never picked as the active. */
     setClients(state, action: PayloadAction<{ items: Client[]; restoredActiveId?: string | null }>) {
       const { items, restoredActiveId } = action.payload;
       state.status = 'loaded';
       state.items = items;
       state.error = null;
 
-      const stillValid = restoredActiveId && items.some((c) => c.id === restoredActiveId);
-      if (stillValid) {
+      const isPickable = (id: string) =>
+        items.some((c) => c.id === id && c.status !== 'archived');
+      const firstActive = items.find((c) => c.status !== 'archived');
+
+      if (restoredActiveId && isPickable(restoredActiveId)) {
         state.activeClientId = restoredActiveId;
-      } else if (state.activeClientId && items.some((c) => c.id === state.activeClientId)) {
-        // existing active is still valid
+      } else if (state.activeClientId && isPickable(state.activeClientId)) {
+        // existing active is still valid + non-archived
       } else {
-        state.activeClientId = items[0]?.id ?? null;
+        state.activeClientId = firstActive?.id ?? null;
       }
     },
     /* User picked a different client in the top-bar switcher. */
@@ -65,6 +70,13 @@ const clientsSlice = createSlice({
       const i = state.items.findIndex((c) => c.id === action.payload.id);
       if (i >= 0) state.items[i] = action.payload;
       else        state.items.unshift(action.payload);
+
+      /* If we just flipped the active client to archived, switch the active
+         to the next non-archived client (or null if none remain). */
+      if (action.payload.status === 'archived' && state.activeClientId === action.payload.id) {
+        const next = state.items.find((c) => c.status !== 'archived');
+        state.activeClientId = next?.id ?? null;
+      }
     },
     removeClient(state, action: PayloadAction<string>) {
       const id = action.payload;

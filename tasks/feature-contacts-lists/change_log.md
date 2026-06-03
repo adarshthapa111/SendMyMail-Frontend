@@ -597,6 +597,155 @@ After all 3 PRs land:
 
 ## Changes (newest first)
 
+### 2026-06-03 · ✅ Done — PR 2 (CSV import + bulk actions + per-list unsubscribe)
+
+Real CSV import end-to-end. A user can upload a 5K-row CSV, map columns,
+confirm consent, watch a live progress bar, and have their contacts land in
+the right list. Bulk-action surface ships alongside (multi-select on the
+contacts table → add-to-list / delete). Per-list "Unsubscribe" / "Re-subscribe"
+button on `ContactDetail` closes the last loose end from PR 1.
+
+**Backend** (`sendmymail-backend`):
+- `prisma/schema.prisma` — new `ImportJob` model + `ImportJobStatus` enum
+  (`pending | parsing | importing | done | failed`). Agency / Client /
+  User / List gain `importJobs[]` reverse relations.
+- Migration `20260603153201_contacts_imports` — adds the `import_jobs` table.
+- `src/lib/roleAccounts.ts` *(new)* — `isRoleAccount(email)` /
+  `roleAccountRate(emails[])` + `ROLE_ACCOUNT_REJECT_THRESHOLD = 0.10`.
+  Conservative role-account set (19 localparts: `info`, `admin`, `noreply`,
+  `support`, etc.); deliberately omits `marketing` and `newsletter`
+  (real people use those at small agencies).
+- `src/routes/contactImports.ts` *(new)* — 3 endpoints under
+  `/v1/clients/:clientId/contacts/imports` (`requireRole('admin')`):
+  - `POST /` — multipart upload (multer disk storage, 10 MB cap, `.csv`
+    only). Validates one column maps to `email`, consent non-empty,
+    listId belongs to client. Creates `ImportJob{status:'pending'}` and
+    returns 201 immediately; kicks off async `processImport()` without
+    awaiting.
+  - `GET /` — list past 20 jobs (newest first).
+  - `GET /:jobId` — single job (poll target).
+- Async `processImport()`:
+  1. `parsing` → papaparse `step` pass to count totalRows + collect
+     200-row email sample.
+  2. `roleAccountRate(sample) > 0.10` → `status: 'failed'`,
+     `rejectedReason: 'too_many_role_accounts'`, zero rows imported.
+  3. `importing` → second papaparse `step` pass; buffer 100 rows at a
+     time → `contact.createMany({ skipDuplicates: true })`. Existing
+     `(client_id, email_lower)` rows are skipped (count → `skippedRows`).
+     If `listId` set, query back by `emailLower` and
+     `listContact.createMany({ skipDuplicates: true })` for membership.
+  4. Invalid emails (no `@`, length out of bounds) → `rejectedRows`;
+     in-batch duplicates → `skippedRows`. First 100 errors saved as JSON.
+  5. Progress counters updated max 1×/s (avoid DB hammering).
+  6. On done → `status: 'done'` + `completedAt`. On throw → `'failed'`
+     + `'parse_error'`. Tmp file `unlink()` runs in `finally` regardless.
+- `src/server.ts` — mounts the imports router *before* the CRUD router so
+  `/imports` doesn't get swallowed by the `/:id` parameterized handler.
+- New deps: `multer + @types/multer + papaparse + @types/papaparse`.
+
+**Frontend** (`sendmymail-frontend`):
+- New dep: `papaparse + @types/papaparse` (client-side header preview +
+  row counting before submitting; the streaming itself happens server-side).
+- `src/lib/api/imports.ts` *(new)* — `uploadImport()` (multipart via raw
+  `fetch` to bypass JSON-only `apiCall`), `listImports()`, `getImport()`
+  + `ImportJob` / `ColumnMapping` types.
+- 6 new components under `src/components/contacts/` + matching SCSS Modules:
+  - **`FileDropZone`** — drag-drop + click-to-pick + 10 MB cap + `.csv`
+    filter. Runs papaparse with `preview: 3` to detect headers + grab a
+    sample for the mapper, then a streaming pass to count total rows.
+    "Replace" button for re-pick.
+  - **`ColumnMapper`** — one row per CSV header → `<select>` of standard
+    fields / "Custom field…" / "Don't import". Auto-detects common
+    headers via regex (`email`, `e_mail`, `first_name`, `fname`, `dob`).
+    Banner enforces exactly-one email column.
+  - **`ImportProgressDialog`** — portal modal polling `getImport()` at 1 Hz
+    until terminal. Progress bar + "imported / skipped / rejected" counter
+    tiles + first 6 row errors with "+ N more…" overflow. Done → "View N
+    imported contacts" CTA. Failed → friendly copy per `rejectedReason`
+    + "Try again" CTA. Cannot close while running.
+  - **`ImportHistoryDialog`** — past 20 jobs for this client. Clicking a
+    row opens `ImportProgressDialog` for that job (works for completed
+    jobs too — shows the final tally).
+  - **`BulkActionBar`** — sticky bar at viewport bottom when ≥1 contacts
+    are selected. Ink-colored, slide-up animation, "Add to list" /
+    "Delete N" / × close.
+  - **`ConfirmDialog`** — generic destructive-action modal. Reusable for
+    any future "delete N" flow.
+- `src/pages/contacts/ContactImport.tsx` *(new)* — 4-step wizard (file →
+  list → columns → consent) per `doc/mockups/contact_import.html`.
+  Disabled-submit hint explains exactly why ("Map one column to Email" /
+  "Confirm consent to proceed" / …). On submit opens
+  `ImportProgressDialog` with the new job.
+- `src/components/contacts/ContactsTable.tsx` — optional bulk-select props
+  (`selectedIds`, `onToggleSelect`, `onToggleSelectAll`). When supplied,
+  renders a checkbox column with indeterminate-state header for partial
+  selection. Row click still navigates to detail; checkbox click
+  `stopPropagation`. Selected rows tinted in `--primary-light`.
+- `src/pages/contacts/ContactsList.tsx` — wired bulk-select state, enabled
+  the previously-disabled "Import CSV" button (navigates to
+  `/clients/:cid/contacts/import`), added a small "import history" link
+  in the subtitle row opening `ImportHistoryDialog`. Renders
+  `BulkActionBar` when ≥1 selected. "Add to list" → `AddToListDialog`
+  with selected ids; "Delete N" → `ConfirmDialog` then
+  `Promise.all(contacts.remove(id))`.
+- `src/pages/contacts/ContactDetail.tsx` — per-list row now shows
+  "Unsubscribe" / "Re-subscribe" button next to the status pill. Calls
+  `updateMembershipStatus()` (PR 1 endpoint), optimistically updates
+  `fetched` + dispatches `upsertContact` so the pill flips instantly.
+
+**Verify**:
+- Backend curl smoke with a 10-row CSV (Devanagari name, bad email,
+  empty email): POST returns 201 `status: 'pending'` instantly; 2s
+  later poll returns `status: 'done'`, `imported: 7`, `rejected: 3`,
+  errors[] has the 3 expected rows with row + reason + email.
+- Listing imports returns the past job.
+- Frontend `npm run build` clean. Contacts chunk grew from 35.4 KB
+  (PR 1) to 81.4 KB / gzip 24.7 KB. Most of the growth is papaparse
+  (~30 KB raw) + the 6 new components.
+- Frontend `npm run lint`: 0 new issues. One
+  `// eslint-disable-next-line react-hooks/set-state-in-effect` on
+  the standard "reset selection on filter change" pattern.
+
+**Decisions made during implementation**:
+- **Multer + Express 5 confirmed working** — no busboy fallback needed.
+  Disk storage in `os.tmpdir()` keeps the upload off the heap.
+- **Per-chunk progress updates capped at 1 Hz** — a 5K-row import
+  finishes in ~3s; even fast imports report 3-4 checkpoints. Avoids
+  50 DB writes per import.
+- **Errors capped at 100 entries** in JSON column. A 50K-row broken
+  CSV would otherwise blow up the column; we truncate + flag the
+  total count in the dialog.
+- **Multipart upload via raw `fetch`**, not `apiCall`. Keeps `apiCall`
+  as the JSON-only contract.
+- **Tmp file `unlink()` in `finally`** regardless of outcome.
+  Combined with 10 MB cap, tmp dir can't accumulate orphan files.
+- **`source: 'csv_import'`** on every contact this flow creates;
+  visible in the contacts table via PR 1's `SourceCell` icon.
+- **Bulk-delete is `Promise.all` of per-contact DELETE calls** —
+  adding a bulk endpoint adds API surface area; defer until someone
+  routinely bulk-deletes 100+.
+- **`AddToListDialog` reused as-is** for the bulk case (it already
+  accepted `contactIds: string[]`).
+- **Per-list "Re-subscribe" is allowed in V1** — the only way to exit
+  `unsubscribed` is to re-subscribe yourself. Two-level suppression
+  (PR 3) will override this regardless for agency-wide bounces.
+
+**Deviations from the plan**:
+- **Plan said `src/routes/contacts/` becomes a folder** with `crud.ts` +
+  `imports.ts`. Kept flat — `routes/contacts.ts` + new
+  `routes/contactImports.ts`. Restructuring would have noised up the
+  diff for no real benefit.
+- **No shift-click range-select** on the bulk checkbox column. Plan
+  marked it "nice-to-have, OK to defer" — defer confirmed.
+
+**What this unlocks**:
+- PR 3 (dynamic segments + suppression + GDPR) — last contacts feature;
+  once it ships the module is V1-complete.
+- Campaign engine (Feature 06) — agencies can finally *get* contacts
+  into lists at scale, so campaigns have real audiences to target.
+- Forms (Feature 09) — will write `contact + list_contact` the same
+  way `streamImport()` does; helper logic becomes reusable.
+
 ### 2026-06-03 · ✅ Done — PR 1 (Contacts foundation)
 
 End-to-end contacts CRUD + static lists + tags is shipped. A user can

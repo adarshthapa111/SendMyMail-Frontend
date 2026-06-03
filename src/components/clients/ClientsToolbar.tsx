@@ -13,10 +13,11 @@ interface Props {
 }
 
 const FILTERS: { value: StatusFilter; label: string }[] = [
-  { value: 'all',    label: 'All'    },
-  { value: 'trial',  label: 'Trial'  },
-  { value: 'active', label: 'Active' },
-  { value: 'paused', label: 'Paused' },
+  { value: 'all',      label: 'All'      },
+  { value: 'trial',    label: 'Trial'    },
+  { value: 'active',   label: 'Active'   },
+  { value: 'paused',   label: 'Paused'   },
+  { value: 'archived', label: 'Archived' },
 ];
 
 /* The .toolbar row above the table — segmented status filter on the left,

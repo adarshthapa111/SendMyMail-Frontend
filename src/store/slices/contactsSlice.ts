@@ -69,6 +69,11 @@ const slice = createSlice({
       state.tag  = action.payload;
       state.page = 1;
     },
+    /* User-driven page navigation (prev / next). Doesn't reset other
+       filters — preserves search + listId + tag across page changes. */
+    gotoPage(state, action: PayloadAction<number>) {
+      state.page = Math.max(1, action.payload);
+    },
     /* Optimistic mutations — UI updates instantly after each API call */
     addContact(state, action: PayloadAction<Contact>) {
       state.items.unshift(action.payload);
@@ -91,7 +96,7 @@ const slice = createSlice({
 
 export const {
   setLoading, setPage, setError,
-  setSearch, setListFilter, setTagFilter,
+  setSearch, setListFilter, setTagFilter, gotoPage,
   addContact, upsertContact, removeContact,
   clearContacts,
 } = slice.actions;

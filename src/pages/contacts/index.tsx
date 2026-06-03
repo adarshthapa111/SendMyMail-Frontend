@@ -1,14 +1,12 @@
 import { Placeholder } from '../_shared/Placeholder';
 
-/* Real pages (feature-contacts-lists PR 1) */
+/* Real pages */
 export { ContactsList as Contacts } from './ContactsList';
-export { ContactDetail } from './ContactDetail';
-export { ListsList     as Lists }    from './ListsList';
+export { ContactDetail }            from './ContactDetail';
+export { ListsList     as Lists }   from './ListsList';
+export { ContactImport }            from './ContactImport';
 
-/* Still placeholders — ship in PR 2 / PR 3 */
-export function ContactImport() {
-  return <Placeholder title="Import contacts" subtitle="Upload CSV, map columns, confirm consent." mockup="contact_import.html" />;
-}
+/* Still placeholders — ship in PR 3 (segments + suppression) */
 export function ListEditor() {
   return <Placeholder title="Edit segment" subtitle="Condition builder with live preview." mockup="list_editor.html" />;
 }

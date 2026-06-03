@@ -24,10 +24,14 @@ export interface ClientUpdateBody {
   name?: string;
   domain?: string | null;
   avatarColor?: string | null;
+  /* Only used by the "Restore" action to flip archived → active. Other
+     status transitions aren't exposed in the UI today. */
+  status?: 'trial' | 'active' | 'paused';
 }
 
-export function listClients() {
-  return apiCall<{ data: { items: Client[] } }>('/v1/clients');
+export function listClients(opts: { includeArchived?: boolean } = {}) {
+  const q = opts.includeArchived ? '?includeArchived=true' : '';
+  return apiCall<{ data: { items: Client[] } }>(`/v1/clients${q}`);
 }
 
 export function getClient(id: string) {

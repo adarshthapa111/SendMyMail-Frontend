@@ -8,6 +8,12 @@
 }
 .sub  { margin-top: 4px; }
 .dim  { color: var(--soft); }
+.historyLink {
+  color: var(--primary-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+.historyLink:hover { text-decoration: underline; }
 
 .actions {
   display: flex;

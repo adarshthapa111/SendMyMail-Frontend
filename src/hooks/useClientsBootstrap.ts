@@ -31,7 +31,9 @@ export function useClientsBootstrap(): void {
     if (clientsStatus !== 'idle') return;
 
     dispatch(setLoading());
-    listClients()
+    // Include archived in the bootstrap fetch so the FE can browse/restore
+    // them without a re-fetch when the user opens the Archived tab.
+    listClients({ includeArchived: true })
       .then((res) => {
         const restoredActiveId = readActiveClientId();
         dispatch(setClients({ items: res.data.items, restoredActiveId }));

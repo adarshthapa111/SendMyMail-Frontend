@@ -114,6 +114,25 @@
 }
 .listName:hover { color: var(--primary-ink); }
 
+.listRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.subBtn {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color .12s ease;
+}
+.subBtn:hover:not(:disabled) { color: var(--primary-ink); text-decoration: underline; }
+.subBtn:disabled { opacity: .5; cursor: default; }
+
 /* Activity timeline */
 .tlCard { min-height: 240px; }
 .tlEmpty {
