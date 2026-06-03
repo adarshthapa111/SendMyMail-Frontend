@@ -16,69 +16,84 @@ import {
   IconPalette,
   IconLifebuoy,
 } from '@tabler/icons-react';
+import { useClients } from '../../hooks/useClients';
 import styles from '@styles/components/shell/Sidebar.module.scss';
 
-type NavItem = { sec?: string; k?: string; l?: string; icon?: typeof IconLayoutDashboard; to?: string; count?: string };
+type NavItem = { k: string; l: string; icon: typeof IconLayoutDashboard; to: string; count?: string | number };
 
-/* Mock active client id for client-scoped routes — replaced by useActiveClient() later. */
-const MOCK_CLIENT_ID = 'cli_khukri';
+const AGENCY_NAV: NavItem[] = [
+  { k: 'overview', l: 'Overview',    icon: IconLayoutDashboard, to: '/dashboard' },
+  { k: 'clients',  l: 'All clients', icon: IconUsersGroup,      to: '/clients' },
+];
 
-const NAV: NavItem[] = [
-  { sec: 'Agency' },
-  { k: 'overview', l: 'Overview', icon: IconLayoutDashboard, to: '/dashboard' },
-  { k: 'clients', l: 'All clients', icon: IconUsersGroup, to: '/clients', count: '8' },
+function perClient(id: string): NavItem[] {
+  return [
+    { k: 'contacts',  l: 'Contacts',  icon: IconAddressBook, to: `/clients/${id}/contacts`  },
+    { k: 'lists',     l: 'Lists',     icon: IconTags,        to: `/clients/${id}/lists`     },
+    { k: 'templates', l: 'Templates', icon: IconTemplate,    to: `/clients/${id}/templates` },
+    { k: 'campaigns', l: 'Campaigns', icon: IconSend,        to: `/clients/${id}/campaigns` },
+    { k: 'flows',     l: 'Flows',     icon: IconRoute,       to: `/clients/${id}/flows`     },
+    { k: 'forms',     l: 'Forms',     icon: IconForms,       to: `/clients/${id}/forms`     },
+    { k: 'reports',   l: 'Reports',   icon: IconChartBar,    to: `/clients/${id}/reports`   },
+  ];
+}
 
-  { sec: 'Khukri Spices' },
-  { k: 'contacts', l: 'Contacts', icon: IconAddressBook, to: `/clients/${MOCK_CLIENT_ID}/contacts` },
-  { k: 'lists', l: 'Lists', icon: IconTags, to: `/clients/${MOCK_CLIENT_ID}/lists` },
-  { k: 'templates', l: 'Templates', icon: IconTemplate, to: `/clients/${MOCK_CLIENT_ID}/templates` },
-  { k: 'campaigns', l: 'Campaigns', icon: IconSend, to: `/clients/${MOCK_CLIENT_ID}/campaigns` },
-  { k: 'flows', l: 'Flows', icon: IconRoute, to: `/clients/${MOCK_CLIENT_ID}/flows` },
-  { k: 'forms', l: 'Forms', icon: IconForms, to: `/clients/${MOCK_CLIENT_ID}/forms` },
-  { k: 'reports', l: 'Reports', icon: IconChartBar, to: `/clients/${MOCK_CLIENT_ID}/reports` },
-
-  { sec: 'Settings' },
-  { k: 'team', l: 'Team', icon: IconUsers, to: '/team' },
-  { k: 'audit', l: 'Activity log', icon: IconHistory, to: '/audit' },
-  { k: 'integrations', l: 'Integrations', icon: IconPlug, to: '/integrations' },
-  { k: 'billing', l: 'Billing', icon: IconCreditCard, to: '/billing' },
-  { k: 'whitelabel', l: 'White-label', icon: IconPalette, to: '/whitelabel' },
+const SETTINGS_NAV: NavItem[] = [
+  { k: 'team',         l: 'Team',         icon: IconUsers,      to: '/team' },
+  { k: 'audit',        l: 'Activity log', icon: IconHistory,    to: '/audit' },
+  { k: 'integrations', l: 'Integrations', icon: IconPlug,       to: '/integrations' },
+  { k: 'billing',      l: 'Billing',      icon: IconCreditCard, to: '/billing' },
+  { k: 'whitelabel',   l: 'White-label',  icon: IconPalette,    to: '/whitelabel' },
 ];
 
 export function Sidebar() {
+  const { items, active } = useClients();
+
   return (
     <aside className={styles.sidebar}>
       <nav className={styles.nav}>
-        {NAV.map((n, i) => {
-          if (n.sec) return <div key={`sec-${i}`} className={styles.label}>{n.sec}</div>;
-          const Icon = n.icon!;
-          return (
-            <NavLink
-              key={n.k}
-              to={n.to!}
-              className={({ isActive }) =>
-                `${styles.item} ${isActive ? styles.active : ''}`
-              }
-            >
-              <Icon size={18} />
-              {n.l}
-              {n.count && <span className={styles.count}>{n.count}</span>}
-            </NavLink>
-          );
-        })}
+        <div className={styles.label}>Agency</div>
+        {AGENCY_NAV.map((n) => (
+          <NavItemRow
+            key={n.k}
+            item={{ ...n, count: n.k === 'clients' && items.length > 0 ? items.length : undefined }}
+          />
+        ))}
+
+        {active ? (
+          <>
+            <div className={styles.label}>{active.name}</div>
+            {perClient(active.id).map((n) => <NavItemRow key={n.k} item={n} />)}
+          </>
+        ) : null}
+
+        <div className={styles.label}>Settings</div>
+        {SETTINGS_NAV.map((n) => <NavItemRow key={n.k} item={n} />)}
       </nav>
 
       <div className={styles.foot}>
         <NavLink
           to="/help"
-          className={({ isActive }) =>
-            `${styles.item} ${isActive ? styles.active : ''}`
-          }
+          className={({ isActive }) => `${styles.item} ${isActive ? styles.active : ''}`}
         >
           <IconLifebuoy size={18} />
           Help &amp; support
         </NavLink>
       </div>
     </aside>
+  );
+}
+
+function NavItemRow({ item }: { item: NavItem }) {
+  const Icon = item.icon;
+  return (
+    <NavLink
+      to={item.to}
+      className={({ isActive }) => `${styles.item} ${isActive ? styles.active : ''}`}
+    >
+      <Icon size={18} />
+      {item.l}
+      {item.count !== undefined && <span className={styles.count}>{item.count}</span>}
+    </NavLink>
   );
 }

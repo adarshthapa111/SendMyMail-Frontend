@@ -1,0 +1,101 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 16px);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding: 14px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.table thead th.r { text-align: right; }
+
+.table tbody td {
+  padding: 16px 18px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink);
+  vertical-align: middle;
+}
+.r { text-align: right; }
+.tnum { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); white-space: nowrap; }
+
+.row { transition: background .12s ease; }
+.row:hover { background: var(--surface); }
+
+.listName {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.ic {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.icStatic  { background: var(--surface);       color: var(--muted);   }
+.icDynamic { background: var(--primary-light); color: var(--primary); }
+
+.listNameMain b {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+}
+.listNameMain small {
+  display: block;
+  color: var(--soft);
+  font-size: 11.5px;
+  margin-top: 1px;
+}
+
+.typePill {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.typeStatic  { background: var(--surface);       color: var(--muted);       }
+.typeDynamic { background: var(--primary-light); color: var(--primary-ink); }
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.editBtn:hover { background: var(--surface); color: var(--ink); }
+
+@media (max-width: 720px) {
+  .table thead { display: none; }
+  .table tbody td { display: none; }
+  .table tbody td:first-child,
+  .table tbody td:nth-child(3),
+  .table tbody td:last-child { display: table-cell; }
+}

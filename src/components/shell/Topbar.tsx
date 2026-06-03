@@ -3,11 +3,13 @@ import { IconSearch, IconBell, IconPlus } from '@tabler/icons-react';
 import { ClientSwitcher } from './ClientSwitcher';
 import { UserMenu } from './UserMenu';
 import { useAuth } from '../../hooks/useAuth';
+import { useClients } from '../../hooks/useClients';
 import styles from '@styles/components/shell/Topbar.module.scss';
 
 export function Topbar() {
   const navigate = useNavigate();
   const { agency } = useAuth();
+  const { active } = useClients();
   return (
     <div className={styles.topnav}>
       <div className={styles.left}>
@@ -38,7 +40,8 @@ export function Topbar() {
         </button>
         <button
           className={styles.primaryBtn}
-          onClick={() => navigate('/clients/cli_khukri/campaigns/new')}
+          onClick={() => navigate(active ? `/clients/${active.id}/campaigns/new` : '/clients')}
+          title={active ? `New campaign for ${active.name}` : 'Pick a client first'}
         >
           <IconPlus size={16} />
           New campaign

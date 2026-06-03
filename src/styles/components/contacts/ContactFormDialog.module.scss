@@ -1,0 +1,117 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 38, 32, 0.40);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  animation: fadeIn .14s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.dialog {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  max-width: 560px;
+  width: 100%;
+  position: relative;
+  animation: pop .18s ease-out;
+}
+@keyframes pop {
+  from { transform: translateY(8px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background .12s ease, color .12s ease;
+}
+.close:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--ink);
+}
+.close:disabled { opacity: .4; cursor: not-allowed; }
+
+.form {
+  padding: 18px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 520px) {
+  .row2 { grid-template-columns: 1fr; }
+}
+
+.listPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.listChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.listChip:hover { background: var(--card); color: var(--ink); }
+.listChipOn {
+  background: var(--primary-light);
+  color: var(--primary-ink);
+  border-color: rgba(197, 106, 51, 0.25);
+}
+
+.foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+}

@@ -1,0 +1,106 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 16px);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding: 14px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 15px 18px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink);
+  vertical-align: middle;
+}
+.r { text-align: right; }
+
+.row {
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.row:hover { background: var(--surface); }
+.row:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.email {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 13.5px;
+}
+
+.muted { color: var(--muted); white-space: nowrap; }
+.dash  { color: var(--soft); }
+
+/* Tags */
+.tags {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pillPurple { background: var(--primary-light); color: var(--primary-ink); }
+.more {
+  font-size: 11px;
+  color: var(--soft);
+  font-weight: 600;
+}
+
+/* Source cell */
+.src {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.src svg { color: var(--soft); }
+
+.openLink {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 12.5px;
+  opacity: 0;
+  transition: opacity .12s ease;
+  white-space: nowrap;
+}
+.row:hover .openLink,
+.row:focus-visible .openLink { opacity: 1; }
+
+/* Mobile — collapse to email + name + chev */
+@media (max-width: 920px) {
+  .table thead { display: none; }
+  .table tbody td { display: none; }
+  .table tbody td:first-child,
+  .table tbody td:nth-child(2),
+  .table tbody td:last-child { display: table-cell; }
+}

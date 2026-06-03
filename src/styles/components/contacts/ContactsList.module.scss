@@ -1,0 +1,39 @@
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.sub  { margin-top: 4px; }
+.dim  { color: var(--soft); }
+
+.actions {
+  display: flex;
+  gap: 9px;
+}
+
+.noMatch {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 16px);
+  box-shadow: var(--shadow-md);
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.spinner {
+  padding: 60px 0;
+  display: grid;
+  place-items: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 0 4px;
+}
+.pagination > div { display: inline-flex; gap: 6px; }
