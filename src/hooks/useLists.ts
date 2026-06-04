@@ -23,18 +23,21 @@ export function useLists(clientId: string | null) {
   const store = useStore<RootState>();
   const state = useAppSelector((s) => s.lists);
 
-  // Fetch lists for a clientId when needed. We deliberately do NOT include
-  // state.clientId / state.status in the deps — dispatch(setLoading)
-  // changes state.status, which would re-run this effect, which would
-  // cleanup-cancel the in-flight request, dispatching nothing and leaving
-  // status stuck on 'loading' forever. Instead we read the latest slice
-  // state via store.getState() inside the effect (which doesn't subscribe),
-  // so the effect only re-runs when clientId itself changes.
+  // Fetch lists for a clientId when needed. Deps are deliberately minimal —
+  // dispatch(setLoading) changes state.status, but we don't depend on
+  // state.* here (we read the latest slice via store.getState() instead),
+  // so the effect doesn't re-run on its own writes.
+  //
+  // Bail condition is `=== 'loaded'` only. If we see 'loading' on mount, that
+  // means a PREVIOUS mount started a fetch that got cancelled by unmount
+  // (the cleanup below sets cancelled=true), so the slice is permanently
+  // stuck unless we refetch. Self-healing: any non-loaded status triggers
+  // a new fetch on the next mount.
   useEffect(() => {
     if (!clientId) return;
     const slice = store.getState().lists;
-    if (slice.clientId === clientId && (slice.status === 'loaded' || slice.status === 'loading')) {
-      return;     // already have data (or a fetch is already in flight)
+    if (slice.clientId === clientId && slice.status === 'loaded') {
+      return;     // we already have data — no work to do
     }
     let cancelled = false;
     dispatch(setLoading({ clientId }));
