@@ -1,7 +1,7 @@
 .palette {
   width: 240px;
-  background: #ffffff;
-  border-right: 1px solid #e4e6eb;
+  background: var(--color-card);
+  border-right: 1px solid var(--color-line);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -10,7 +10,7 @@
 
 .searchWrap {
   padding: 12px;
-  border-bottom: 1px solid #e4e6eb;
+  border-bottom: 1px solid var(--color-line);
   flex-shrink: 0;
 }
 
@@ -19,17 +19,17 @@
   padding: 7px 10px;
   font: inherit;
   font-size: 13px;
-  border: 1px solid #d2d4d8;
+  border: 1px solid var(--color-line-strong);
   border-radius: 4px;
-  background: #f7f8fa;
+  background: var(--color-bg);
   box-sizing: border-box;
 }
 
 .search:focus {
   outline: none;
-  border-color: #1a73e8;
-  background: #ffffff;
-  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+  border-color: var(--color-primary);
+  background: var(--color-card);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 .scroller {
@@ -40,20 +40,20 @@
 
 .empty {
   padding: 16px;
-  color: #8a8d91;
+  color: var(--color-soft);
   font-size: 13px;
   text-align: center;
 }
 
 .group {
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid var(--color-line-soft);
 }
 
 .groupHeader {
   font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
-  color: #65676b;
+  color: var(--color-muted);
   padding: 12px 12px 6px;
   letter-spacing: 0.5px;
 }
@@ -72,12 +72,12 @@
   justify-content: center;
   gap: 6px;
   padding: 12px 6px;
-  border: 1px solid #e4e6eb;
-  background: #ffffff;
+  border: 1px solid var(--color-line);
+  background: var(--color-card);
   border-radius: 6px;
   cursor: grab;
   font: inherit;
-  color: #1a1a1a;
+  color: var(--color-ink);
   user-select: none;
   touch-action: none;
   text-align: center;
@@ -86,13 +86,13 @@
 }
 
 .blockCard:hover {
-  background: #f0f2f5;
-  border-color: #c5c8cd;
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
 }
 
 .blockCard:active {
   cursor: grabbing;
-  background: #e4e6eb;
+  background: color-mix(in srgb, var(--color-primary) 20%, var(--color-card));
 }
 
 .dragging {
@@ -103,14 +103,14 @@
 .blockIcon {
   width: 32px;
   height: 24px;
-  background: #f0f2f5;
+  background: var(--color-surface);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 13px;
-  color: #65676b;
+  color: var(--color-muted);
   letter-spacing: -1px;
 }
 
@@ -127,8 +127,8 @@
 .hint {
   padding: 10px 12px;
   font-size: 11px;
-  color: #8a8d91;
-  border-top: 1px solid #e4e6eb;
+  color: var(--color-soft);
+  border-top: 1px solid var(--color-line);
   text-align: center;
   flex-shrink: 0;
 }

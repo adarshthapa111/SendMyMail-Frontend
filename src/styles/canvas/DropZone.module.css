@@ -26,25 +26,25 @@
 }
 
 .barActive {
-  background: rgba(26, 115, 232, 0.12);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .barOver {
   height: 16px;
-  background: #1a73e8;
-  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.3);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .barRejected {
   height: 16px;
   background: repeating-linear-gradient(
     45deg,
-    rgba(209, 26, 42, 0.2),
-    rgba(209, 26, 42, 0.2) 4px,
-    rgba(209, 26, 42, 0.05) 4px,
-    rgba(209, 26, 42, 0.05) 8px
+    color-mix(in srgb, var(--color-red) 20%, transparent),
+    color-mix(in srgb, var(--color-red) 20%, transparent) 4px,
+    color-mix(in srgb, var(--color-red) 5%, transparent) 4px,
+    color-mix(in srgb, var(--color-red) 5%, transparent) 8px
   );
-  border: 1px dashed #d11a2a;
+  border: 1px dashed var(--color-red);
   border-radius: 4px;
 }
 
@@ -61,29 +61,29 @@
   min-height: 120px;
   margin: 16px;
   padding: 24px;
-  border: 2px dashed #d2d4d8;
+  border: 2px dashed var(--color-line-strong);
   border-radius: 6px;
-  color: #8a8d91;
+  color: var(--color-soft);
   font-size: 14px;
   text-align: center;
   transition: background 100ms ease, border-color 100ms ease, color 100ms ease;
 }
 
 .largeActive {
-  border-color: #1a73e8;
-  color: #1a73e8;
-  background: rgba(26, 115, 232, 0.04);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
 }
 
 .largeOver {
-  border-color: #1a73e8;
-  color: #1a73e8;
-  background: rgba(26, 115, 232, 0.12);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   border-style: solid;
 }
 
 .largeRejected {
-  border-color: #d11a2a;
-  color: #d11a2a;
-  background: rgba(209, 26, 42, 0.08);
+  border-color: var(--color-red);
+  color: var(--color-red);
+  background: color-mix(in srgb, var(--color-red) 8%, transparent);
 }

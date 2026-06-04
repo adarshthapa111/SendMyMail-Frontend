@@ -6,9 +6,9 @@
   align-items: center;
   gap: 1px;
   padding: 2px;
-  background: #1a73e8;
+  background: var(--color-ink);
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-ink) 15%, transparent);
   z-index: 10;
   cursor: default;
   user-select: none;
@@ -85,5 +85,5 @@
 }
 
 .danger:hover:not(:disabled) {
-  background: #d11a2a;
+  background: var(--color-red);
 }
