@@ -1,0 +1,14 @@
+/* Loading / error fallback while the template is being fetched.
+   Fills the same viewport area the editor would occupy. */
+
+.fallback {
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}

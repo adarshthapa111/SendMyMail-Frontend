@@ -48,7 +48,13 @@ function isEditableTarget(target: EventTarget | null): boolean {
   return false;
 }
 
-export default function EditorShell() {
+interface EditorShellProps {
+  /** Slot for context-specific Toolbar actions (e.g. the template builder
+      passes <SaveTemplateButton />). Forwarded as the Toolbar's `extras`. */
+  toolbarExtras?: React.ReactNode;
+}
+
+export default function EditorShell({ toolbarExtras }: EditorShellProps = {}) {
   const dispatch = useAppDispatch();
   const selectedId = useAppSelector((s) => s.editor.selectedId);
   const idPathCache = useAppSelector((s) => s.editor.idPathCache);
@@ -161,7 +167,7 @@ export default function EditorShell() {
       onDragEnd={onDragEnd}
     >
       <div className={styles.shell}>
-        <Toolbar />
+        <Toolbar extras={toolbarExtras} />
         <div className={styles.body}>
           <Palette />
           <Canvas />

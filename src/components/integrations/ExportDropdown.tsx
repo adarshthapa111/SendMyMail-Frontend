@@ -12,7 +12,12 @@ const BACKEND = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:4000';
 
 export default function ExportDropdown() {
   const tree = useAppSelector((s) => s.editor.tree);
-  const subject = useAppSelector((s) => s.editor.subject);
+  // Subject was moved off editor state in feature-templates PR 2 — it's
+  // campaign-level metadata now. This legacy integrations path predates
+  // campaigns; pass '' so the contract with the backend integrations
+  // endpoints stays intact. When Campaigns (Feature 06) ships, send will
+  // happen through the campaign builder with its own subject field.
+  const subject = '';
   const connections = useAppSelector((s) => s.integrations.connections);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);

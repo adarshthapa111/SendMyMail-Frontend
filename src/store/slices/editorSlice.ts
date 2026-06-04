@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { current, type WritableDraft } from 'immer';
-import { v4 as uuid } from 'uuid';
 import type { IMjmlNode, NodePath } from '../../tree/types';
 import { buildIdPathCache } from '../../tree/paths';
 import { newTemplate } from '../../tree/newTemplate';
@@ -25,11 +24,11 @@ export interface EditorState {
     future: IMjmlNode[];
   };
   /**
-   * Email-level metadata used at send time. Not part of the MJML tree because
-   * MJML has no `subject` element — it's an ESP concern. Preheader lives inside
-   * the tree as mj-preview (so it compiles into the HTML head naturally).
+   * True iff the user has made tree changes since the last load / save.
+   * SaveTemplateButton uses this to enable/disable; the Builder's
+   * useBlocker uses it to prompt on navigation away.
    */
-  subject: string;
+  dirty: boolean;
 }
 
 const initialTree = newTemplate();
@@ -42,7 +41,7 @@ const initialState: EditorState = {
   idPathCache: buildIdPathCache(initialTree),
   previewVisible: false,
   history: { past: [], future: [] },
-  subject: '',
+  dirty: false,
 };
 
 const HISTORY_LIMIT = 50;
@@ -79,6 +78,7 @@ const editorSlice = createSlice({
       state.tree = insertNode(state.tree, parentPath, index, node);
       state.idPathCache = buildIdPathCache(state.tree);
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     moveBlock(
@@ -90,6 +90,7 @@ const editorSlice = createSlice({
       state.tree = moveNode(state.tree, fromPath, toParentPath, toIndex);
       state.idPathCache = buildIdPathCache(state.tree);
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     deleteBlock(state, action: PayloadAction<{ path: NodePath }>) {
@@ -98,6 +99,7 @@ const editorSlice = createSlice({
       state.idPathCache = buildIdPathCache(state.tree);
       state.selectedId = null;
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     duplicateBlock(state, action: PayloadAction<{ path: NodePath }>) {
@@ -105,6 +107,7 @@ const editorSlice = createSlice({
       state.tree = duplicateNode(state.tree, action.payload.path);
       state.idPathCache = buildIdPathCache(state.tree);
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     setAttr(
@@ -115,12 +118,14 @@ const editorSlice = createSlice({
       const { path, key, value } = action.payload;
       state.tree = updateAttr(state.tree, path, key, value);
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     setContent(state, action: PayloadAction<{ path: NodePath; content: string }>) {
       const prev = snapshot(state);
       state.tree = updateContent(state.tree, action.payload.path, action.payload.content);
       pushHistory(state, prev);
+      state.dirty = true;
     },
 
     selectNode(state, action: PayloadAction<string | null>) {
@@ -139,30 +144,6 @@ const editorSlice = createSlice({
       state.previewVisible = !state.previewVisible;
     },
 
-    setSubject(state, action: PayloadAction<string>) {
-      state.subject = action.payload;
-    },
-
-    /**
-     * Update mj-preview content in the tree (the email's preheader text).
-     * Creates the node if missing. Snapshots history like any other mutation.
-     */
-    setPreheader(state, action: PayloadAction<string>) {
-      const prev = snapshot(state);
-      const head = state.tree.children?.find((c) => c.tagName === 'mj-head');
-      if (!head) return;
-      head.children ??= [];
-      let preview = head.children.find((c) => c.tagName === 'mj-preview');
-      if (!preview) {
-        preview = { tagName: 'mj-preview', _id: uuid(), content: action.payload };
-        head.children.unshift(preview);
-      } else {
-        preview.content = action.payload;
-      }
-      state.idPathCache = buildIdPathCache(state.tree);
-      pushHistory(state, prev);
-    },
-
     undo(state) {
       if (state.history.past.length === 0) return;
       const prev = state.history.past.pop()!;
@@ -174,6 +155,7 @@ const editorSlice = createSlice({
       // undoing — clear to avoid stale references.
       state.selectedId = null;
       state.editingTextId = null;
+      state.dirty = true;
     },
 
     redo(state) {
@@ -185,6 +167,31 @@ const editorSlice = createSlice({
       state.idPathCache = buildIdPathCache(next);
       state.selectedId = null;
       state.editingTextId = null;
+      state.dirty = true;
+    },
+
+    /**
+     * Load a template's tree into the editor. Resets history, selection,
+     * and dirty flag. Called by Builder.tsx on mount after fetching the
+     * template via GET /v1/clients/:cid/templates/:id.
+     */
+    loadTemplate(state, action: PayloadAction<{ tree: IMjmlNode }>) {
+      const { tree } = action.payload;
+      state.tree = tree as WritableDraft<IMjmlNode>;
+      state.idPathCache = buildIdPathCache(tree);
+      state.selectedId = null;
+      state.hoveredId = null;
+      state.editingTextId = null;
+      state.history = { past: [], future: [] };
+      state.dirty = false;
+    },
+
+    /**
+     * Clear the dirty flag after a successful PATCH. Called by
+     * SaveTemplateButton when the API roundtrip resolves.
+     */
+    markSaved(state) {
+      state.dirty = false;
     },
   },
 });
@@ -200,10 +207,10 @@ export const {
   hoverNode,
   setEditingTextNode,
   togglePreview,
-  setSubject,
-  setPreheader,
   undo,
   redo,
+  loadTemplate,
+  markSaved,
 } = editorSlice.actions;
 
 export default editorSlice.reducer;

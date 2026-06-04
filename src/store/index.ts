@@ -6,6 +6,7 @@ import authReducer from './slices/authSlice';
 import clientsReducer from './slices/clientsSlice';
 import contactsReducer from './slices/contactsSlice';
 import listsReducer from './slices/listsSlice';
+import templatesReducer from './slices/templatesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     clients: clientsReducer,
     contacts: contactsReducer,
     lists: listsReducer,
+    templates: templatesReducer,
     editor: editorReducer,
     app: appReducer,
     integrations: integrationsReducer,

@@ -1,0 +1,68 @@
+/* Modal shell — mirrors ClientFormDialog. Portal-mounted, terra-themed,
+   pop-in animation, click-outside-to-close handled by JSX. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 38, 32, 0.40);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  animation: tfdFade .14s ease-out;
+}
+@keyframes tfdFade { from { opacity: 0; } to { opacity: 1; } }
+
+.dialog {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  max-width: 480px;
+  width: 100%;
+  animation: tfdPop .18s ease-out;
+}
+@keyframes tfdPop {
+  from { transform: translateY(8px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1);      opacity: 1; }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background .12s ease, color .12s ease;
+}
+.close:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--ink);
+}
+.close:disabled { opacity: .4; cursor: not-allowed; }
+
+.body {
+  padding: 18px 24px 22px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}

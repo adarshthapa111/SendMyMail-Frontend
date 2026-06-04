@@ -109,7 +109,7 @@ integration. A single client can now design and save templates.
 | Frontend hook | `src/hooks/useTemplates.ts` — list + CRUD. |
 | Frontend page | Real `TemplatesList` (replaces Placeholder) — card grid + filter tabs + "+ New template" modal + per-card kebab (rename / duplicate / archive). |
 | Frontend components | `TemplateCard`, `TemplateFormDialog` (create + rename), `TemplatesEmptyState`. |
-| Builder integration | `Builder.tsx` reads `:templateId` from URL → fetches the template → dispatches a new `loadTemplate(tree, subject)` editor-slice action → user edits → "Save" Toolbar button POSTs the stripped tree back via PATCH. Dirty-state guard warns on navigation away. |
+| Builder integration | `Builder.tsx` reads `:templateId` from URL → fetches the template → dispatches a new `loadTemplate(tree)` editor-slice action → user edits → "Save" Toolbar button POSTs the stripped tree back via PATCH. Dirty-state guard warns on navigation away. Subject + preheader are NOT persisted (see Decisions below — they're campaign-level, not template-level). |
 
 Lands on top of PR 1's themed editor, so the entire user flow
 (`/templates` grid → "+ New template" modal → `/edit` builder) reads as
@@ -414,10 +414,9 @@ One new model + one migration (`20260603_templates_foundation`):
 model Template {
   id           String   @id @default(cuid())
   agencyId     String   @map("agency_id")
-  clientId     String?  @map("client_id")           // null = agency-level reusable (PR 2 territory; nullable now to avoid a future migration)
-  name         String                                // ≤120 chars
-  subject      String   @default("")                 // ESP-level, not in MJML tree (mirrors editorSlice)
-  mjmlSource   Json     @map("mjml_source")          // serialized IMjmlNode tree, post-strip (no _id / _meta)
+  clientId     String?  @map("client_id")           // null = agency-level reusable (PR 3 territory; nullable now to avoid a future migration)
+  name         String                                // ≤120 chars — internal label, NOT the email subject
+  mjmlSource   Json     @map("mjml_source")          // serialized IMjmlNode tree, post-strip (no _id, no _meta, no mj-preview)
   thumbnailUrl String?  @map("thumbnail_url")        // null in V1; reserved for V1.5 real thumbnails
   category     String?                                // free-text V1 ('welcome', 'promo', 'newsletter', etc.) — enum in V2
   isStarter    Boolean  @default(false) @map("is_starter")  // seeded library; client-created templates never set this
@@ -433,9 +432,13 @@ model Template {
   @@map("templates")
   @@index([agencyId])
   @@index([clientId, archived, updatedAt(sort: Desc)])  // hot path: GET /clients/:cid/templates ordered by recency
-  @@index([agencyId, isStarter])                         // PR 2's starter lookup
+  @@index([agencyId, isStarter])                         // PR 3's starter lookup
 }
 ```
+
+**No `subject` column.** Subject (and preheader) are envelope metadata
+set per-send. They belong to `Campaign` (Feature 06), not `Template`.
+See [Decisions](#decisions) below.
 
 Updates to existing models — `Agency` / `Client` / `User` gain
 `templates: Template[]` reverse relations.
@@ -456,8 +459,8 @@ Mutations gated by `requireRole('admin')`.
 |---|---|---|---|
 | `GET` | `/` | any | List non-archived templates for this client + agency-level starters/reusables (clientId IS NULL). Sorted by `updatedAt DESC`. Response shape strips the heavy `mjmlSource` field for list view — only single GET returns it. |
 | `GET` | `/:id` | any | Full template including `mjmlSource`. 404 on out-of-scope (never leak). |
-| `POST` | `/` | admin | Create. Body: `{ name, subject?, category?, mjmlSource? }`. If `mjmlSource` is omitted, server returns a fresh `newTemplate()` tree (mirrors what the FE editor uses). |
-| `PATCH` | `/:id` | admin | Update. Body: any subset of `{ name, subject, category, mjmlSource, archived }`. Strips editor-only fields (`_id`, `_meta`) before persisting if present. |
+| `POST` | `/` | admin | Create. Body: `{ name, category?, mjmlSource? }`. If `mjmlSource` is omitted, server returns a fresh `newTemplate()` tree (mirrors what the FE editor uses). |
+| `PATCH` | `/:id` | admin | Update. Body: any subset of `{ name, category, mjmlSource, archived }`. Strips editor-only fields (`_id`, `_meta`) AND any `mj-preview` nodes before persisting (preheader is campaign-level, not template-level). |
 | `DELETE` | `/:id` | admin | Soft-archive (sets `archived: true`). |
 | `POST` | `/:id/duplicate` | admin | Deep-clones the template under the same client with " (copy)" suffix; the clone is never `isStarter`. |
 
@@ -471,7 +474,6 @@ type TemplateSummary = {
   agencyId: string;
   clientId: string | null;        // null = agency-level
   name: string;
-  subject: string;
   category: string | null;
   thumbnailUrl: string | null;
   isStarter: boolean;
@@ -510,13 +512,18 @@ src/
 │  └─ templates.ts                           # NEW — listTemplates, getTemplate, createTemplate, updateTemplate, archiveTemplate, duplicateTemplate
 ├─ store/slices/
 │  ├─ templatesSlice.ts                      # NEW — per-client cache; mirrors contactsSlice
-│  └─ editorSlice.ts                         # UPDATE — add loadTemplate(tree, subject) action; add `dirty` boolean
+│  └─ editorSlice.ts                         # UPDATE — add loadTemplate(tree) action + `dirty` boolean; REMOVE `subject` field + setSubject reducer (campaign-level, not template-level)
 ├─ hooks/
 │  └─ useTemplates.ts                        # NEW — list + CRUD + duplicate
 ├─ pages/templates/
 │  ├─ TemplatesList.tsx                      # NEW — card grid (replaces Placeholder)
 │  ├─ Builder.tsx                            # UPDATE — fetches template by URL :templateId, dispatches loadTemplate, owns the Save button
 │  └─ index.tsx                              # re-exports
+├─ components/                                # editor surface cleanup
+│  ├─ EmailSettingsBar.tsx                   # DELETE — subject/preheader/from are campaign-level, not template-level. Editor is pure design now.
+│  └─ EditorShell.tsx                        # UPDATE — drop the <EmailSettingsBar /> render + its import
+├─ tree/
+│  └─ strip.ts                                # UPDATE — extend to also remove any `mj-preview` nodes from the tree (preheader = campaign concern)
 ├─ components/templates/                     # NEW folder
 │  ├─ TemplateCard.tsx                       # the card per the mockup
 │  ├─ TemplateFormDialog.tsx                 # name + category modal (create + rename)
@@ -526,6 +533,13 @@ src/
 └─ styles/components/templates/              # NEW folder
    └─ *.module.scss                          # one per component above
 ```
+
+**Files deleted by PR 2** (the cleanup side of the architecture change):
+
+- `src/components/EmailSettingsBar.tsx` — subject/preheader/from inputs
+  no longer exist at template-design time.
+- `src/styles/components/EmailSettingsBar.module.css` — its stylesheet.
+- Any imports of either in `EditorShell.tsx`.
 
 ### Frontend phases
 
@@ -575,24 +589,33 @@ src/
 4. **Builder integration** (the trickiest part):
    - `Builder.tsx` reads `useParams<{ clientId, templateId }>()`.
    - On mount: `useEffect` fires `getTemplate(clientId, templateId)` → on
-     resolve, dispatch `loadTemplate({ tree, subject })` (new editorSlice
+     resolve, dispatch `loadTemplate({ tree })` (new editorSlice
      action). While loading: show a spinner instead of the editor.
-   - New action in editorSlice: `loadTemplate(state, { payload: { tree, subject } })`
-     resets `tree` + `subject` to the loaded values, clears history (past/future),
+   - New action in editorSlice: `loadTemplate(state, { payload: { tree } })`
+     resets `tree` to the loaded value, clears history (past/future),
      rebuilds idPathCache, clears selection, sets `dirty: false`.
    - New slice field: `dirty: boolean`. Set to `true` by every mutating
      reducer (insertBlock / moveBlock / deleteBlock / duplicateBlock /
-     updateAttr / updateContent / setSubject / setPreheader). Cleared by
-     `loadTemplate` and by the save handler.
+     updateAttr / updateContent). Cleared by `loadTemplate` and by the
+     save handler.
+   - **Removed from editorSlice**: `subject: string` field + `setSubject`
+     reducer + any `setPreheader` reducer + any `getPreheaderFromTree`
+     selector. Subject and preheader are campaign-level state
+     (Feature 06), not template-design state.
+   - **Removed from EditorShell**: the `<EmailSettingsBar />` render and
+     its import. The bar held subject/from/preheader inputs which no
+     longer have a place at template-design time. Editor becomes a pure
+     design surface (Toolbar + Palette + Canvas + Inspector + optional
+     PreviewModal).
    - New `SaveTemplateButton` component, rendered inside the Toolbar
      (which I'll touch lightly — add a `right` slot or just append the
      button to the existing toolbar's right side).
      - Disabled when `!dirty`.
      - Active state shows a small dot or "Unsaved" pill.
      - On click: strip editor-only fields via `tree/strip.ts`, PATCH the
-       template with `{ mjmlSource: strippedTree, subject }`,
+       template with `{ mjmlSource: strippedTree }`,
        `dispatch(upsertTemplate(res.data.template))`, clear dirty,
-       toast "Saved Welcome email".
+       toast "Saved {name}".
    - **Dirty-leave warning**: in Builder.tsx, a `useEffect` hooks into
      `useBlocker` (react-router v7) to prompt the user before navigating
      away with unsaved changes. Simple `window.confirm("You have unsaved
@@ -603,12 +626,23 @@ src/
      (multi-tab, optimistic concurrency); explicit Save is the safer V1
      bet.
 
-5. **Stripping editor-only fields**:
-   - `src/tree/strip.ts` already exists (per CLAUDE.md). Use it.
-   - On every PATCH: `mjmlSource: strip(state.editor.tree)` —
-     removes `_id` and `_meta` so the persisted tree is clean.
+5. **Stripping editor-only + envelope-only fields on save**:
+   - `src/tree/strip.ts` already exists (per CLAUDE.md). EXTEND it to
+     also remove any `mj-preview` nodes from the tree — preheader is a
+     campaign-level concern, not a template-design concern. The function
+     becomes: strip `_id`, strip `_meta`, drop any child whose `tagName
+     === 'mj-preview'` recursively.
+   - On every PATCH: `mjmlSource: strip(state.editor.tree)` — the
+     persisted tree contains design only (no editor internals, no
+     envelope metadata).
    - On every load (`loadTemplate`): rebuild `_id` + `idPathCache` via
-     `buildIdPathCache` (already used by editorSlice on mount).
+     `buildIdPathCache` (already used by editorSlice on mount). No
+     `mj-preview` nodes to worry about — they're guaranteed absent
+     because we stripped them on save.
+   - **Backwards compatibility**: if existing test data has subject
+     columns or `mj-preview` nodes, the migration's down-step is a
+     no-op (we just drop the column and ignore tree nodes). No data
+     loss for V1 since no real templates exist yet.
 
 ### Audit checklist after PR 1
 
@@ -635,6 +669,31 @@ src/
 ---
 
 ## Decisions
+
+- **Subject + preheader belong to Campaign, not Template.** They are
+  envelope metadata set per-send, not design intent. Rationale:
+  - **One template, many campaigns**: a "Newsletter" template gets
+    different subjects each month (March / April / May). Subject-on-
+    template would force cloning the whole design just to change the
+    subject.
+  - **A/B subject testing** is a standard email-marketing feature —
+    two campaigns, same template, different subjects. Impossible if
+    subject lives on the template.
+  - **Every ESP works this way** — Mailchimp, Klaviyo, Postmark,
+    SendGrid, MailerLite all put subject + preheader on the campaign.
+  - **MJML itself has no `<mj-subject>` element** — the format is the
+    body. The envelope (subject, from, to, preheader header) is set by
+    whatever sends the message.
+  - **The existing editor slice comment already acknowledged this**:
+    `"Email-level metadata used at send time. Not part of the MJML
+    tree because MJML has no subject element — it's an ESP concern."`
+    The original author left it on the editor only because there was
+    no campaign system yet. Now there will be (Feature 06).
+  - **Concrete effects in PR 2**: no `subject` column on Template,
+    no `subject` field on editorSlice, no `setSubject` reducer, the
+    `EmailSettingsBar` component is deleted entirely, `strip(tree)`
+    also drops any `mj-preview` nodes. Campaign (Feature 06) will own
+    `subject` + `preheader` + `fromName` + `fromEmail` + `sendAt`.
 
 - **Store the `IMjmlNode` tree as JSON, not raw MJML markup.** The editor
   works on the tree natively (immer + path-based ops); a JSON column
@@ -735,8 +794,12 @@ src/
   POSTs and navigates to `/clients/:cid/templates/:newId/edit` with a
   fresh tree loaded into the editor.
 - [ ] **Edit + Save**: edits in the builder flip a "Save" button to
-  enabled; clicking Save persists the stripped tree + subject; toast
-  "Saved {name}" appears.
+  enabled; clicking Save persists the stripped tree (no subject, no
+  `mj-preview` nodes); toast "Saved {name}" appears.
+- [ ] **No subject/preheader UI in the editor**: the EmailSettingsBar
+  is gone. The editor surface is Toolbar + Palette + Canvas + Inspector
+  only. Subject and preheader appear only in the campaign builder
+  (Feature 06, future).
 - [ ] **Re-open**: navigating away from the builder and clicking the
   card again loads the saved tree exactly as designed.
 - [ ] **Refresh**: hard-refresh on `/templates/:id/edit` reloads the
@@ -771,6 +834,177 @@ src/
 ---
 
 ## Changes (newest first)
+
+### 2026-06-04 · ✅ Done — PR 2 (Foundation — templates persistence)
+
+End-to-end persistence for templates. A user can now create a template,
+design it in the existing MJML editor, save it, navigate away, come
+back, and find their design intact. Refresh persists. The editor is
+finally *real* — every edit can be saved against a server-side row.
+
+**Backend** (3 file changes + 1 new migration):
+
+- `prisma/schema.prisma` — new `Template` model: id, agencyId,
+  clientId (nullable for PR 3 starters), name, mjmlSource (JSONB),
+  thumbnailUrl?, category?, isStarter, archived, createdBy? (SetNull),
+  timestamps. No `subject` column — subject + preheader are
+  envelope metadata owned by Campaign (Feature 06). Reverse relations
+  on Agency / User / Client. Three indexes covering the hot paths.
+- `prisma/migrations/20260604144912_templates_foundation/` —
+  CREATE TABLE + indexes + FKs with Agency/Client Cascade + User
+  SetNull.
+- `src/routes/templates.ts` (new) — 6 endpoints under
+  `/v1/clients/:clientId/templates`:
+  - `GET /` — list summaries (omits `mjmlSource` for payload weight;
+    20-100 KB tree × 30 templates = 600 KB-3 MB if we returned full)
+  - `GET /:id` — full template incl. mjmlSource
+  - `POST /` (admin) — create
+  - `PATCH /:id` (admin) — update; server-side `stripTreeForPersistence`
+    removes `_id` / `_meta` / `mj-preview` as a safety net
+  - `DELETE /:id` (admin) — soft-archive (idempotent)
+  - `POST /:id/duplicate` (admin) — deep clone with " (copy)" suffix;
+    clones are never `isStarter`
+  - All endpoints write audit logs (`template.created` /
+    `.updated` / `.archived` / `.duplicated`)
+  - `assertClientExists` helper guards every endpoint against the
+    "scope:all owner with a fabricated clientId" FK violation
+- `src/server.ts` — mount the new router
+
+**Frontend** (a lot — but the right amount):
+
+- API: `src/lib/api/templates.ts` — typed CRUD wrappers
+- Slice: `src/store/slices/templatesSlice.ts` — per-client cache,
+  mirrors `contactsSlice` shape
+- Hook: `src/hooks/useTemplates.ts` — bail-on-`'loaded'`-only
+  (carrying the useLists lesson forward, self-healing on stale loading)
+- Pages:
+  - `src/pages/templates/TemplatesList.tsx` (new) — replaces the
+    Placeholder. Card grid + FTUX empty state + create modal +
+    rename modal + archive confirm; navigation to builder on card
+    click
+  - `src/pages/templates/Builder.tsx` (rewrite) — reads `:templateId`
+    from URL, fetches template, dispatches `loadTemplate({tree})`,
+    renders EditorShell with `<SaveTemplateButton />` in the Toolbar's
+    new `extras` slot, owns `useBlocker` dirty-leave guard +
+    `beforeunload` for full-page reload protection
+  - `src/pages/templates/index.tsx` — re-exports `TemplatesList`
+    (Placeholder is gone)
+- Components: `src/components/templates/` (new folder):
+  - `TemplateCard.tsx` — grid card with category icon, name,
+    relative-time, hover-revealed kebab (Rename / Duplicate / Archive)
+  - `TemplateFormDialog.tsx` — name + category modal (create + rename),
+    reuses the ClientFormDialog portal-shell pattern, datalist
+    autocomplete for common categories
+  - `TemplatesEmptyState.tsx` — FTUX card
+  - `SaveTemplateButton.tsx` — Toolbar pill, dirty-aware:
+    disabled+ghosted when clean, terra-primary with "Unsaved" pulsing
+    dot when dirty. Click → `stripForPersistence(tree)` → PATCH →
+    dispatch `markSaved` + `upsertTemplate` → toast `"Saved {name}"`
+  - `index.ts` — re-exports
+- SCSS: `src/styles/components/templates/` (new folder, 5 stylesheets)
+
+**Editor architecture changes** (per the subject/preheader = campaign
+decision):
+
+- `src/store/slices/editorSlice.ts`:
+  - REMOVED `subject` field, `setSubject` reducer, `setPreheader`
+    reducer, `uuid` import (only used by setPreheader)
+  - ADDED `dirty: boolean` — set true by every mutating reducer
+    (insertBlock / moveBlock / deleteBlock / duplicateBlock / setAttr /
+    setContent / undo / redo); cleared by `loadTemplate` + `markSaved`
+  - ADDED `loadTemplate({tree})` — resets tree + clears history +
+    clears selection + sets dirty=false
+  - ADDED `markSaved` — clears dirty on save success
+- `src/store/selectors.ts` — removed `selectSubject`; `selectPreheader`
+  stays (reads tree's `mj-preview` for design-time preview only — gets
+  stripped on save)
+- `src/tree/strip.ts` — added `stripForPersistence(tree)` that drops
+  `_id` / `_meta` AND any `mj-preview` nodes recursively. The original
+  `stripEditorFields` is kept untouched (used by the preview render
+  path which SHOULD include mj-preview)
+
+**Editor UI cleanup** (the subject/preheader UI deletion):
+
+- `src/components/EmailSettingsBar.tsx` — **DELETED.** Subject + from +
+  preheader inputs no longer have a place at template-design time.
+- `src/styles/components/EmailSettingsBar.module.css` — **DELETED.**
+- `src/components/Canvas.tsx` — removed the `<EmailSettingsBar />`
+  render + import. Editor is pure design now.
+- `src/components/Toolbar.tsx` — added optional `extras` prop, slotted
+  between Export and Preview buttons. Used by the template builder.
+- `src/components/EditorShell.tsx` — added optional `toolbarExtras`
+  prop, forwards to Toolbar's `extras`. Lets pages wrap the editor
+  with their own context-specific actions (PR 2: SaveTemplateButton;
+  PR 4: TestSendButton).
+- `src/components/integrations/ExportDropdown.tsx` — passes empty
+  subject string to legacy integration send endpoints. ExportDropdown
+  is the pre-campaign integrations path; will be replaced by the
+  campaign builder in Feature 06.
+
+**Smoke tests** (all green):
+
+- Backend in-process Prisma smoke (7 checks): create → JSONB tree
+  round-trips → updatedAt moves on update → list query orders by
+  recency + omits mjmlSource → soft-archive → archived rows excluded
+  by default → cleanup. Zero schema warnings.
+- Frontend type-check (`tsc -b --noEmit`) clean.
+- Frontend build (`vite build`) clean. New chunks: templates pages
+  4.4 KB + components 11.2 KB gzip. Builder chunk +0.3 KB for the
+  SaveTemplateButton wiring.
+- Frontend lint: **zero new issues.** 12 pre-existing problems
+  (canvas/* hooks-rules, integrations/* any-types, ColorPicker
+  setState-in-effect, router/index fast-refresh, tree/paths any) all
+  untouched.
+
+**What this unlocks**:
+
+- PR 3 (starters + agency-level templates + brand-colour swap) — just
+  needs to seed rows + activate the filter tabs. Schema + APIs all
+  ready.
+- PR 4 (test-send via Postmark + merge-tag resolver) — just needs the
+  POST `/templates/:id/test-send` endpoint + a TestSendButton in the
+  Toolbar's `extras` slot.
+- **Campaigns (Feature 06) — the "Pick a template" step finally has
+  real templates to pick.**
+- **Flows (Feature 07) — automation steps can reference template ids.**
+- **Image upload (PR 2.5)** — templates persist their tree, but the
+  tree's `mj-image src=` is still just a URL string today. The dedicated
+  image-upload PR comes next.
+
+### 2026-06-03 · 📐 Planning update — subject + preheader move to Campaign (not Template)
+
+User raised an architectural concern: subject + preheader shouldn't be
+saved on the template — they're per-send (campaign-level) metadata. They
+were right. Update applied across the PR 2 plan:
+
+**Schema** — dropped the `subject String` column from `Template`. Tree
+columns are: id, agencyId, clientId?, name, mjmlSource, thumbnailUrl?,
+category?, isStarter, archived, createdBy?, timestamps.
+
+**API** — POST/PATCH bodies no longer accept `subject`. Response
+shapes (`TemplateSummary` / `TemplateFull`) no longer include it.
+
+**Frontend** —
+- `editorSlice.ts`: `subject: string` field + `setSubject` reducer
+  removed. `loadTemplate({ tree })` (was `loadTemplate({ tree, subject })`).
+- `EmailSettingsBar.tsx` + its stylesheet: **DELETED**. The bar held
+  subject/from/preheader inputs that no longer have a place at
+  template-design time. EditorShell drops its `<EmailSettingsBar />`
+  render + import.
+- `tree/strip.ts`: extended to also drop any `mj-preview` nodes from
+  the tree before persisting. Preheader is a campaign concern.
+- The editor surface becomes pure design: Toolbar + Palette + Canvas +
+  Inspector + optional PreviewModal. No envelope metadata.
+
+**Campaign (Feature 06) will own** subject + preheader + fromName +
+fromEmail + sendAt — a clean separation between "design" (template)
+and "envelope" (campaign).
+
+Full rationale in the new Decisions section (top item). PR 2 scope
+actually got *smaller* — one less DB column, one less slice field,
+one fewer component, one less endpoint param.
+
+Ready to implement PR 2 (Foundation) as updated.
 
 ### 2026-06-03 · ✅ Done — PR 1 (Editor theme migration)
 

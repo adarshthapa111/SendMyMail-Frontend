@@ -1,0 +1,136 @@
+/* Per the templates.html mockup: gradient-thumb card with hover lift. */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  text-align: left;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--line-strong);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* The "thumbnail" — gradient bg with a category icon. Real bitmap previews
+   are V1.5; the icon-on-gradient treatment matches the mockup. */
+.thumb {
+  height: 128px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary-light), var(--surface));
+  color: var(--primary);
+}
+
+.meta {
+  padding: 12px 14px;
+}
+
+.name {
+  display: block;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub {
+  display: block;
+  color: var(--soft);
+  margin-top: 2px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Kebab menu ─────────────────────────────────────────────── */
+
+.menuWrap {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.kebab {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .12s ease, background .12s ease, color .12s ease;
+}
+.card:hover .kebab,
+.card:focus-within .kebab,
+.kebab[aria-expanded="true"] { opacity: 1; }
+.kebab:hover {
+  background: var(--card);
+  color: var(--ink);
+}
+
+.menu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  min-width: 160px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: left;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .1s ease, color .1s ease;
+}
+.menuItem:hover { background: var(--surface); }
+.menuItem:focus-visible {
+  outline: none;
+  background: var(--primary-light);
+  color: var(--primary-ink);
+}
+
+.menuItemDanger {
+  color: var(--red);
+}
+.menuItemDanger:hover {
+  background: var(--red-bg);
+  color: var(--red);
+}

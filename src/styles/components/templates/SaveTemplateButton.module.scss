@@ -1,0 +1,55 @@
+/* Save button — terra-themed, dirty-aware. Lives in the Toolbar's
+   `extras` slot when the editor is in template mode. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease, color .12s ease, opacity .12s ease;
+  position: relative;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+/* "Dirty" state — user has unsaved changes. Terra-primary, prominent. */
+.dirty {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 1px solid var(--color-primary);
+}
+.dirty:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+/* "Clean" state — nothing to save. Quiet, ghosted. */
+.clean {
+  background: var(--color-card);
+  color: var(--color-muted);
+  border: 1px solid var(--color-line);
+  opacity: 0.7;
+}
+
+/* The "unsaved" indicator dot on the right of the label. */
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  margin-left: 2px;
+  animation: tplPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tplPulse {
+  0%,  100% { opacity: 0.5; }
+  50%       { opacity: 1.0; }
+}

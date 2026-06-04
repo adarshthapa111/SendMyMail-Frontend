@@ -1,0 +1,39 @@
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.sub {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Card grid — matches doc/mockups/templates.html. auto-fill so it
+   reflows naturally as the viewport widens. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.spinner {
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+  text-align: center;
+}

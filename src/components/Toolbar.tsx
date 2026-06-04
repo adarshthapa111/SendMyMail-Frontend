@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { redo, togglePreview, undo } from '../store/slices/editorSlice';
 import { setView } from '../store/slices/appSlice';
@@ -8,7 +9,14 @@ import styles from '@styles/components/Toolbar.module.css';
 const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
 const META = isMac ? '⌘' : 'Ctrl+';
 
-export default function Toolbar() {
+interface Props {
+  /** Slot for context-specific actions on the right side of the Toolbar
+      (e.g. the template builder slots in SaveTemplateButton). Rendered
+      between Export and Preview. */
+  extras?: ReactNode;
+}
+
+export default function Toolbar({ extras }: Props = {}) {
   const dispatch = useAppDispatch();
   const canUndo = useAppSelector(selectCanUndo);
   const canRedo = useAppSelector(selectCanRedo);
@@ -53,6 +61,8 @@ export default function Toolbar() {
       </button>
 
       <ExportDropdown />
+
+      {extras}
 
       <button
         type="button"
