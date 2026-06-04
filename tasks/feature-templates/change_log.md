@@ -835,6 +835,330 @@ src/
 
 ## Changes (newest first)
 
+### 2026-06-04 · ✅ Done — PR 2.5 (Builder UX redesign)
+
+Full-screen takeover + new top bar + compact grouped palette. The editor
+now reads as a focused-mode tool (Mailchimp / Beefree / Draftship), not
+an in-app form.
+
+**Mockup**: [doc/mockups/builder.html](../../doc/mockups/builder.html)
+(open in browser — this is the ground-truth design that V1 ships.)
+
+**Phase 1 — Router restructure** ([src/router/index.tsx](../../src/router/index.tsx)):
+Moved `/clients/:cid/templates/:tid/edit` OUT of `<AppShell>` into a new
+top-level route group still gated by `<AgencyReady>` + `<ClientScoped>`,
+but with no sidebar or topbar wrapping. The builder takes over the
+viewport. Reserved the same route group for future full-screen editors
+(campaign content step, form builder).
+
+**Phase 2 — Top bar components** (new files in `src/components/templates/`):
+
+- `BuilderTopBar.tsx` + SCSS — three-cluster grid (left / center / right),
+  56px tall, terra-themed. Replaces the legacy `<Toolbar />` for the
+  template builder.
+  - Left: `← Templates` back link → `BuilderInlineName` → save status
+    (pulsing terra dot "Unsaved changes" → muted dot "Saved").
+  - Center: device toggle pill (Desktop / Mobile / HTML). V1 decorative
+    — Mobile + HTML disabled with "coming soon" tooltips. Desktop is the
+    only active state.
+  - Right: Send test (disabled with PR-4 tooltip) → Preview (opens
+    existing PreviewModal) → `<SaveTemplateButton />` → `<BuilderMoreMenu />`.
+
+- `BuilderInlineName.tsx` + SCSS — click the template name to rename
+  inline (contenteditable). Blur or Enter commits via PATCH; Escape
+  reverts. Updates the template summary in `templatesSlice` via
+  `upsertTemplate` so the cards list reflects the new name on
+  back-navigation. Mirrors Figma / Notion / Mailchimp.
+
+- `BuilderMoreMenu.tsx` + SCSS — kebab dropdown with Duplicate / Export /
+  Archive. Duplicate calls existing API + navigates into the clone.
+  Archive opens the existing `<ConfirmDialog />` (reused from
+  feature-contacts-lists) then navigates back to `/templates` on
+  success. Export is a placeholder toast pointing to PR 4.
+
+**Phase 3 — EditorBody extraction**:
+
+`src/components/EditorBody.tsx` (new) holds the previous EditorShell
+internals (DndContext + Palette + Canvas + Inspector + keyboard
+shortcuts + DragOverlay + FloatingTextToolbar + PreviewModal). Lets
+pages with their own chrome (Builder's BuilderTopBar) render the body
+without dragging along the legacy Toolbar.
+
+`src/components/EditorShell.tsx` simplified to a thin wrapper:
+`<Toolbar /> + <EditorBody />`. Kept for legacy callers (`app.view ===
+'editor'`) — the integrations workflow path.
+
+**Phase 4 — Builder page + Palette rewrite**:
+
+`src/pages/templates/Builder.tsx` no longer renders `<EditorShell />`.
+Instead: `<BuilderTopBar />` + `<EditorBody />` directly, wrapped in
+a full-viewport flex layout. The dirty-leave guard + beforeunload
+wiring + load-on-mount logic is unchanged.
+
+`src/components/Palette.tsx` — kept the grouped structure (already
+had LAYOUT / CONTENT / MEDIA / ADVANCED groups) but completely
+rewrote the visual layer:
+
+- **Search field** at the top now has a leading Tabler search icon +
+  smaller padding + warmer placeholder. No more separate
+  "Blocks · Drag onto canvas" header card — group labels handle that.
+- **Group headers** dropped from 12px to 10px uppercase with 0.7px
+  letter-spacing. Notion-style minimalism — takes ~24px instead of
+  ~60px per group.
+- **Tile grid** denser — gap 5px (was 6px), padding tightened, tiles
+  go to 64px min-height with proper terra-light hover + 1px upward
+  transform on hover.
+- **Tabler icons** replace the legacy glyph strings (`T`, `▭▭▭`)
+  for content/media/advanced blocks. Each block id has an explicit
+  icon mapping in the new `iconFor()` function.
+- **Layout-block visuals** — the headline change. `section-1col`
+  shows one rectangle, `section-2col` shows two side-by-side,
+  `section-3col` shows three. Rectangles use terra at 18% opacity
+  with terra outline, darken on hover. Matches Beefree / Stripo —
+  the user instantly sees the structure rather than parsing a
+  generic icon.
+- **Responsive collapse** at 1100px breakpoint — palette shrinks
+  to 64px icon-only, search disappears, labels hide. The layout
+  visuals stay visible because they ARE the icon.
+
+**Files touched** (8 new + 5 modified):
+
+```
+src/router/index.tsx                                   UPDATE   (route moved out of AppShell)
+src/pages/templates/Builder.tsx                        REWRITE  (uses BuilderTopBar + EditorBody)
+src/components/templates/BuilderTopBar.tsx             NEW
+src/components/templates/BuilderInlineName.tsx         NEW
+src/components/templates/BuilderMoreMenu.tsx           NEW
+src/components/templates/index.ts                      UPDATE   (re-exports)
+src/components/EditorBody.tsx                          NEW      (extracted from EditorShell)
+src/components/EditorShell.tsx                         REWRITE  (thin wrapper around Toolbar + EditorBody)
+src/components/Palette.tsx                             REWRITE  (icons + column visuals)
+src/styles/components/templates/BuilderTopBar.module.scss      NEW
+src/styles/components/templates/BuilderInlineName.module.scss  NEW
+src/styles/components/templates/BuilderMoreMenu.module.scss    NEW
+src/styles/components/templates/Builder.module.scss            UPDATE   (.app full-viewport grid)
+src/styles/components/EditorBody.module.css                    NEW
+src/styles/components/Palette.module.css                       REWRITE  (compact + layout visuals)
+```
+
+**Verify gates**:
+
+- ✅ `npm run build` clean (1.95s, no errors, no warnings).
+- ✅ `npm run lint` adds 0 new issues. 12 pre-existing problems
+  (canvas/* hooks-rules, integrations/* any-types, ColorPicker
+  setState-in-effect, router/index fast-refresh, tree/paths any)
+  unchanged.
+- ✅ Builder bundle SHRUNK from 99.51 KB → 96.28 KB (gzip 28.69 → 28.04
+  KB) — the EditorShell simplification + EmailSettingsBar deletion in
+  PR 2 offset the new chrome's weight.
+- ✅ Templates chunk grew from 11.21 KB → 19.22 KB (gzip 4.22 → 6.05
+  KB) — 8 KB added for BuilderTopBar + BuilderInlineName + BuilderMoreMenu
+  + their stylesheets. Reasonable.
+- ✅ No new dependencies.
+
+**What this unlocks**:
+
+- **PR 4** — TestSendButton becomes a real click in the same right
+  cluster slot (currently disabled with "PR 4 tooltip").
+- **Inline device toggle (functional)** — slot already rendered in
+  the center cluster; just needs the click handler that swaps the
+  Canvas's `width` between 600/375 + persists to localStorage.
+- **Tabbed left rail (Blocks / Rows / Styles / Settings)** — Palette
+  becomes the `Blocks` tab; Rows / Styles / Settings can land as
+  sibling components when needed.
+- **HTML view mode** — top-bar's `HTML` device button can swap the
+  Canvas for the existing HTML source view that already lives in the
+  PreviewModal.
+
+### 2026-06-04 · 📐 Planning — Builder UX redesign (PR 2.5)
+
+User feedback after PR 2 shipped: the editor lives inside the app shell
+(sidebar + topbar visible), the chrome reads like a desktop app from
+2008, the Save button is isolated in the right corner of a busy toolbar,
+the palette is a flat list with no column-layout previews. Doesn't
+match modern email builders (Mailchimp / Beefree / Stripo / Draftship).
+
+This PR is a pure UX/visual upgrade of the existing builder — no
+schema changes, no new persistence, no logic changes to the editor's
+tree operations. It's all chrome.
+
+#### Goal
+
+Take the builder from "in-app editor" to "focused full-screen editor"
+that reads as one of the modern email tools (Beefree / Mailchimp). Make
+the palette compact, grouped, and feature the column-layout blocks as
+visual previews instead of generic icons.
+
+#### Scope (V1)
+
+Locked to two things:
+1. **Full-screen takeover + new top bar** — builder route moves OUT of
+   `<AppShell>`, gets its own chrome. New `<BuilderTopBar />` replaces
+   the existing `<Toolbar />` for template-editing flows.
+2. **Compact grouped palette** — `<Palette />` rewritten to show
+   LAYOUT / CONTENT / MEDIA / ADVANCED group headers with all 13 real
+   blocks from the registry, denser tiles, and visual column-structure
+   previews for the 1col / 2col / 3col blocks.
+
+Approved via [doc/mockups/builder.html](../../doc/mockups/builder.html)
+(open in browser to preview the target design).
+
+#### Out of scope (deferred)
+
+These appear visually in the mockup but ship as decorative-only V1 OR
+defer entirely:
+
+- **Device toggle (Desktop / Mobile / HTML)** — the toggle pill
+  renders in the top bar but switching is not wired in V1. The
+  existing PreviewModal stays as the device-preview surface for now.
+  Full inline device-toggle lands in a follow-up.
+- **Inline rename** — clicking the template name in the top bar shows
+  the cursor but commits via blur → PATCH. Wired in V1.
+- **Send test button** — rendered but disabled with "Coming in PR 4"
+  tooltip (Postmark integration is PR 4).
+- **More-actions menu (`⋯`)** — rendered but with a placeholder
+  dropdown (Duplicate / Archive / Export) that wires the existing
+  duplicate + archive APIs already shipped in PR 2.
+- **Zoom controls** — rendered as a floating widget but disabled in
+  V1. Real zoom requires a CSS transform on the canvas + recalcing
+  drop-zone coordinates, which is a non-trivial follow-up.
+- **Tabbed left rail (Blocks / Rows / Styles / Settings)** — not in
+  V1. The palette stays single-list, just grouped by category.
+
+#### Files
+
+```
+src/
+├─ router/index.tsx                          # MOVE the builder route OUT of <AppShell> — make it a top-level route under AgencyReady
+├─ pages/templates/Builder.tsx               # REWRITE — render <BuilderTopBar /> + the editor body directly (no <EditorShell />)
+├─ components/templates/
+│  ├─ BuilderTopBar.tsx                      # NEW — left cluster (back / name / status) + center (device toggle, V1 disabled) + right (test/preview/save/more)
+│  ├─ BuilderInlineName.tsx                  # NEW — contenteditable template name, blur → PATCH name + dispatch upsertTemplate
+│  ├─ BuilderMoreMenu.tsx                    # NEW — kebab dropdown (Duplicate / Archive / Export)
+│  └─ index.ts                                # re-export new components
+├─ components/
+│  └─ EditorShell.tsx                        # extract <EditorBody /> sub-component (just Palette + Canvas + Inspector + DnD wiring) so Builder can render it without the legacy Toolbar
+├─ components/Palette.tsx                    # REWRITE — render groups (LAYOUT / CONTENT / MEDIA / ADVANCED) with grouped 2-col grid, custom layout-block visuals
+└─ styles/components/templates/
+   ├─ BuilderTopBar.module.scss              # NEW
+   ├─ BuilderInlineName.module.scss          # NEW
+   └─ BuilderMoreMenu.module.scss            # NEW
+└─ styles/components/Palette.module.css      # UPDATE — group headers, denser tiles, layout-block visual class
+```
+
+The existing **`SaveTemplateButton`** keeps working — `BuilderTopBar`
+renders it in its right cluster, replacing the SaveTemplateButton's
+previous role as a Toolbar `extras` slot.
+
+The existing **`EditorShell`** keeps its current shape for backward
+compatibility with `app.view === 'editor'` (the legacy original-app
+entry point that may still be used by the integrations flow). Builder
+no longer uses it.
+
+#### Decisions
+
+- **Move out of AppShell, not just hide it.** The router route gets
+  moved to a sibling top-level route. `Outlet`-wrapping with
+  `AgencyReady` (so auth still gates the page) but no AppShell. This
+  is the Figma / Mailchimp / Linear pattern.
+- **`BuilderTopBar`, not extending the existing Toolbar.** They serve
+  different mental models — Toolbar is a generic-looking app toolbar,
+  BuilderTopBar is the focused-mode chrome. Conflating them would
+  mean Toolbar grows props for things only Builder uses.
+- **Extract `EditorBody` from EditorShell.** Builder needs the
+  palette + canvas + inspector + DnD wiring but NOT the Toolbar.
+  Extracting a sub-component keeps EditorShell intact for legacy
+  callers + gives Builder the right composable piece.
+- **Inline rename via contenteditable + blur-PATCH.** No modal, no
+  separate edit-mode toggle. Click the name, it's editable; click
+  elsewhere or press Enter, it saves. Reuses the existing
+  `updateTemplate` API.
+- **Status text in the top bar replaces the old loud "Save" button
+  state.** "Unsaved changes" (pulsing terra dot) → "Saved" (muted dot)
+  is the primary signal; the Save button mirrors but the *headline*
+  is in the status indicator. Figma / Notion pattern.
+- **Column-layout visuals on layout blocks** instead of generic icons.
+  Beefree / Stripo / Mailchimp all do this. A 2-column block should
+  *show* two columns. Lower cognitive load — user instantly knows
+  what they'll get.
+- **Group headers, not tabs.** V1 stays single-scroll with group
+  labels (Notion-style). Tabs (Blocks / Rows / Styles / Settings)
+  would be a bigger commitment that requires the Rows / Styles /
+  Settings tabs to actually have content; deferred.
+- **Search field at top of palette** — quick filter across all
+  blocks. Already in current Palette; keep it.
+- **Responsive collapse**: under 1100px the palette shrinks to 64px
+  icon-only; under 820px both side rails hide entirely (full-bleed
+  canvas). Editing on mobile isn't pleasant but the read/preview
+  works.
+
+#### Implementation phases (sequential)
+
+1. **Router restructure** — pull the builder route out of AppShell.
+   Verify by visiting `/clients/:cid/templates/:tid/edit` directly:
+   the app sidebar + topbar should vanish, but auth gating + redirect
+   to login if logged-out still works. The page is mostly blank at
+   this phase because EditorShell still renders its old Toolbar; we
+   replace that next.
+2. **BuilderTopBar component** — write it standalone first, render
+   it in the route. It includes:
+   - Left: ← Templates back link → BuilderInlineName → save status
+   - Center: device toggle pill (V1 cosmetic)
+   - Right: Send test (disabled, tooltip) · Preview (opens existing
+     PreviewModal) · `<SaveTemplateButton />` · BuilderMoreMenu kebab
+3. **Extract EditorBody from EditorShell** — pull the body (Palette +
+   Canvas + Inspector + DnD wiring + DragOverlay + FloatingTextToolbar
+   + PreviewModal) into its own component. EditorShell keeps its
+   current shape (renders Toolbar + EditorBody) for legacy callers.
+4. **Builder.tsx rewrite** — renders `<BuilderTopBar />` + `<EditorBody />`
+   directly. Fetch + loadTemplate + dirty-leave guard logic stays the
+   same.
+5. **Palette rewrite** — convert to grouped layout. Add a custom
+   render path for layout-group blocks (1col / 2col / 3col) that
+   shows the column-structure visual instead of the icon glyph.
+6. **Verify** — manual flow (open template → drag block → save →
+   navigate away with dirty → confirm → save → list shows updated
+   time). Build + lint clean.
+
+#### Acceptance criteria
+
+- [ ] `/clients/:cid/templates/:tid/edit` no longer shows the
+  app sidebar or topbar — the builder fills the viewport.
+- [ ] Clicking "← Templates" in the top bar returns to
+  `/clients/:cid/templates` (with dirty-leave confirm if applicable).
+- [ ] Template name in the top bar is click-to-edit; blur saves
+  it via PATCH; toast `Renamed to {new name}`.
+- [ ] Save status indicator reads `Unsaved changes` (pulsing terra
+  dot) while dirty, switches to `Saved` (muted dot) after save.
+- [ ] Send test button is visible but disabled, with a "Coming
+  soon" tooltip. Preview button opens the existing PreviewModal.
+  More-actions menu shows Duplicate / Archive / Export (each wired
+  to its existing API or modal).
+- [ ] Device toggle pill renders Desktop / Mobile / HTML. Clicking
+  doesn't change behavior in V1 (decorative).
+- [ ] Palette shows 4 group headers (LAYOUT / CONTENT / MEDIA /
+  ADVANCED) with their blocks (3 / 4 / 3 / 2). Layout blocks display
+  column visuals (1, 2, 3 rectangles) instead of generic icons.
+- [ ] Search field at top of palette filters tiles in real time
+  across all groups.
+- [ ] Drag/drop / canvas / inspector / undo/redo / preview / save all
+  continue to work — no functional regressions.
+- [ ] Responsive: under 1100px palette collapses to icon-only; under
+  820px both rails hide.
+- [ ] `npm run build` clean; `npm run lint` adds 0 new issues.
+
+#### What this unlocks
+
+- **PR 3 (starters + agency)** — Starter templates land in a builder
+  that already looks modern + focused. The "Use this starter" CTA on
+  the list page lands users in the builder with the starter's tree
+  pre-loaded; the new chrome makes the experience continuous.
+- **PR 4 (test-send + merge tags)** — TestSendButton becomes a real
+  click instead of a disabled placeholder. Same slot in the top bar.
+- **Future builder enhancements** — Tabbed left rail (Blocks / Rows /
+  Styles / Settings), inline device toggle, zoom controls — all have
+  the architectural homes already carved out.
+
 ### 2026-06-04 · ✅ Done — PR 2 (Foundation — templates persistence)
 
 End-to-end persistence for templates. A user can now create a template,

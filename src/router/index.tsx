@@ -135,7 +135,8 @@ export const router = createBrowserRouter([
       { path: '/clients/:clientId/suppression',                element: <RoleGated min="admin">{withSuspense(<Contacts.Suppression />)}</RoleGated> },
 
       { path: '/clients/:clientId/templates',                  element: <ClientScoped>{withSuspense(<Templates.List />)}</ClientScoped> },
-      { path: '/clients/:clientId/templates/:templateId/edit', element: <ClientScoped>{withSuspense(<Templates.Builder />)}</ClientScoped> },
+      /* Note: /templates/:tid/edit moved OUT of AppShell — see "Full-screen
+         editor routes" below. Builder takes over the entire viewport. */
 
       { path: '/clients/:clientId/campaigns',                  element: <ClientScoped>{withSuspense(<Campaigns.List />)}</ClientScoped> },
       { path: '/clients/:clientId/campaigns/new',              element: <ClientScoped>{withSuspense(<Campaigns.New />)}</ClientScoped> },
@@ -169,6 +170,17 @@ export const router = createBrowserRouter([
 
       /* Catch-all inside the shell — 404 with chrome */
       { path: '*', element: <Outlet /> /* falls through to top-level 404 */ },
+    ],
+  },
+
+  /* ─── Full-screen editor routes — auth gated, but NO AppShell ─── */
+  /* These routes take over the whole viewport. The builder renders its own
+     focused chrome (BuilderTopBar + Palette + Canvas + Inspector). Used by
+     template editing, and later by campaign content step and form builder. */
+  {
+    element: <AgencyReady><Outlet /></AgencyReady>,
+    children: [
+      { path: '/clients/:clientId/templates/:templateId/edit', element: <ClientScoped>{withSuspense(<Templates.Builder />)}</ClientScoped> },
     ],
   },
 

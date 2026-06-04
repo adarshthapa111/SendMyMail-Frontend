@@ -1,0 +1,9 @@
+/* The body layout: palette + canvas + inspector. Fills whatever vertical
+   space the parent gives it. Used by both EditorShell (legacy chrome) and
+   the template Builder page (BuilderTopBar chrome). */
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}

@@ -1,3 +1,6 @@
+/* Block palette — compact, grouped by category (LAYOUT / CONTENT / MEDIA
+   / ADVANCED). Mirrors doc/mockups/builder.html. */
+
 .palette {
   width: 240px;
   background: var(--color-card);
@@ -8,23 +11,34 @@
   min-height: 0;
 }
 
+/* ─── Search ─── */
+
 .searchWrap {
-  padding: 12px;
-  border-bottom: 1px solid var(--color-line);
+  position: relative;
+  padding: 12px 12px 10px;
+  border-bottom: 1px solid var(--color-line-soft);
   flex-shrink: 0;
 }
-
+.searchIcon {
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-soft);
+  pointer-events: none;
+}
 .search {
   width: 100%;
-  padding: 7px 10px;
+  padding: 7px 10px 7px 30px;
   font: inherit;
-  font-size: 13px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: 4px;
+  font-size: 12.5px;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
   background: var(--color-bg);
+  color: var(--color-ink);
   box-sizing: border-box;
 }
-
+.search::placeholder { color: var(--color-soft); }
 .search:focus {
   outline: none;
   border-color: var(--color-primary);
@@ -32,37 +46,42 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
+/* ─── Scrolling group list ─── */
+
 .scroller {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  padding: 4px 0 16px;
 }
 
 .empty {
   padding: 16px;
   color: var(--color-soft);
-  font-size: 13px;
+  font-size: 12.5px;
   text-align: center;
 }
 
 .group {
-  border-bottom: 1px solid var(--color-line-soft);
+  /* No bottom border — group headers themselves provide the separation */
 }
 
 .groupHeader {
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  color: var(--color-muted);
-  padding: 12px 12px 6px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.7px;
+  color: var(--color-soft);
+  padding: 12px 14px 4px;
 }
+
+/* ─── Tile grid ─── */
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  padding: 6px 12px 12px;
+  gap: 5px;
+  padding: 4px 10px 4px;
 }
 
 .blockCard {
@@ -71,10 +90,10 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 6px;
+  padding: 11px 6px 9px;
   border: 1px solid var(--color-line);
   background: var(--color-card);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: grab;
   font: inherit;
   color: var(--color-ink);
@@ -82,16 +101,19 @@
   touch-action: none;
   text-align: center;
   min-height: 64px;
-  transition: background 80ms ease, border-color 80ms ease, opacity 80ms ease;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
 }
 
 .blockCard:hover {
   background: var(--color-primary-light);
   border-color: var(--color-primary);
+  color: var(--color-primary-ink);
+  transform: translateY(-1px);
 }
 
 .blockCard:active {
   cursor: grabbing;
+  transform: translateY(0);
   background: color-mix(in srgb, var(--color-primary) 20%, var(--color-card));
 }
 
@@ -100,35 +122,73 @@
   cursor: grabbing;
 }
 
+/* ─── Icon container — uses Tabler icons (block-default) ─── */
+
 .blockIcon {
-  width: 32px;
-  height: 24px;
-  background: var(--color-surface);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--color-muted);
-  letter-spacing: -1px;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 22px;
+  color: var(--color-primary);
+  line-height: 1;
 }
+.blockCard:hover .blockIcon { color: var(--color-primary-ink); }
+
+/* ─── Layout-block visuals — N rectangles for the column structure ─── */
+
+.layoutVisual {
+  display: inline-flex;
+  gap: 2px;
+  width: 32px;
+  height: 18px;
+  align-items: stretch;
+}
+.layoutVisual i {
+  flex: 1;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  border: 1.5px solid var(--color-primary);
+  border-radius: 2px;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.blockCard:hover .layoutVisual i {
+  background: color-mix(in srgb, var(--color-primary-ink) 28%, transparent);
+  border-color: var(--color-primary-ink);
+}
+
+/* ─── Tile label ─── */
 
 .blockLabel {
   font-size: 11px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
 }
 
-.hint {
-  padding: 10px 12px;
-  font-size: 11px;
-  color: var(--color-soft);
-  border-top: 1px solid var(--color-line);
-  text-align: center;
-  flex-shrink: 0;
+/* ─── Responsive collapse to icon-only ─── */
+
+@media (max-width: 1100px) {
+  .palette { width: 64px; }
+  .searchWrap { display: none; }
+  .group {
+    padding: 8px 4px 4px;
+    text-align: center;
+  }
+  .groupHeader {
+    font-size: 8px;
+    padding: 8px 4px 4px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 2px 6px;
+    gap: 4px;
+  }
+  .blockCard {
+    padding: 8px 4px;
+    min-height: 48px;
+    gap: 4px;
+  }
+  .blockLabel { display: none; }
 }

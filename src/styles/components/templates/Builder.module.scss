@@ -1,6 +1,19 @@
+/* Full-screen builder shell. Takes over the viewport — no app sidebar
+   or topbar (the route lives outside <AppShell> in router/index.tsx).
+   Mirrors doc/mockups/builder.html.
+
+   Two-row grid: BuilderTopBar (56px) + EditorBody (rest of the viewport). */
+.app {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+  width: 100vw;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
 /* Loading / error fallback while the template is being fetched.
    Fills the same viewport area the editor would occupy. */
-
 .fallback {
   display: grid;
   place-items: center;

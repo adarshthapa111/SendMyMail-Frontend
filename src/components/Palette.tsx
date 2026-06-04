@@ -1,5 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useDraggable } from '@dnd-kit/core';
+import {
+  IconTypography, IconRectangle, IconMinus, IconArrowsVertical,
+  IconPhoto, IconStar, IconBrandFacebook,
+  IconLayoutNavbar, IconCode, IconSearch,
+} from '@tabler/icons-react';
 import { blockRegistry, type BlockDef } from '../blocks/registry';
 import {
   PALETTE_GROUP_ORDER,
@@ -14,6 +19,37 @@ export interface PaletteDragData {
   blockId: string;
   category: BlockCategory;
   label: string;
+}
+
+/* Visual for the three layout blocks — N rectangles side-by-side instead
+   of a generic icon. Matches doc/mockups/builder.html — Beefree / Stripo
+   style. The rectangle count signals exactly what dragging in produces. */
+function ColumnVisual({ cols }: { cols: 1 | 2 | 3 }) {
+  return (
+    <span className={styles.layoutVisual} aria-hidden="true">
+      {Array.from({ length: cols }, (_, i) => <i key={i} />)}
+    </span>
+  );
+}
+
+/* Map block id → React icon. Layout blocks use ColumnVisual; everything
+   else uses a Tabler icon. */
+function iconFor(blockId: string): ReactNode {
+  switch (blockId) {
+    case 'section-1col': return <ColumnVisual cols={1} />;
+    case 'section-2col': return <ColumnVisual cols={2} />;
+    case 'section-3col': return <ColumnVisual cols={3} />;
+    case 'text':         return <IconTypography size={18} stroke={1.6} />;
+    case 'button':       return <IconRectangle size={18} stroke={1.6} />;
+    case 'divider':      return <IconMinus size={18} stroke={2} />;
+    case 'spacer':       return <IconArrowsVertical size={18} stroke={1.6} />;
+    case 'image':        return <IconPhoto size={18} stroke={1.6} />;
+    case 'hero':         return <IconStar size={18} stroke={1.6} />;
+    case 'social':       return <IconBrandFacebook size={18} stroke={1.6} />;
+    case 'navbar':       return <IconLayoutNavbar size={18} stroke={1.6} />;
+    case 'rawHtml':      return <IconCode size={18} stroke={1.6} />;
+    default:             return null;
+  }
 }
 
 function PaletteCard({ def }: { def: BlockDef }) {
@@ -38,7 +74,7 @@ function PaletteCard({ def }: { def: BlockDef }) {
       title={def.label}
       className={`${styles.blockCard} ${isDragging ? styles.dragging : ''}`}
     >
-      <span className={styles.blockIcon}>{def.icon}</span>
+      <span className={styles.blockIcon}>{iconFor(def.id)}</span>
       <span className={styles.blockLabel}>{def.label}</span>
     </div>
   );
@@ -67,6 +103,7 @@ export default function Palette() {
   return (
     <aside className={styles.palette}>
       <div className={styles.searchWrap}>
+        <IconSearch size={14} className={styles.searchIcon} aria-hidden="true" />
         <input
           type="search"
           className={styles.search}
@@ -97,8 +134,6 @@ export default function Palette() {
           );
         })}
       </div>
-
-      <div className={styles.hint}>Drag a block onto the canvas.</div>
     </aside>
   );
 }

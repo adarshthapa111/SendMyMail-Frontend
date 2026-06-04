@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useBlocker } from 'react-router-dom';
-import EditorShell from '../../components/EditorShell';
-import { SaveTemplateButton } from '../../components/templates';
+import EditorBody from '../../components/EditorBody';
+import { BuilderTopBar } from '../../components/templates';
 import { Spinner } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadTemplate } from '../../store/slices/editorSlice';
@@ -11,10 +11,15 @@ import { toast } from '../../lib/toast';
 import styles from '@styles/components/templates/Builder.module.scss';
 
 /* /clients/:clientId/templates/:templateId/edit
-   Wraps the existing MJML editor (EditorShell) with:
-   - Fetch-on-mount: GET the template, dispatch loadTemplate into editorSlice
-   - SaveTemplateButton in the Toolbar's `extras` slot (dirty-aware)
-   - Dirty-leave guard via React Router's useBlocker — confirm before nav
+   Full-screen editor — lives OUTSIDE <AppShell> per router/index.tsx.
+   Renders the focused builder chrome (BuilderTopBar) + the editor body
+   (Palette + Canvas + Inspector + DnD + Preview), nothing else.
+
+   - Fetch on mount: GET /v1/clients/:cid/templates/:id → dispatch
+     loadTemplate({tree}) so editorSlice populates with the saved design.
+   - Local state holds the latest name + category so inline rename in the
+     top bar updates instantly without a refetch.
+   - Dirty-leave guard via React Router's useBlocker — confirms before nav
      away with unsaved changes. */
 export function Builder() {
   const { clientId = '', templateId = '' } = useParams<{ clientId: string; templateId: string }>();
@@ -50,8 +55,6 @@ export function Builder() {
   }, [clientId, templateId, dispatch]);
 
   // ── Dirty-leave guard ─────────────────────────────────────────
-  // useBlocker fires whenever the user tries to navigate away from this
-  // route. If we're dirty, prompt; if confirmed, proceed.
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       dirty && currentLocation.pathname !== nextLocation.pathname,
@@ -94,14 +97,15 @@ export function Builder() {
   }
 
   return (
-    <EditorShell
-      toolbarExtras={
-        <SaveTemplateButton
-          clientId={clientId}
-          templateId={templateId}
-          templateName={template.name}
-        />
-      }
-    />
+    <div className={styles.app}>
+      <BuilderTopBar
+        clientId={clientId}
+        templateId={templateId}
+        templateName={template.name}
+        category={template.category}
+        onNameChange={(name) => setTemplate((t) => (t ? { ...t, name } : t))}
+      />
+      <EditorBody />
+    </div>
   );
 }
