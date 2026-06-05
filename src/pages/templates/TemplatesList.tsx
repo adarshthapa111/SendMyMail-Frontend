@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Heading, Text, Button, Spinner } from '../../components/ui';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconCloudUpload } from '@tabler/icons-react';
 import {
-  TemplateCard, TemplateFormDialog, TemplatesEmptyState,
-  type TemplateFormValues,
+  TemplateCard, TemplateFormDialog, TemplatesEmptyState, ImportMjmlDialog,
+  type TemplateFormValues, type ImportMjmlValues,
 } from '../../components/templates';
 import { ConfirmDialog } from '../../components/contacts';
 import { useTemplates } from '../../hooks/useTemplates';
@@ -29,6 +29,7 @@ export function TemplatesList() {
 
   // ── Modal state ───────────────────────────────────────────────
   const [creating, setCreating]       = useState(false);
+  const [importing, setImporting]     = useState(false);
   const [renaming, setRenaming]       = useState<TemplateSummary | null>(null);
   const [submitting, setSubmitting]   = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -67,6 +68,35 @@ export function TemplatesList() {
     } catch (err) {
       if (!(err instanceof ApiError && err.field)) {
         /* generic error toast already shown by withFormToast */
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  // ── Import MJML ───────────────────────────────────────────────
+  async function onImport(values: ImportMjmlValues) {
+    if (!clientId) return;
+    setSubmitting(true);
+    setFieldErrors({});
+    try {
+      const tpl = await withFormToast(
+        tpls.create({
+          name:       values.name,
+          category:   values.category,
+          mjmlSource: values.tree,
+        }),
+        {
+          loading: 'Importing…',
+          success: `Imported ${values.name}`,
+          onFieldError: (err) => setFieldErrors({ [err.field!]: err.message }),
+        },
+      );
+      setImporting(false);
+      navigate(`/clients/${clientId}/templates/${tpl.id}/edit`);
+    } catch (err) {
+      if (!(err instanceof ApiError && err.field)) {
+        /* generic error toast already shown */
       }
     } finally {
       setSubmitting(false);
@@ -144,13 +174,24 @@ export function TemplatesList() {
   if (visible.length === 0) {
     return (
       <>
-        <TemplatesEmptyState onAdd={() => setCreating(true)} />
+        <TemplatesEmptyState
+          onAdd={() => setCreating(true)}
+          onImport={() => setImporting(true)}
+        />
         {creating ? (
           <TemplateFormDialog
             submitting={submitting}
             fieldErrors={fieldErrors}
             onSubmit={onCreate}
             onClose={() => setCreating(false)}
+          />
+        ) : null}
+        {importing ? (
+          <ImportMjmlDialog
+            submitting={submitting}
+            fieldErrors={fieldErrors}
+            onSubmit={onImport}
+            onClose={() => setImporting(false)}
           />
         ) : null}
       </>
@@ -167,6 +208,13 @@ export function TemplatesList() {
           </Text>
         </div>
         <div className={styles.actions}>
+          <Button
+            variant="secondary"
+            leading={<IconCloudUpload size={16} />}
+            onClick={() => setImporting(true)}
+          >
+            Import MJML
+          </Button>
           <Button
             variant="primary"
             leading={<IconPlus size={16} />}
@@ -196,6 +244,15 @@ export function TemplatesList() {
           fieldErrors={fieldErrors}
           onSubmit={onCreate}
           onClose={() => setCreating(false)}
+        />
+      ) : null}
+
+      {importing ? (
+        <ImportMjmlDialog
+          submitting={submitting}
+          fieldErrors={fieldErrors}
+          onSubmit={onImport}
+          onClose={() => setImporting(false)}
         />
       ) : null}
 

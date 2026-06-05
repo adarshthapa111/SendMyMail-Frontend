@@ -1,0 +1,259 @@
+/* Import MJML modal — two-step (Source → Name). Wider than the standard
+   form dialog because the textarea + drop zone need horizontal room. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 38, 32, 0.40);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  animation: imdFade .14s ease-out;
+}
+@keyframes imdFade { from { opacity: 0; } to { opacity: 1; } }
+
+.dialog {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  max-width: 680px;
+  width: 100%;
+  animation: imdPop .18s ease-out;
+}
+@keyframes imdPop {
+  from { transform: translateY(8px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1);      opacity: 1; }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--color-line-soft);
+}
+
+.sub {
+  margin-top: 4px;
+  font-size: 13px;
+  max-width: 520px;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--color-muted);
+  flex-shrink: 0;
+  transition: background .12s ease, color .12s ease;
+}
+.close:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.close:disabled { opacity: .4; cursor: not-allowed; }
+
+.body {
+  padding: 18px 24px 6px;
+}
+
+/* ─── Tabs ─── */
+
+.tabs {
+  display: inline-flex;
+  background: var(--color-surface);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 0;
+  margin-bottom: 14px;
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.tab:hover { color: var(--color-ink); }
+.tabOn {
+  background: var(--color-card);
+  color: var(--color-primary);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+
+/* ─── Paste textarea ─── */
+
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 240px;
+}
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-card);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+.textarea::placeholder {
+  color: var(--color-soft);
+  white-space: pre;
+}
+
+/* ─── Drop zone ─── */
+
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 20px;
+  border: 1.5px dashed var(--color-line-strong);
+  border-radius: 10px;
+  background: var(--color-bg);
+  text-align: center;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+  min-height: 240px;
+  box-sizing: border-box;
+}
+.dropZone:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+}
+.dropZoneOver {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  border-style: solid;
+}
+.fileInput {
+  position: absolute;
+  left: -9999px;
+}
+.dropIcon {
+  color: var(--color-primary);
+}
+.dropTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.dropSub {
+  font-size: 12px;
+  color: var(--color-soft);
+}
+.fileInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-ink);
+  text-align: left;
+}
+.fileText b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.fileText small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--color-soft);
+  margin-top: 2px;
+}
+
+/* ─── Validation banner ─── */
+
+.banner {
+  display: flex;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.banner b {
+  font-weight: 600;
+}
+.banner small {
+  display: block;
+  font-size: 11.5px;
+  margin-top: 3px;
+  opacity: 0.85;
+}
+.bannerIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.bannerError {
+  background: var(--color-red-bg);
+  color: var(--color-red);
+}
+.bannerSuccess {
+  background: var(--color-green-bg);
+  color: var(--color-green-tx);
+}
+.bannerWarn {
+  color: var(--color-amber-tx);
+  margin-top: 6px !important;
+  padding: 6px 8px;
+  background: var(--color-amber-bg);
+  border-radius: 6px;
+  font-weight: 500;
+}
+.bannerHint {
+  margin-top: 14px;
+  padding: 11px 14px;
+  background: var(--color-surface);
+  color: var(--color-soft);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* ─── Step 2 summary ─── */
+
+.summaryRow {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+/* ─── Action bar ─── */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 24px 22px;
+  border-top: 1px solid var(--color-line-soft);
+}

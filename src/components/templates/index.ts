@@ -5,3 +5,4 @@ export { SaveTemplateButton } from './SaveTemplateButton';
 export { BuilderTopBar } from './BuilderTopBar';
 export { BuilderInlineName } from './BuilderInlineName';
 export { BuilderMoreMenu } from './BuilderMoreMenu';
+export { ImportMjmlDialog, type ImportMjmlValues } from './ImportMjmlDialog';

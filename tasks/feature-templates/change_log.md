@@ -835,6 +835,17 @@ src/
 
 ## Changes (newest first)
 
+### 2026-06-04 · 🔗 Sibling feature — MJML import
+
+User requested an "Import MJML" feature on the templates list page.
+Because it's a self-contained addition (its own parser, its own UI,
+no schema / backend changes), it lives in its own folder:
+**[tasks/feature-mjml-import/change_log.md](../feature-mjml-import/change_log.md)**.
+
+It's logically part of templates — imported MJML lands as a regular
+visual template and uses the builder shipped in PR 2.5 — but the
+implementation is bounded enough to track separately.
+
 ### 2026-06-04 · ✅ Done — PR 2.5 (Builder UX redesign)
 
 Full-screen takeover + new top bar + compact grouped palette. The editor

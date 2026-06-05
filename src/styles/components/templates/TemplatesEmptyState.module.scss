@@ -35,6 +35,27 @@
   line-height: 1.5;
 }
 
+.ctas {
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .cta {
   display: inline-flex;
+}
+
+.subSecondary {
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  max-width: 420px;
+  margin-inline: auto;
+}
+.subSecondary code {
+  background: var(--surface);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }

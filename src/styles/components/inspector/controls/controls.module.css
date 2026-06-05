@@ -227,3 +227,66 @@
 .toggleRow input {
   cursor: pointer;
 }
+
+/* ── Image picker / replace ─────────────────────────────────── */
+
+.imageDrop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  min-height: 120px;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: 6px;
+  background: var(--color-bg);
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+
+.imageDropOver {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  border-style: solid;
+}
+
+.imageDropPreview {
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.imageDropPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-soft);
+  font-size: 11px;
+}
+
+.imageDropButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-card);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.imageDropButton:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.imageDropButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

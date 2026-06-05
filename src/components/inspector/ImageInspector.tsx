@@ -5,6 +5,7 @@ import UrlInput from './controls/UrlInput';
 import NumberInput from './controls/NumberInput';
 import SelectInput from './controls/SelectInput';
 import PaddingControl from './controls/PaddingControl';
+import ImageReplaceControl from './controls/ImageReplaceControl';
 import AdvancedPanel from './AdvancedPanel';
 import { useAttrSetter } from './useInspectorHelpers';
 import styles from '@styles/components/inspector/controls/controls.module.css';
@@ -24,6 +25,10 @@ export default function ImageInspector({ node, path }: Props) {
   return (
     <>
       <FormSection title="Image">
+        <ImageReplaceControl
+          currentSrc={attrs.src as string | undefined}
+          onPicked={(dataUrl) => set('src')(dataUrl)}
+        />
         <UrlInput
           label="Source URL"
           value={attrs.src as string}

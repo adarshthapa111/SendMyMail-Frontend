@@ -31,6 +31,7 @@ export const PALETTE_GROUP_LABEL: Record<PaletteGroup, string> = {
  */
 export const CONTAINER_ACCEPTS: Record<string, BlockCategory[]> = {
   'mj-body': ['section'],
+  'mj-wrapper': ['section'],   // wraps multiple sections under shared styles
   'mj-section': ['column'],
   'mj-column': ['content'],
   'mj-hero': ['content'],

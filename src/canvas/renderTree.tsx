@@ -36,6 +36,8 @@ export function RenderNode({ node, path }: { node: IMjmlNode; path: NodePath }) 
       return <BodyFrame node={node} path={path} />;
     case 'mj-section':
       return <SectionFrame node={node} path={path} />;
+    case 'mj-wrapper':
+      return <WrapperFrame node={node} path={path} />;
     case 'mj-column':
       return <ColumnFrame node={node} path={path} />;
     case 'mj-hero':
@@ -212,6 +214,46 @@ function HeroFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
             <div key={child._id ?? i}>
               <RenderNode node={child} path={[...path, 'children', i]} />
               <DropZone parentPath={path} parentTag="mj-hero" index={i + 1} />
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+/* mj-wrapper groups multiple sections under shared styles (background-color,
+   padding, border-radius). Structurally it sits between mj-body and
+   mj-section. Real-world MJML (EmailLove / mjml.io / Stripo) uses this
+   constantly for full-width banners and visual grouping. Rendering: a
+   styled, selectable container that contains its child sections vertically,
+   with drop zones so sections can still be reordered/added inside. */
+function WrapperFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
+  const isSelected = useIsSelected(node._id);
+  const onClick = useSelectHandler(node._id);
+  const style: CSSProperties = {
+    backgroundColor: String(node.attributes?.['background-color'] ?? 'transparent'),
+    padding: String(node.attributes?.padding ?? '0'),
+    borderRadius: String(node.attributes?.['border-radius'] ?? '0'),
+    position: 'relative',
+  };
+  const children = node.children ?? [];
+  return (
+    <div
+      style={style}
+      className={`${styles.section} ${isSelected ? styles.selected : ''}`}
+      onClick={onClick}
+    >
+      {isSelected && <SelectionToolbar path={path} />}
+      {children.length === 0 ? (
+        <DropZone parentPath={path} parentTag="mj-wrapper" index={0} large />
+      ) : (
+        <>
+          <DropZone parentPath={path} parentTag="mj-wrapper" index={0} />
+          {children.map((child, i) => (
+            <div key={child._id ?? i}>
+              <RenderNode node={child} path={[...path, 'children', i]} />
+              <DropZone parentPath={path} parentTag="mj-wrapper" index={i + 1} />
             </div>
           ))}
         </>
