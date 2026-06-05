@@ -66,13 +66,23 @@ export function buildIdPathCache(
 }
 
 /**
- * Assign fresh _id values to every node in the tree.
- * Used on load: persisted JSON has no _id (stripped on save), so we hydrate them.
+ * Hydrate `_id` on every node in the tree.
+ *
+ * - Nodes that already have an `_id` keep it (so trees that already had
+ *   stable IDs — e.g. just-uploaded-then-saved trees, freshly imported
+ *   MJML — round-trip through `loadTemplate` without surprise re-keying).
+ * - Nodes WITHOUT an `_id` get a fresh UUID. This is the load-from-backend
+ *   path: `stripForPersistence` removes `_id` before save, so the persisted
+ *   JSON has none on reload, and the editor needs `_id` for selection,
+ *   hover, and the `idPathCache` that all canvas mutations use.
+ *
+ * Called inside the `loadTemplate` reducer so every caller benefits — no
+ * call site has to remember to hydrate.
  */
 export function assignFreshIds(node: IMjmlNode): IMjmlNode {
   return {
     ...node,
-    _id: uuid(),
+    _id: node._id ?? uuid(),
     children: node.children?.map(assignFreshIds),
   };
 }

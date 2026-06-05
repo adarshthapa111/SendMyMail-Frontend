@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { current, type WritableDraft } from 'immer';
 import type { IMjmlNode, NodePath } from '../../tree/types';
-import { buildIdPathCache } from '../../tree/paths';
+import { buildIdPathCache, assignFreshIds } from '../../tree/paths';
 import { newTemplate } from '../../tree/newTemplate';
 import {
   insertNode,
@@ -174,9 +174,17 @@ const editorSlice = createSlice({
      * Load a template's tree into the editor. Resets history, selection,
      * and dirty flag. Called by Builder.tsx on mount after fetching the
      * template via GET /v1/clients/:cid/templates/:id.
+     *
+     * `assignFreshIds` runs FIRST and is idempotent: it only assigns a new
+     * UUID to nodes that don't already have one. The backend-loaded tree
+     * has its `_id`s stripped (see `stripForPersistence`), so without
+     * this step the canvas couldn't select / hover / mutate anything
+     * because `buildIdPathCache` would produce an empty map. Trees that
+     * already have IDs (e.g. the post-upload tree dispatched from
+     * SaveTemplateButton) pass through unchanged.
      */
     loadTemplate(state, action: PayloadAction<{ tree: IMjmlNode }>) {
-      const { tree } = action.payload;
+      const tree = assignFreshIds(action.payload.tree);
       state.tree = tree as WritableDraft<IMjmlNode>;
       state.idPathCache = buildIdPathCache(tree);
       state.selectedId = null;

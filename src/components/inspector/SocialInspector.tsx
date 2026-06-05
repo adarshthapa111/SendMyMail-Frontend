@@ -49,8 +49,7 @@ export default function SocialInspector({ node, path }: Props) {
           onCommit={set('align')}
         />
         <span className={styles.fieldHint}>
-          Add or remove specific networks via the Advanced panel — full per-icon
-          editing arrives in a later phase.
+          Click an icon on the canvas to edit it (image, URL, network name).
         </span>
       </FormSection>
 

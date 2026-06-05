@@ -445,8 +445,9 @@ function SpacerLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function SocialLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
-  const onClick = useSelectHandler(node._id);
-  const mode = String(node.attributes?.mode ?? 'horizontal');
+  const onClick    = useSelectHandler(node._id);
+  const mode       = String(node.attributes?.mode ?? 'horizontal');
+  const iconSize   = String(node.attributes?.['icon-size'] ?? '32px');
   return (
     <div
       className={`${styles.socialWrap} ${isSelected ? styles.selected : ''}`}
@@ -464,43 +465,121 @@ function SocialLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
           gap: '8px',
         }}
       >
-        {node.children?.map((c, i) => {
-          const name = String(c.attributes?.name ?? '?');
-          const initial = name.charAt(0).toUpperCase();
-          return (
-            <span key={c._id ?? i} className={styles.socialIcon} title={name}>
-              {initial}
-            </span>
-          );
-        })}
+        {node.children?.map((c, i) => (
+          <SocialIconElement key={c._id ?? i} node={c} size={iconSize} />
+        ))}
       </div>
     </div>
   );
 }
 
-function NavbarLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
+/* Individual mj-social-element. Clickable so the user can select a single
+   icon and edit it (icon image, network name, href, padding) via the
+   dedicated SocialElementInspector. Renders <img> when src is set (always
+   the case for fresh nodes — see blocks/social.ts), falls back to a letter
+   chip otherwise so legacy / partial templates don't render as blanks.
+
+   Padding model mirrors MJML's structural separation:
+   - `padding` (outer wrapper span)  — space between this element and its
+     siblings in the social row.
+   - `icon-padding` (inner element)  — space around the icon inside the
+     wrapper, useful for adding visual breathing room without affecting
+     row alignment. */
+function SocialIconElement({ node, size }: { node: IMjmlNode; size: string }) {
+  const dispatch   = useAppDispatch();
   const isSelected = useIsSelected(node._id);
-  const onClick = useSelectHandler(node._id);
+  const name       = String(node.attributes?.name ?? '?');
+  const src        = node.attributes?.src as string | undefined;
+  const padding    = node.attributes?.padding as string | undefined;
+  const iconPad    = node.attributes?.['icon-padding'] as string | undefined;
+
+  const onSelect = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (node._id) dispatch(selectNode(node._id));
+  };
+
+  return (
+    <span
+      onClick={onSelect}
+      style={{ display: 'inline-block', padding, cursor: 'pointer' }}
+    >
+      {src ? (
+        <img
+          src={src}
+          alt={name}
+          title={name}
+          className={`${styles.socialIconImg} ${isSelected ? styles.selected : ''}`}
+          style={{
+            width: size,
+            height: size,
+            padding: iconPad,
+            boxSizing: 'content-box',
+          }}
+        />
+      ) : (
+        <span
+          className={`${styles.socialIcon} ${isSelected ? styles.selected : ''}`}
+          title={name}
+          style={{ padding: iconPad }}
+        >
+          {name.charAt(0).toUpperCase()}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function NavbarLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
+  const dispatch  = useAppDispatch();
+  const isSelected = useIsSelected(node._id);
+  const editingId  = useAppSelector((s) => s.editor.editingTextId);
+  const onSelect   = useSelectHandler(node._id);
+
   return (
     <div
       className={`${styles.navbarWrap} ${isSelected ? styles.selected : ''}`}
-      onClick={onClick}
+      onClick={onSelect}
       style={{ padding: String(node.attributes?.padding ?? '10px 25px') }}
     >
       {isSelected && <SelectionToolbar path={path} />}
       <nav className={styles.navbar}>
-        {node.children?.map((c, i) => (
-          <span
-            key={c._id ?? i}
-            className={styles.navbarLink}
-            style={{
-              color: String(c.attributes?.color ?? '#333'),
-              fontSize: String(c.attributes?.['font-size'] ?? '14px'),
-            }}
-          >
-            {c.content ?? 'Link'}
-          </span>
-        ))}
+        {node.children?.map((c, i) => {
+          const linkPath  = [...path, 'children', i];
+          const isEditing = editingId === c._id;
+          const linkStyle: CSSProperties = {
+            color: String(c.attributes?.color ?? '#333'),
+            fontSize: String(c.attributes?.['font-size'] ?? '14px'),
+            cursor: 'text',
+          };
+
+          if (isEditing) {
+            return (
+              <ContentEditable
+                key={c._id ?? i}
+                initialValue={c.content ?? ''}
+                multiline={false}
+                className={styles.navbarLink}
+                style={linkStyle}
+                onCommit={(text) => dispatch(setContent({ path: linkPath, content: text }))}
+                onExit={() => dispatch(setEditingTextNode(null))}
+              />
+            );
+          }
+
+          return (
+            <span
+              key={c._id ?? i}
+              className={styles.navbarLink}
+              style={linkStyle}
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                if (c._id) dispatch(setEditingTextNode(c._id));
+              }}
+            >
+              {c.content ?? 'Link'}
+            </span>
+          );
+        })}
       </nav>
     </div>
   );

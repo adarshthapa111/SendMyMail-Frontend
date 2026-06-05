@@ -11,6 +11,7 @@ import SectionInspector from './inspector/SectionInspector';
 import ColumnInspector from './inspector/ColumnInspector';
 import HeroInspector from './inspector/HeroInspector';
 import SocialInspector from './inspector/SocialInspector';
+import SocialElementInspector from './inspector/SocialElementInspector';
 import NavbarInspector from './inspector/NavbarInspector';
 import RawHtmlInspector from './inspector/RawHtmlInspector';
 import AdvancedPanel from './inspector/AdvancedPanel';
@@ -26,6 +27,7 @@ const LABELS: Record<string, string> = {
   'mj-column': 'Column',
   'mj-hero': 'Hero',
   'mj-social': 'Social',
+  'mj-social-element': 'Social Icon',
   'mj-navbar': 'Navbar',
   'mj-raw': 'Raw HTML',
 };
@@ -50,6 +52,8 @@ function FormForNode({ node, path }: { node: IMjmlNode; path: NodePath }) {
       return <HeroInspector node={node} path={path} />;
     case 'mj-social':
       return <SocialInspector node={node} path={path} />;
+    case 'mj-social-element':
+      return <SocialElementInspector node={node} path={path} />;
     case 'mj-navbar':
       return <NavbarInspector node={node} path={path} />;
     case 'mj-raw':

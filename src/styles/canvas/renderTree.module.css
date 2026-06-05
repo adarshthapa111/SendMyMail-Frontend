@@ -103,6 +103,30 @@
   font-size: 13px;
   font-weight: 600;
   font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+/* Real-icon variant — used when mj-social-element has a src attribute.
+   Sized via inline style from the parent's `icon-size`. Selection halo
+   matches other selectable canvas elements. */
+.socialIconImg {
+  display: inline-block;
+  object-fit: contain;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: outline-color 100ms ease;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.socialIconImg:hover {
+  outline-color: var(--color-line-strong);
+}
+
+.socialIconImg.selected,
+.socialIcon.selected {
+  outline-color: var(--color-primary);
+  outline-style: solid;
 }
 
 .navbar {

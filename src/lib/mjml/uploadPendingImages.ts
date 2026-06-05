@@ -61,9 +61,22 @@ function replaceDataUrls(
   }
 }
 
+/**
+ * A node is "pending upload" iff its src is a local data URL. Matches:
+ * - `mj-image` — the primary image block
+ * - `mj-social-element` — individual social icons (Facebook / Instagram /
+ *   TikTok / etc.). Same upload-on-save semantics; otherwise custom-
+ *   uploaded icons would bake into the email HTML as inline base64.
+ *
+ * Add more tags here as new image-bearing blocks land (mj-hero with
+ * background-url is a future candidate, but currently we don't surface
+ * data-URL hero backgrounds — only normal URLs).
+ */
+const HOSTS_IMAGE_SRC = new Set(['mj-image', 'mj-social-element']);
+
 function isPendingImage(node: IMjmlNode): boolean {
   return (
-    node.tagName === 'mj-image' &&
+    HOSTS_IMAGE_SRC.has(node.tagName) &&
     typeof node.attributes?.src === 'string' &&
     (node.attributes.src as string).startsWith('data:')
   );
