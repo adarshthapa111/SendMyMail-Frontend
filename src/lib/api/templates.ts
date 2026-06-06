@@ -37,6 +37,9 @@ export interface TemplateUpdateBody {
   category?: string | null;
   mjmlSource?: TemplateTree;
   archived?: boolean;
+  /** Cloudinary URL of the auto-generated preview image. Set silently by
+      the post-save thumbnail pipeline (see `useSaveTemplate`). */
+  thumbnailUrl?: string | null;
 }
 
 function url(clientId: string, suffix = ''): string {

@@ -5,8 +5,10 @@ import { upsertTemplate } from '../../store/slices/templatesSlice';
 import { updateTemplate } from '../../lib/api/templates';
 import { stripForPersistence } from '../../tree/strip';
 import { uploadPendingImages, countPendingImages } from '../../lib/mjml/uploadPendingImages';
+import { generateThumbnailUrl } from '../../lib/thumbnails/generateThumbnail';
 import { toast } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
+import type { IMjmlNode } from '../../tree/types';
 
 interface Options {
   /** Skip the success toast — caller will surface its own. */
@@ -74,6 +76,14 @@ export function useSaveTemplate(clientId: string, templateId: string, templateNa
       } else {
         toast.success(`Saved ${templateName}`, { id });
       }
+
+      /* Fire-and-forget thumbnail regeneration. Runs in the background
+         after the toast clears — never blocks the user, never surfaces
+         errors. Updates the cards-list cache when it completes so the
+         /templates grid shows the fresh preview next time the user
+         lands there. */
+      void regenerateThumbnail(hosted, clientId, templateId, res.data.template, dispatch);
+
       return true;
     } catch (err) {
       const msg = err instanceof ApiError ? err.message
@@ -87,4 +97,64 @@ export function useSaveTemplate(clientId: string, templateId: string, templateNa
   }, [tree, clientId, templateId, templateName, dispatch]);
 
   return { save, saving, dirty };
+}
+
+/**
+ * Background thumbnail pipeline. Renders the tree to HTML, screenshots,
+ * uploads to Cloudinary, then silently PATCHes the template with the URL.
+ *
+ * All failures are swallowed — thumbnails are non-critical. The user
+ * still has a working faux-preview card if this fails.
+ *
+ * Dispatched separately from the save flow's return value so the user's
+ * Save success toast appears immediately without waiting on the 1-3s
+ * thumbnail render.
+ */
+async function regenerateThumbnail(
+  hostedTree: IMjmlNode,
+  clientId: string,
+  templateId: string,
+  serverTemplate: {
+    id: string;
+    agencyId: string;
+    clientId: string | null;
+    name: string;
+    category: string | null;
+    isStarter: boolean;
+    archived: boolean;
+    createdBy: string | null;
+    createdAt: string;
+    updatedAt: string;
+  },
+  dispatch: ReturnType<typeof useAppDispatch>,
+): Promise<void> {
+  try {
+    const url = await generateThumbnailUrl(hostedTree);
+    if (!url) return;
+
+    /* Silent PATCH — no toast, no save-flow side effects. The thumbnail
+       endpoint is just storing the URL on the template row. */
+    const res = await updateTemplate(clientId, templateId, { thumbnailUrl: url });
+
+    dispatch(upsertTemplate({
+      id:           res.data.template.id,
+      agencyId:     res.data.template.agencyId,
+      clientId:     res.data.template.clientId,
+      name:         res.data.template.name,
+      thumbnailUrl: res.data.template.thumbnailUrl,
+      category:     res.data.template.category,
+      isStarter:    res.data.template.isStarter,
+      archived:     res.data.template.archived,
+      createdBy:    res.data.template.createdBy,
+      createdAt:    res.data.template.createdAt,
+      updatedAt:    res.data.template.updatedAt,
+    }));
+
+    /* Suppress "unused" warnings for the unused server template arg —
+       it's kept in the signature for future use (audit context, fallback
+       on thumbnail failure, etc.). */
+    void serverTemplate;
+  } catch {
+    // Swallow — thumbnails are best-effort.
+  }
 }

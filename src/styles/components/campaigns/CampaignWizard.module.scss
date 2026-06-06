@@ -168,7 +168,7 @@
 
 .templateGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 14px;
 }
 
@@ -176,7 +176,7 @@
   appearance: none;
   background: var(--color-card);
   border: 1px solid var(--color-line-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 0;
   cursor: pointer;
   overflow: hidden;
@@ -184,18 +184,22 @@
   flex-direction: column;
   font: inherit;
   color: var(--color-ink);
-  transition: border-color 140ms ease, transform 140ms cubic-bezier(.2, .8, .25, 1);
+  transition: border-color 140ms ease, transform 140ms cubic-bezier(.2, .8, .25, 1), box-shadow 180ms ease;
 }
 
 .tplCard:hover {
   border-color: var(--color-line-strong);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgba(43, 38, 32, 0.14);
 }
 
 .tplCardSelected {
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
+/* Mini email preview — same treatment as TemplateCard.thumb so the
+   selection picker looks consistent with the templates list page. */
 .tplThumb {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -203,12 +207,28 @@
   display: grid;
   place-items: center;
   color: var(--color-soft);
+  overflow: hidden;
+
+  /* Bottom fade so long emails don't end with a hard edge — matches
+     TemplateCard's .thumb::after treatment. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 28px;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.45));
+    pointer-events: none;
+  }
 }
 
 .tplThumb img {
   width: 100%;
   height: 100%;
+  /* Top-anchored so users see the email HEADER (the recognizable
+     part — banner, logo, brand band) rather than the middle of a
+     long body, which is just paragraph stripes. */
   object-fit: cover;
+  object-position: top center;
 }
 
 .tplCheck {

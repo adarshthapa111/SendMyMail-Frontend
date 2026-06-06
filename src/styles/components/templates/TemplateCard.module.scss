@@ -1,136 +1,403 @@
-/* Per the templates.html mockup: gradient-thumb card with hover lift. */
+/* TemplateCard — phone-frame product-showcase style.
+   The email preview sits inside an iPhone-style bezel on a soft warm
+   stage that tints with the category brand color. Hover tilts the
+   phone in 3D and warms the stage. Each card sets --brand + --brand-tint
+   inline (category-derived). */
 
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow   240ms ease,
+    transform    220ms cubic-bezier(.2, .8, .25, 1);
   text-align: left;
+  isolation: isolate;
+  perspective: 1000px;             /* enables the phone 3D tilt on hover */
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--line-strong);
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand, var(--color-primary)) 40%, var(--color-line));
+  box-shadow:
+    0 1px 0 0 color-mix(in srgb, var(--brand, var(--color-primary)) 10%, transparent),
+    0 18px 40px -14px rgba(43, 38, 32, 0.20),
+    0 6px 16px -8px color-mix(in srgb, var(--brand, var(--color-primary)) 28%, transparent);
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--brand, var(--color-primary));
   outline-offset: 2px;
 }
 
-/* The "thumbnail" — gradient bg with a category icon. Real bitmap previews
-   are V1.5; the icon-on-gradient treatment matches the mockup. */
-.thumb {
-  height: 128px;
+/* ── Stage — soft warm background the phone sits on ──────────────── */
+
+.stage {
+  position: relative;
+  height: 320px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--primary-light), var(--surface));
-  color: var(--primary);
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 30%,
+      color-mix(in srgb, var(--brand-tint, var(--color-surface)) 80%, transparent) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, var(--color-bg) 0%, color-mix(in srgb, var(--brand-tint, var(--color-surface)) 35%, var(--color-bg)) 100%);
+  padding: 18px 0 22px;
+  overflow: hidden;
 }
 
+.card:hover .stage {
+  background:
+    radial-gradient(
+      ellipse 90% 70% at 50% 30%,
+      color-mix(in srgb, var(--brand-tint, var(--color-surface)) 100%, transparent) 0%,
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--color-bg) 0%, color-mix(in srgb, var(--brand-tint, var(--color-surface)) 50%, var(--color-bg)) 100%);
+}
+
+/* ── Phone bezel ─────────────────────────────────────────────────── */
+
+.phone {
+  position: relative;
+  width: 160px;
+  height: 280px;
+  background: #1a1814;                        /* warm near-black */
+  border-radius: 28px;
+  padding: 6px;
+  box-shadow:
+    /* Inner bevel highlight */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    /* Outer ambient + drop shadows */
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 18px 32px -10px rgba(43, 38, 32, 0.30),
+    0 6px 12px -4px rgba(43, 38, 32, 0.15);
+  transform-style: preserve-3d;
+  transition: transform 360ms cubic-bezier(.2, .8, .25, 1), box-shadow 360ms ease;
+}
+
+.card:hover .phone {
+  /* Subtle 3D tilt on hover — looks like the phone is being shown off */
+  transform: rotate3d(1, -0.2, 0, 6deg) translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.18),
+    0 26px 48px -10px rgba(43, 38, 32, 0.36),
+    0 12px 24px -6px color-mix(in srgb, var(--brand, var(--color-primary)) 24%, transparent);
+}
+
+/* Dynamic island */
+.notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 14px;
+  background: #050505;
+  border-radius: 999px;
+  z-index: 3;
+  box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.06);
+}
+
+/* Home bar */
+.homebar {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  z-index: 3;
+}
+
+/* ── Screen — contains the email preview ─────────────────────────── */
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.screenImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Top-anchored so the email header (banner / logo) is always visible. */
+  object-position: top center;
+}
+
+/* Subtle fade at the bottom of long screenshots — matches the
+   templates list card's treatment. */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 32px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55));
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Faux preview (fallback when no thumbnail yet) ──────────────── */
+
+.fauxPreview {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-tint, var(--color-surface)) 60%, white) 0%,
+    white 60%
+  );
+  padding: 8px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.previewBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--brand, var(--color-primary));
+  color: #fff;
+  padding: 4px 6px 4px 4px;
+  border-radius: 5px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.previewLogo {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.previewBarLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.previewBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0;
+  overflow: hidden;
+}
+
+.strip {
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.stripHeader {
+  height: 5px;
+  width: 70%;
+  background: rgba(43, 38, 32, 0.50);
+}
+
+.stripParagraph {
+  height: 3px;
+  width: 100%;
+  background: rgba(43, 38, 32, 0.16);
+}
+
+.stripParagraphShort {
+  height: 3px;
+  width: 60%;
+  background: rgba(43, 38, 32, 0.16);
+}
+
+.stripImage {
+  height: 18px;
+  background: rgba(43, 38, 32, 0.08);
+  border-radius: 3px;
+}
+
+.stripButton {
+  height: 9px;
+  width: 38%;
+  background: var(--brand, var(--color-primary));
+  border-radius: 3px;
+  margin-top: 1px;
+}
+
+.stripSpacer {
+  height: 6px;
+}
+
+/* ── Meta — name + category + relative time ─────────────────────── */
+
 .meta {
-  padding: 12px 14px;
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--color-card);
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.metaTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .name {
-  display: block;
+  flex: 1;
   font-weight: 600;
-  font-size: 13.5px;
-  color: var(--ink);
+  font-size: 14px;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.sub {
-  display: block;
-  color: var(--soft);
-  margin-top: 2px;
-  font-size: 12px;
+.starterPill {
+  flex-shrink: 0;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--brand, var(--color-primary)) 14%, transparent);
+  color: var(--brand, var(--color-primary));
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.metaSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--color-soft);
+  min-width: 0;
+}
+
+.categoryDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand, var(--color-primary));
+  flex-shrink: 0;
+}
+
+.categoryLabel {
+  text-transform: capitalize;
+  font-weight: 500;
+  color: var(--color-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Kebab menu ─────────────────────────────────────────────── */
+.metaSep {
+  color: var(--color-soft);
+  flex-shrink: 0;
+}
+
+/* ── Kebab menu (top-right, floats above stage) ─────────────────── */
 
 .menuWrap {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
 }
 
 .kebab {
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 0;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(4px);
-  color: var(--muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-muted);
   cursor: pointer;
   opacity: 0;
-  transition: opacity .12s ease, background .12s ease, color .12s ease;
+  transition: opacity 140ms ease, background 100ms ease;
+  box-shadow: 0 2px 6px rgba(43, 38, 32, 0.08);
 }
+
 .card:hover .kebab,
 .card:focus-within .kebab,
-.kebab[aria-expanded="true"] { opacity: 1; }
+.kebab[aria-expanded="true"] {
+  opacity: 1;
+}
+
 .kebab:hover {
-  background: var(--card);
-  color: var(--ink);
+  background: #fff;
+  color: var(--color-ink);
 }
 
 .menu {
   position: absolute;
-  top: 34px;
+  top: 36px;
   right: 0;
   min-width: 160px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: var(--shadow-lg);
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  box-shadow: 0 10px 32px -8px rgba(43, 38, 32, 0.20);
   padding: 6px;
-  z-index: 5;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  z-index: 6;
 }
 
 .menuItem {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 10px;
+  gap: 8px;
+  background: none;
   border: 0;
-  background: transparent;
+  padding: 7px 10px;
   font: inherit;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--ink);
-  text-align: left;
-  border-radius: 7px;
+  color: var(--color-ink);
   cursor: pointer;
-  transition: background .1s ease, color .1s ease;
+  border-radius: 4px;
+  text-align: left;
 }
-.menuItem:hover { background: var(--surface); }
-.menuItem:focus-visible {
-  outline: none;
-  background: var(--primary-light);
-  color: var(--primary-ink);
+
+.menuItem:hover {
+  background: var(--color-surface);
 }
 
 .menuItemDanger {
-  color: var(--red);
+  color: #d11a2a;
 }
+
 .menuItemDanger:hover {
-  background: var(--red-bg);
-  color: var(--red);
+  background: rgba(209, 26, 42, 0.08);
 }
