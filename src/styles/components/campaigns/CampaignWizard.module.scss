@@ -1,0 +1,443 @@
+/* Campaign wizard shell + step-internal layouts.
+   Two-column layout: step rail on the left, content on the right.
+   Footer nav at the bottom of the content column. */
+
+.wizard {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.crumb {
+  margin-bottom: 8px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+.back:hover { color: var(--color-ink); }
+
+.header {
+  margin-bottom: 22px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 26px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: 60px 20px;
+  color: var(--color-soft);
+}
+
+.centerSmall {
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  color: var(--color-soft);
+}
+
+/* ── Step content shared utility ────────────────────────────────── */
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-line-soft);
+  border-radius: 8px;
+  background: var(--color-bg);
+}
+
+.noticeIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-soft);
+}
+
+.noticeText { margin: 0; line-height: 1.5; }
+.noticeText code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92em;
+}
+
+.emptyInline {
+  padding: 32px 20px;
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px dashed var(--color-line);
+  border-radius: 12px;
+}
+
+/* ── List picker (Step 2) ───────────────────────────────────────── */
+
+.listPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pickRow {
+  appearance: none;
+  text-align: left;
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+  font: inherit;
+  color: var(--color-ink);
+}
+
+.pickRow:hover { border-color: var(--color-line-strong); background: var(--color-surface); }
+
+.pickRowSelected {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-card));
+}
+
+.pickIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.pickRowSelected .pickIcon {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+
+.pickMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pickName { font-weight: 600; font-size: 14px; color: var(--color-ink); }
+.pickDesc { font-size: 12.5px; color: var(--color-soft); }
+
+.pickCheck {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+/* ── Template grid (Step 4) ─────────────────────────────────────── */
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.tplCard {
+  appearance: none;
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  color: var(--color-ink);
+  transition: border-color 140ms ease, transform 140ms cubic-bezier(.2, .8, .25, 1);
+}
+
+.tplCard:hover {
+  border-color: var(--color-line-strong);
+  transform: translateY(-2px);
+}
+
+.tplCardSelected {
+  border-color: var(--color-primary);
+}
+
+.tplThumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--color-surface);
+  display: grid;
+  place-items: center;
+  color: var(--color-soft);
+}
+
+.tplThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tplCheck {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.tplMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.tplName {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--color-ink);
+}
+
+.tplCategory {
+  font-size: 11px;
+  color: var(--color-soft);
+}
+
+/* ── Schedule group (Step 5) ───────────────────────────────────── */
+
+.scheduleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scheduleRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.scheduleRowSelected {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-card));
+}
+
+.scheduleRowDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.scheduleIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.scheduleRowSelected .scheduleIcon {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+
+.scheduleText {
+  flex: 1;
+  min-width: 0;
+}
+
+.scheduleText strong {
+  display: block;
+  font-size: 14px;
+  color: var(--color-ink);
+  margin-bottom: 2px;
+}
+
+.scheduleRadio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 5px solid var(--color-primary);
+  flex-shrink: 0;
+}
+
+.scheduleComing {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-soft);
+  background: var(--color-surface);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* ── Review (Step 6) ────────────────────────────────────────────── */
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 6px 0;
+}
+
+.reviewRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.reviewRow:first-child { border-top: 0; }
+
+.reviewIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.reviewTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-soft);
+}
+
+.reviewBody {
+  font-size: 14px;
+  color: var(--color-ink);
+  word-break: break-word;
+}
+
+.reviewSubtle {
+  font-size: 12.5px;
+  color: var(--color-soft);
+  margin-top: 2px;
+}
+
+.reviewEdit {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-muted);
+  padding: 4px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reviewEdit:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.reviewNotice {
+  padding: 14px 18px;
+  border-top: 1px solid var(--color-line-soft);
+  background: var(--color-bg);
+}
+
+/* ── Footer nav ─────────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 8px;
+  border-top: 1px solid var(--color-line-soft);
+  margin-top: 8px;
+}
+
+.footerLeft, .footerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+
+@media (max-width: 880px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .footerLeft, .footerRight {
+    justify-content: stretch;
+  }
+  .footerLeft button, .footerRight button {
+    flex: 1;
+  }
+}

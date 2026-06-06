@@ -7,6 +7,7 @@ import clientsReducer from './slices/clientsSlice';
 import contactsReducer from './slices/contactsSlice';
 import listsReducer from './slices/listsSlice';
 import templatesReducer from './slices/templatesSlice';
+import campaignsReducer from './slices/campaignsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     contacts: contactsReducer,
     lists: listsReducer,
     templates: templatesReducer,
+    campaigns: campaignsReducer,
     editor: editorReducer,
     app: appReducer,
     integrations: integrationsReducer,

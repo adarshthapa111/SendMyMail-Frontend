@@ -1,0 +1,262 @@
+/* Campaign report page. Status pill in header, progress card while
+   sending, hero stats row, recipient log table. */
+
+.page {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.crumb {
+  margin-bottom: 8px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+.back:hover { color: var(--color-ink); }
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+  color: var(--color-soft);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.statusPill_sending { background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); }
+.statusPill_sent    { background: rgba(28, 168, 95, 0.12); color: #1ca85f; }
+.statusPill_failed  { background: rgba(209, 26, 42, 0.10); color: #d11a2a; }
+
+.spinning {
+  animation: crSpin 1s linear infinite;
+}
+@keyframes crSpin { to { transform: rotate(360deg); } }
+
+/* ── Progress card (while sending) ──────────────────────────────── */
+
+.progressCard {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-line-soft));
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.progressTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.progressLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.progressCount {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-surface);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 600ms ease;
+}
+
+.progressHint {
+  margin: 8px 0 0;
+}
+
+/* ── Stats row ──────────────────────────────────────────────────── */
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.statCard {
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--color-soft);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statCard_ok      .statValue { color: #1ca85f; }
+.statCard_bad     .statValue { color: #d11a2a; }
+.statCard_neutral .statValue { color: var(--color-ink); }
+
+/* ── Log section ────────────────────────────────────────────────── */
+
+.logSection {
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px 4px 12px;
+}
+
+.logTitle {
+  margin: 0 18px 12px;
+}
+
+.logList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.logRow {
+  display: grid;
+  grid-template-columns: 12px 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 18px;
+  border-top: 1px solid var(--color-line-soft);
+  font-size: 13px;
+}
+
+.logList .logRow:first-child { border-top: 0; }
+
+.logDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-soft);
+}
+
+.logDot_sent   { background: #1ca85f; }
+.logDot_failed { background: #d11a2a; }
+.logDot_queued { background: var(--color-primary); }
+
+.logEmail {
+  color: var(--color-ink);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logStatus {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-soft);
+  font-weight: 600;
+}
+
+.logError {
+  font-size: 12px;
+  color: #d11a2a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.logTime {
+  font-size: 11.5px;
+  color: var(--color-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.loadMore {
+  appearance: none;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-primary);
+  padding: 12px;
+  width: 100%;
+  cursor: pointer;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.loadMore:hover { background: var(--color-surface); }
+.loadMore:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .header {
+    flex-direction: column;
+  }
+  .logRow {
+    grid-template-columns: 12px 1fr auto;
+    grid-template-rows: auto auto;
+  }
+  .logError {
+    grid-column: 1 / -1;
+    max-width: 100%;
+    margin-left: 24px;
+  }
+  .logTime {
+    grid-column: 1 / -1;
+    margin-left: 24px;
+  }
+}

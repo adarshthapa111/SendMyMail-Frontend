@@ -1,0 +1,131 @@
+/* Per-campaign card. Status-themed pill + per-status icon color.
+   Sending status gets a spinning loader icon (handled in JSX). */
+
+.card {
+  appearance: none;
+  text-align: left;
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow   200ms ease,
+    transform    200ms cubic-bezier(.2, .8, .25, 1);
+  isolation: isolate;
+  font: inherit;
+  color: var(--color-ink);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-line-strong);
+  box-shadow:
+    0 1px 0 0 rgba(43, 38, 32, 0.04),
+    0 10px 24px -10px rgba(43, 38, 32, 0.16);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.iconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  display: grid;
+  place-items: center;
+}
+
+[data-status="sent"]    .iconWrap { color: #1ca85f; background: rgba(28, 168, 95, 0.10); }
+[data-status="sending"] .iconWrap { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 12%, transparent); }
+[data-status="failed"]  .iconWrap { color: #d11a2a; background: rgba(209, 26, 42, 0.10); }
+[data-status="sending"] .iconWrap svg { animation: csCardSpin 1s linear infinite; }
+
+@keyframes csCardSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Body ───────────────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta {
+  font-size: 12.5px;
+  color: var(--color-soft);
+}
+
+/* ── Pill ───────────────────────────────────────────────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pill_draft     { background: var(--color-surface); color: var(--color-muted); }
+.pill_scheduled { background: rgba(26, 130, 226, 0.12); color: #1a82e2; }
+.pill_sending   { background: color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); }
+.pill_sent      { background: rgba(28, 168, 95, 0.12); color: #1ca85f; }
+.pill_failed    { background: rgba(209, 26, 42, 0.10); color: #d11a2a; }
+
+/* ── Stats row ──────────────────────────────────────────────────── */
+
+.stats {
+  display: flex;
+  gap: 18px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  color: var(--color-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat strong {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  text-transform: none;
+}
+
+.statLabel {
+  margin-top: 2px;
+}
+
+.statFailed strong {
+  color: #d11a2a;
+}

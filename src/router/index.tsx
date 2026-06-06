@@ -52,14 +52,9 @@ const Templates = {
 };
 
 const Campaigns = {
-  List:     lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignsList }))),
-  New:      lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignNew }))),
-  Audience: lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignAudience }))),
-  Content:  lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignContent }))),
-  Schedule: lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignSchedule }))),
-  Review:   lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignReview }))),
-  Done:     lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignDone }))),
-  Report:   lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignReport }))),
+  List:   lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignsList }))),
+  Wizard: lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignWizard }))),
+  Report: lazy(() => import('../pages/campaigns').then(m => ({ default: m.CampaignReport }))),
 };
 
 const Flows = {
@@ -138,14 +133,10 @@ export const router = createBrowserRouter([
       /* Note: /templates/:tid/edit moved OUT of AppShell — see "Full-screen
          editor routes" below. Builder takes over the entire viewport. */
 
-      { path: '/clients/:clientId/campaigns',                  element: <ClientScoped>{withSuspense(<Campaigns.List />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new',              element: <ClientScoped>{withSuspense(<Campaigns.New />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new/audience',     element: <ClientScoped>{withSuspense(<Campaigns.Audience />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new/content',      element: <ClientScoped>{withSuspense(<Campaigns.Content />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new/schedule',     element: <ClientScoped>{withSuspense(<Campaigns.Schedule />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new/review',       element: <ClientScoped>{withSuspense(<Campaigns.Review />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/new/done',         element: <ClientScoped>{withSuspense(<Campaigns.Done />)}</ClientScoped> },
-      { path: '/clients/:clientId/campaigns/:campaignId',      element: <ClientScoped>{withSuspense(<Campaigns.Report />)}</ClientScoped> },
+      { path: '/clients/:clientId/campaigns',                          element: <ClientScoped>{withSuspense(<Campaigns.List />)}</ClientScoped> },
+      { path: '/clients/:clientId/campaigns/new',                      element: <RoleGated min="admin"><ClientScoped>{withSuspense(<Campaigns.Wizard />)}</ClientScoped></RoleGated> },
+      { path: '/clients/:clientId/campaigns/:campaignId/edit',         element: <RoleGated min="admin"><ClientScoped>{withSuspense(<Campaigns.Wizard />)}</ClientScoped></RoleGated> },
+      { path: '/clients/:clientId/campaigns/:campaignId',              element: <ClientScoped>{withSuspense(<Campaigns.Report />)}</ClientScoped> },
 
       { path: '/clients/:clientId/flows',                      element: <ClientScoped>{withSuspense(<Flows.List />)}</ClientScoped> },
       { path: '/clients/:clientId/flows/:flowId',              element: <ClientScoped>{withSuspense(<Flows.Config />)}</ClientScoped> },
