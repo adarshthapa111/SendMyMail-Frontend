@@ -2,6 +2,8 @@ export { TemplateCard } from './TemplateCard';
 export { TemplateFormDialog, type TemplateFormValues } from './TemplateFormDialog';
 export { TemplatesEmptyState } from './TemplatesEmptyState';
 export { SaveTemplateButton } from './SaveTemplateButton';
+export { TestSendButton } from './TestSendButton';
+export { TestSendDialog } from './TestSendDialog';
 export { BuilderTopBar } from './BuilderTopBar';
 export { BuilderInlineName } from './BuilderInlineName';
 export { BuilderMoreMenu } from './BuilderMoreMenu';

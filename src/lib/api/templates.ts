@@ -76,3 +76,30 @@ export function duplicateTemplate(clientId: string, templateId: string) {
     { method: 'POST' },
   );
 }
+
+export interface TestSendBody {
+  toEmail: string;
+  subject?: string;
+}
+
+export interface TestSendResult {
+  messageId: string;
+  to:        string;
+  subject:   string;
+}
+
+/**
+ * Compile the saved template's MJML tree and send it to one address via
+ * the backend's Resend transport. Used by the editor's "Send test" flow.
+ *
+ * Important: the backend reads `mjmlSource` from the database — the caller
+ * MUST have saved the template first (which uploads pending Cloudinary
+ * images and persists the latest tree). The TestSendDialog component
+ * orchestrates save-then-test.
+ */
+export function testSendTemplate(clientId: string, templateId: string, body: TestSendBody) {
+  return apiCall<{ data: TestSendResult }>(
+    url(clientId, `/${encodeURIComponent(templateId)}/test-send`),
+    { method: 'POST', body },
+  );
+}

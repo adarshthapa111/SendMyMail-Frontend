@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import {
   IconArrowLeft, IconDeviceDesktop, IconDeviceMobile, IconCode,
-  IconSend, IconEye,
+  IconEye,
 } from '@tabler/icons-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { togglePreview } from '../../store/slices/editorSlice';
 import { BuilderInlineName } from './BuilderInlineName';
 import { BuilderMoreMenu } from './BuilderMoreMenu';
 import { SaveTemplateButton } from './SaveTemplateButton';
+import { TestSendButton } from './TestSendButton';
 import styles from '@styles/components/templates/BuilderTopBar.module.scss';
 
 interface Props {
@@ -24,7 +25,7 @@ interface Props {
 
    - Left: ← Templates back link · template name (inline rename) · save status
    - Center: device toggle pill (V1 decorative; functional in a follow-up)
-   - Right: Send test (disabled, V1) · Preview · Save · More menu */
+   - Right: Send test · Preview · Save · More menu */
 export function BuilderTopBar({ clientId, templateId, templateName, category, onNameChange }: Props) {
   const dispatch = useAppDispatch();
   const dirty = useAppSelector((s) => s.editor.dirty);
@@ -82,14 +83,11 @@ export function BuilderTopBar({ clientId, templateId, templateName, category, on
 
       {/* ─── Right cluster ─── */}
       <div className={styles.right}>
-        <button
-          type="button"
-          className={styles.actionBtn}
-          disabled
-          title="Send test email — coming in PR 4"
-        >
-          <IconSend size={15} /> Send test
-        </button>
+        <TestSendButton
+          clientId={clientId}
+          templateId={templateId}
+          templateName={templateName}
+        />
         <button
           type="button"
           className={styles.actionBtn}
