@@ -39,7 +39,27 @@ export interface PlatformDef {
   sendEndpoint?: string;
   // Tier 4 only:
   acceptsUrl?: true;
+  /** V1 visibility flag. Per feature-integrations §V1 outbound: the screen
+      surfaces only the 6 first-class platforms (Mailchimp / MailerLite /
+      Brevo / SendGrid / HubSpot / Klaviyo) + escape hatch (HTML / MJML /
+      Webhook / Zapier / Make). The other ~17 entries remain defined here
+      so beta-team can unhide them by flipping this flag — no code changes
+      needed in the screen or the export dropdown. */
+  v1?: true;
+  /** Editorial spotlight on the integrations screen. Featured platforms
+      appear in the "Recommended for your market" hero row with a larger
+      card + the persuasive `reason` copy. Reason is short — 1-2 sentences,
+      max ~120 chars, sales-deck tone. */
+  featured?: { reason: string };
 }
+
+/**
+ * Convenience accessor for the V1 visible set. Components that need to
+ * filter (IntegrationsScreen, ExportDropdown) call `.filter(isV1)` rather
+ * than repeating the `def.v1 === true` predicate everywhere.
+ */
+export const isV1       = (def: PlatformDef): boolean => def.v1 === true;
+export const isFeatured = (def: PlatformDef): boolean => Boolean(def.featured);
 
 export const platformRegistry: Record<string, PlatformDef> = {
   // ─────────────────────────────────────────────────────────────────
@@ -47,6 +67,10 @@ export const platformRegistry: Record<string, PlatformDef> = {
   // ─────────────────────────────────────────────────────────────────
   mailerlite: {
     id: 'mailerlite',
+    v1: true,
+    featured: {
+      reason: 'Budget favorite for Nepali agencies. Full API push, automation-ready.',
+    },
     value: 'MailerLite',
     name: 'MailerLite',
     tier: 1,
@@ -131,6 +155,10 @@ export const platformRegistry: Record<string, PlatformDef> = {
   },
   brevo: {
     id: 'brevo',
+    v1: true,
+    featured: {
+      reason: 'Strong in South Asia. Affordable email + SMS in one platform.',
+    },
     value: 'Brevo',
     name: 'Brevo',
     tier: 1,
@@ -232,6 +260,7 @@ export const platformRegistry: Record<string, PlatformDef> = {
   },
   sendgrid: {
     id: 'sendgrid',
+    v1: true,
     value: 'Sendgrid',
     name: 'SendGrid',
     tier: 1,
@@ -301,19 +330,19 @@ export const platformRegistry: Record<string, PlatformDef> = {
   // Tier 3 — Copy & paste (16)
   // ─────────────────────────────────────────────────────────────────
   html: {
-    id: 'html', value: 'Html', name: 'HTML code', tier: 3, category: 'output',
+    id: 'html', v1: true, value: 'Html', name: 'HTML code', tier: 3, category: 'output',
     description: 'Plain compiled HTML.', brandColor: '#E34F26', icon: SiHtml5,
   },
   mjml: {
-    id: 'mjml', value: 'Mjml', name: 'MJML code', tier: 3, category: 'output',
+    id: 'mjml', v1: true, value: 'Mjml', name: 'MJML code', tier: 3, category: 'output',
     description: 'Raw MJML source.', brandColor: '#F06B6E',
   },
   mailchimp: {
-    id: 'mailchimp', value: 'MailChimp', name: 'Mailchimp', tier: 3, category: 'esp',
+    id: 'mailchimp', v1: true, value: 'MailChimp', name: 'Mailchimp', tier: 3, category: 'esp',
     description: 'Paste HTML into Mailchimp.', brandColor: '#FFE01B', icon: SiMailchimp,
   },
   klaviyo: {
-    id: 'klaviyo', value: 'Klaviyo', name: 'Klaviyo (HTML only)', tier: 3, category: 'esp',
+    id: 'klaviyo', v1: true, value: 'Klaviyo', name: 'Klaviyo (HTML only)', tier: 3, category: 'esp',
     description: 'Paste HTML with Liquid unsubscribe tag.', brandColor: '#1E1E1E',
   },
   klaviyo_edit: {
@@ -321,7 +350,7 @@ export const platformRegistry: Record<string, PlatformDef> = {
     description: 'HTML with Klaviyo editable attributes.', brandColor: '#1E1E1E',
   },
   hubspot: {
-    id: 'hubspot', value: 'Hubspot', name: 'HubSpot', tier: 3, category: 'esp',
+    id: 'hubspot', v1: true, value: 'Hubspot', name: 'HubSpot', tier: 3, category: 'esp',
     description: 'HubSpot Handlebars merge tags.', brandColor: '#FF7A59', icon: SiHubspot,
   },
   iterable_drag: {
@@ -369,17 +398,17 @@ export const platformRegistry: Record<string, PlatformDef> = {
   // Tier 4 — Webhooks (3)
   // ─────────────────────────────────────────────────────────────────
   webhook: {
-    id: 'webhook', value: 'Webhook::Html', name: 'Custom Webhook', tier: 4, category: 'webhook',
+    id: 'webhook', v1: true, value: 'Webhook::Html', name: 'Custom Webhook', tier: 4, category: 'webhook',
     description: 'POST compiled HTML to your own URL.', brandColor: '#6B7280',
     acceptsUrl: true, sendEndpoint: '/integrations/webhook/send',
   },
   zapier: {
-    id: 'zapier', value: 'Zapier::Html', name: 'Zapier', tier: 4, category: 'webhook',
+    id: 'zapier', v1: true, value: 'Zapier::Html', name: 'Zapier', tier: 4, category: 'webhook',
     description: 'Zapier webhook target.', brandColor: '#FF4A00', icon: SiZapier,
     acceptsUrl: true, sendEndpoint: '/integrations/webhook/send',
   },
   make: {
-    id: 'make', value: 'Make::Html', name: 'Make (Integromat)', tier: 4, category: 'webhook',
+    id: 'make', v1: true, value: 'Make::Html', name: 'Make (Integromat)', tier: 4, category: 'webhook',
     description: 'Make.com webhook target.', brandColor: '#6D00CC', icon: SiMake,
     acceptsUrl: true, sendEndpoint: '/integrations/webhook/send',
   },

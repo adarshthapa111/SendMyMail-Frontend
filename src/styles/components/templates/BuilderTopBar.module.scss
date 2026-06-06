@@ -155,11 +155,52 @@
 /* ─── Responsive ─── */
 
 @media (max-width: 1100px) {
-  /* Hide the center device toggle when space is tight */
+  /* Hide the center device toggle when space is tight — bar becomes
+     two-cluster (left / right) but the grid still has 1fr auto 1fr.
+     That's fine: the center column collapses to 0 (display:none) and
+     left/right still split the remaining space. */
   .center { display: none; }
-  /* Drop the category sub on narrow screens */
 }
+
 @media (max-width: 820px) {
-  .sep + .status, .sep:last-of-type { display: none; }
+  /* Right cluster: action buttons become icon-only (hides ` Send test`,
+     ` Preview`, etc.). The leading icon stays. */
   .actionBtn span { display: none; }
+
+  /* Save status indicator and its leading divider disappear — the dirty
+     dot + name change in the inline title is enough. */
+  .sep + .status, .sep:last-of-type { display: none; }
+
+  .bar { padding: 0 12px; gap: 10px; }
+}
+
+@media (max-width: 600px) {
+  /* Switch from grid (which forces 1fr+auto+1fr equal-thirds) to a
+     simple flex row — lets left + right size to their content and
+     overflow-clip cleanly. */
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 8px;
+  }
+
+  /* Back link: keep the arrow, drop the "Templates" text. */
+  .back {
+    padding: 6px 8px;
+    font-size: 0;            /* hide text */
+  }
+  .back > :first-child {
+    font-size: 16px;         /* keep the icon visible */
+  }
+
+  /* Hide all separators on mobile — visual nicety, not info. */
+  .sep { display: none; }
+
+  /* Tighter action buttons. Save module is a separate file but the
+     `.actionBtn` here is already icon-only from the 820px rule. */
+  .actionBtn { padding: 6px 9px; }
+
+  /* Left/right clusters: shrink gaps so they don't push each other. */
+  .left, .right { gap: 6px; min-width: 0; }
 }

@@ -118,3 +118,35 @@
   padding: 14px 24px 22px;
   border-top: 1px solid var(--color-line-soft);
 }
+
+/* ── Responsive ─────────────────────────────────────────────────────
+   The dialog is already `max-width: 480px; width: 100%` so it
+   fluidly resizes. Below 480px we mainly need to tighten internal
+   padding so the inputs don't feel cramped, and let the footer
+   buttons stretch full-width for tap targets. */
+
+@media (max-width: 520px) {
+  .backdrop {
+    padding: 12px;
+    align-items: flex-start;       // no vertical centering at small viewports — top-anchored
+    padding-top: 32px;
+  }
+  .header {
+    padding: 18px 18px 12px;
+    gap: 12px;
+  }
+  .title {
+    font-size: 16px;
+  }
+  .body {
+    padding: 16px 18px 6px;
+  }
+  .footer {
+    padding: 12px 18px 18px;
+    flex-direction: column-reverse; // primary on top, Cancel below
+    gap: 8px;
+  }
+  .footer button {
+    width: 100%;                   // stretch both Cancel + Send to full width
+  }
+}

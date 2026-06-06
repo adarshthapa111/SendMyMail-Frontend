@@ -257,3 +257,39 @@
   padding: 14px 24px 22px;
   border-top: 1px solid var(--color-line-soft);
 }
+
+/* ─── Responsive ─────────────────────────────────────────────────────
+   Dialog is `max-width: 680px; width: 100%` so it fluidly shrinks.
+   On phones we mainly tighten padding + let the Continue/Cancel
+   buttons stretch full-width for tap targets. */
+
+@media (max-width: 720px) {
+  .backdrop {
+    padding: 16px;
+  }
+  .header {
+    padding: 18px 18px 12px;
+    gap: 12px;
+  }
+  .body {
+    padding: 16px 18px 4px;
+  }
+  .actions {
+    padding: 12px 18px 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .backdrop {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+  .actions {
+    flex-direction: column-reverse;       // primary on top, Cancel below
+    gap: 8px;
+  }
+  .actions button {
+    width: 100%;                          // full-width tap targets
+  }
+}

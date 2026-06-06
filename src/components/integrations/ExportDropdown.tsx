@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useAppSelector } from '../../store/hooks';
 import { renderTemplate } from '../../api/renderTemplate';
-import { platformRegistry, type PlatformDef } from '../../integrations/registry';
+import { platformRegistry, isV1, type PlatformDef } from '../../integrations/registry';
 import { loadCredentials } from '../../integrations/credentials';
 import PlatformIcon from './PlatformIcon';
 import styles from '@styles/components/integrations/ExportDropdown.module.css';
@@ -46,6 +46,10 @@ export default function ExportDropdown() {
     const copyExport: PlatformDef[] = [];
     const webhookSend: PlatformDef[] = [];
     for (const def of Object.values(platformRegistry)) {
+      // V1 cut: the dropdown mirrors the integrations screen's visible
+      // set. Non-V1 platforms (Marketo, Postmark, etc.) stay defined
+      // but hidden until their `v1` flag is flipped.
+      if (!isV1(def)) continue;
       if (connections[def.id]?.status !== 'connected') continue;
       if (def.tier === 1) apiSend.push(def);
       else if (def.tier === 4) webhookSend.push(def);
