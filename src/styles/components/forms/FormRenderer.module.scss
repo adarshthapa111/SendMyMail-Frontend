@@ -1,0 +1,194 @@
+/* FormRenderer — shared between editor preview + public hosted form.
+   The form card with all variants (active / thank-you / unavailable).
+   Theming via --form-brand custom property (set inline). */
+
+.card {
+  --form-brand: var(--color-primary);
+
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  padding: 36px 32px 28px;
+  max-width: 440px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+  box-shadow: 0 14px 32px -12px rgba(43, 38, 32, 0.12);
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--form-brand);
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  font-family: "Bricolage Grotesque", "Hanken Grotesk", sans-serif;
+}
+
+.body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.iconBadge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--form-brand) 12%, transparent);
+  color: var(--form-brand);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 4px;
+}
+
+.iconBadgeSuccess {
+  background: rgba(28, 168, 95, 0.14);
+  color: #1ca85f;
+}
+
+/* Center the title + body in unavailable + thank-you states */
+.card .iconBadge + .title,
+.card .iconBadge + .title + .body {
+  text-align: center;
+}
+
+/* ── Form fields ───────────────────────────────────────────────── */
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.input {
+  appearance: none;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--form-brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--form-brand) 16%, transparent);
+}
+
+.input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Honeypot — must be visually hidden but still in the DOM tab order
+   skipped via tabindex=-1. Real users never see this. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Consent ──────────────────────────────────────────────────── */
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.consentInput {
+  margin-top: 2px;
+  accent-color: var(--form-brand);
+  flex-shrink: 0;
+}
+
+.consentText {
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* ── Submit ───────────────────────────────────────────────────── */
+
+.submitBtn {
+  appearance: none;
+  background: var(--form-brand);
+  color: #fff;
+  border: 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: filter 100ms ease, transform 80ms ease;
+}
+
+.submitBtn:hover:not(:disabled)  { filter: brightness(0.95); }
+.submitBtn:active:not(:disabled) { transform: translateY(1px); }
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── Error ────────────────────────────────────────────────────── */
+
+.error {
+  padding: 8px 12px;
+  background: rgba(209, 26, 42, 0.08);
+  border: 1px solid rgba(209, 26, 42, 0.20);
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #d11a2a;
+  line-height: 1.45;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+
+.footerLine {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-soft);
+}
+
+.footerLine strong {
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+@media (max-width: 520px) {
+  .card {
+    padding: 28px 22px 22px;
+    border-radius: 14px;
+  }
+  .title { font-size: 19px; }
+}

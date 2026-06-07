@@ -1,0 +1,28 @@
+/* /f/:slug public page — centers the FormRenderer card on a warm
+   editorial background. */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.stage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.loadingCard {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  padding: 60px 40px;
+  display: grid;
+  place-items: center;
+  color: var(--color-soft);
+}

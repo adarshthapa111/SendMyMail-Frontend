@@ -63,9 +63,12 @@ const Flows = {
 };
 
 const Forms = {
-  List:    lazy(() => import('../pages/forms').then(m => ({ default: m.Forms }))),
-  Builder: lazy(() => import('../pages/forms').then(m => ({ default: m.FormBuilder }))),
+  List:   lazy(() => import('../pages/forms').then(m => ({ default: m.FormsList }))),
+  Editor: lazy(() => import('../pages/forms').then(m => ({ default: m.FormEditor }))),
+  Detail: lazy(() => import('../pages/forms').then(m => ({ default: m.FormDetail }))),
 };
+
+const HostedForm = lazy(() => import('../pages/public/HostedForm').then(m => ({ default: m.HostedForm })));
 
 const Reports      = lazy(() => import('../pages/reports').then(m => ({ default: m.Reports })));
 const Team         = lazy(() => import('../pages/team').then(m => ({ default: m.Team })));
@@ -108,6 +111,7 @@ export const router = createBrowserRouter([
 
   /* Public deep-link landing pages — no chrome */
   { path: '/u/:unsubToken',   element: withSuspense(<Unsubscribe />) },
+  { path: '/f/:slug',         element: withSuspense(<HostedForm />) },
 
   /* ─── Main app — wrapped in AppShell (topbar + sidebar + scrolling main) ─── */
   {
@@ -142,7 +146,9 @@ export const router = createBrowserRouter([
       { path: '/clients/:clientId/flows/:flowId',              element: <ClientScoped>{withSuspense(<Flows.Config />)}</ClientScoped> },
 
       { path: '/clients/:clientId/forms',                      element: <ClientScoped>{withSuspense(<Forms.List />)}</ClientScoped> },
-      { path: '/clients/:clientId/forms/:formId/edit',         element: <ClientScoped>{withSuspense(<Forms.Builder />)}</ClientScoped> },
+      { path: '/clients/:clientId/forms/new',                  element: <RoleGated min="admin"><ClientScoped>{withSuspense(<Forms.Editor />)}</ClientScoped></RoleGated> },
+      { path: '/clients/:clientId/forms/:formId',              element: <ClientScoped>{withSuspense(<Forms.Detail />)}</ClientScoped> },
+      { path: '/clients/:clientId/forms/:formId/edit',         element: <RoleGated min="admin"><ClientScoped>{withSuspense(<Forms.Editor />)}</ClientScoped></RoleGated> },
 
       { path: '/clients/:clientId/reports',                    element: <ClientScoped>{withSuspense(<Reports />)}</ClientScoped> },
 
