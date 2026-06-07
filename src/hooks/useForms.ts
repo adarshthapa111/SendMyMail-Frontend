@@ -41,8 +41,30 @@ export function useForms(clientId: string | null) {
 
   const archive = useCallback(async (formId: string) => {
     if (!clientId) throw new Error('No client');
-    await apiArchive(clientId, formId);
-    setItems((prev) => prev.filter((f) => f.id !== formId));
+    /* Optimistic — feature-perceived-performance V1. Capture rollback,
+       remove immediately, fire API, restore on error. */
+    let removed: FormSummary | undefined;
+    let removedIndex = -1;
+    setItems((prev) => {
+      removedIndex = prev.findIndex((f) => f.id === formId);
+      if (removedIndex >= 0) removed = prev[removedIndex];
+      return prev.filter((f) => f.id !== formId);
+    });
+    try {
+      await apiArchive(clientId, formId);
+    } catch (err) {
+      // Rollback: re-insert at original position
+      if (removed && removedIndex >= 0) {
+        const restore = removed;
+        const idx = removedIndex;
+        setItems((prev) => {
+          const next = [...prev];
+          next.splice(idx, 0, restore);
+          return next;
+        });
+      }
+      throw err;
+    }
   }, [clientId]);
 
   return {

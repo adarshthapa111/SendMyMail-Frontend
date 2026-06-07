@@ -4,7 +4,8 @@ import {
   IconArrowLeft, IconEdit, IconExternalLink, IconCheck, IconCopy,
   IconPlayerPause, IconPlayerPlay, IconTrash, IconUserPlus, IconRefresh,
 } from '@tabler/icons-react';
-import { Heading, Text, Button, Spinner, Pill } from '../../components/ui';
+import { Heading, Text, Button, Pill } from '../../components/ui';
+import { KpiCardSkeleton, RowSkeleton, Skeleton } from '../../components/skeletons';
 import { getForm, updateForm, archiveForm, type FormDetailResponse } from '../../lib/api/forms';
 import { toast } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
@@ -45,7 +46,23 @@ export function FormDetail() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId, formId]);
 
-  if (loading) return <div className={styles.center}><Spinner /></div>;
+  if (loading) {
+    return (
+      <div className={styles.page} aria-busy="true">
+        <Skeleton w={120} h={11} style={{ marginBottom: 12 }} />
+        <Skeleton w={260} h={28} style={{ marginBottom: 22 }} />
+        <div className={styles.statsRow}>
+          <KpiCardSkeleton />
+          <KpiCardSkeleton />
+          <KpiCardSkeleton />
+          <KpiCardSkeleton />
+        </div>
+        <div style={{ marginTop: 22 }}>
+          <RowSkeleton count={6} />
+        </div>
+      </div>
+    );
+  }
   if (error || !detail) {
     return (
       <div className={styles.center}>

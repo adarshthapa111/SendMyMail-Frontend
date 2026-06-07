@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconPlus } from '@tabler/icons-react';
-import { Heading, Text, Button, Spinner } from '../../components/ui';
+import { Heading, Text, Button } from '../../components/ui';
+import { CampaignCardSkeleton } from '../../components/skeletons';
 import { CampaignCard } from '../../components/campaigns';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import type { CampaignSummary, CampaignStatus } from '../../lib/api/campaigns';
@@ -54,8 +55,8 @@ export function CampaignsList() {
 
   if (camps.status === 'loading' || camps.status === 'idle') {
     return (
-      <div className={styles.center}>
-        <Spinner />
+      <div className={styles.grid} aria-busy="true">
+        {Array.from({ length: 6 }).map((_, i) => <CampaignCardSkeleton key={i} />)}
       </div>
     );
   }

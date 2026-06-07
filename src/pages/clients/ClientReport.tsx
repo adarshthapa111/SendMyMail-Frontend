@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { IconExternalLink, IconChartLine } from '@tabler/icons-react';
-import { Heading, Text, Spinner, Pill } from '../../components/ui';
+import { Heading, Text, Pill } from '../../components/ui';
+import { KpiCardSkeleton, ChartSkeleton, RowSkeleton, Skeleton } from '../../components/skeletons';
 import { RangePicker } from '../../components/clients/RangePicker';
 import { SendingChart } from '../../components/clients/SendingChart';
 import { useClientReport } from '../../hooks/useClientReport';
@@ -35,7 +36,26 @@ export function ClientReport() {
   }, [setRange, setSearchParams]);
 
   if (loading && !data) {
-    return <div className={styles.center}><Spinner /></div>;
+    return (
+      <div className={styles.page} aria-busy="true">
+        <Skeleton w={260} h={28} style={{ marginBottom: 6 }} />
+        <Skeleton w={180} h={13} style={{ marginBottom: 24 }} />
+        <div className={styles.kpiRow}>
+          <KpiCardSkeleton />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton withSubtitle />
+        </div>
+        <div className={styles.section} style={{ marginBottom: 22 }}>
+          <Skeleton w={170} h={17} style={{ margin: '0 18px 14px' }} />
+          <ChartSkeleton />
+        </div>
+        <div className={styles.section}>
+          <Skeleton w={210} h={17} style={{ margin: '0 18px 14px' }} />
+          <RowSkeleton count={5} />
+        </div>
+      </div>
+    );
   }
   if (error && !data) {
     return (

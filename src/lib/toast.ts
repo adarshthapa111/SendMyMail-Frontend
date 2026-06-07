@@ -1,4 +1,5 @@
 import toast from 'react-hot-toast';
+import { createElement, Fragment } from 'react';
 import { ApiError } from './api/client';
 
 interface FormToastOptions {
@@ -35,6 +36,63 @@ export async function withFormToast<T>(promise: Promise<T>, opts: FormToastOptio
     toast.error(message, { id });
     throw err;
   }
+}
+
+/* ─── successWithUndo — toast with an Undo action ─────────────────────
+   feature-perceived-performance V1. Used by destructive mutations
+   (archive, suppress, etc.) so the user has a 6-second window to
+   roll back. Standard SaaS pattern (Linear, Gmail, Slack).
+
+   Usage:
+     successWithUndo('Archived', () => unarchive(id));
+
+   Behavior:
+     - Toast shows the message + an Undo button
+     - Default duration 6s; configurable
+     - Clicking Undo: dismisses the toast, calls the handler, no
+       further confirmation toast (the handler can fire its own)
+     - If the toast dismisses without click: nothing happens
+     - The handler is fire-and-forget; errors should be caught by
+       the caller and surfaced with toast.error() */
+interface UndoToastOpts {
+  duration?: number;       // ms; default 6000
+  undoLabel?: string;      // default 'Undo'
+}
+
+export function successWithUndo(
+  message: string,
+  onUndo: () => void,
+  opts: UndoToastOpts = {},
+): string {
+  const { duration = 6000, undoLabel = 'Undo' } = opts;
+
+  const id = toast.success(
+    (t) => createElement(Fragment, null,
+      createElement('span', null, message),
+      createElement('button', {
+        type: 'button',
+        onClick: () => {
+          toast.dismiss(t.id);
+          onUndo();
+        },
+        style: {
+          marginLeft: 14,
+          padding: '4px 10px',
+          background: 'transparent',
+          border: '1px solid var(--color-line)',
+          borderRadius: 6,
+          color: 'var(--color-primary)',
+          font: 'inherit',
+          fontSize: 12.5,
+          fontWeight: 600,
+          cursor: 'pointer',
+        },
+      }, undoLabel),
+    ),
+    { duration },
+  );
+
+  return id;
 }
 
 /* Re-export react-hot-toast's `toast` for components that need one-shot toasts. */

@@ -69,8 +69,29 @@ export function useSendingDomains() {
   }, []);
 
   const remove = useCallback(async (id: string) => {
-    await apiDelete(id);
-    setItems((prev) => prev.filter((d) => d.id !== id));
+    /* Optimistic — feature-perceived-performance V1. Card disappears
+       immediately; rolls back on error. */
+    let removed: SendingDomain | undefined;
+    let removedIndex = -1;
+    setItems((prev) => {
+      removedIndex = prev.findIndex((d) => d.id === id);
+      if (removedIndex >= 0) removed = prev[removedIndex];
+      return prev.filter((d) => d.id !== id);
+    });
+    try {
+      await apiDelete(id);
+    } catch (err) {
+      if (removed && removedIndex >= 0) {
+        const restore = removed;
+        const idx = removedIndex;
+        setItems((prev) => {
+          const next = [...prev];
+          next.splice(idx, 0, restore);
+          return next;
+        });
+      }
+      throw err;
+    }
   }, []);
 
   return { items, loading, error, refetch, add, check, remove };

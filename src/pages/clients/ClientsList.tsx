@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Heading, Text, Button, Spinner } from '../../components/ui';
+import { Heading, Text, Button } from '../../components/ui';
+import { RowSkeleton } from '../../components/skeletons';
 import { IconPlus } from '@tabler/icons-react';
 import {
   ClientsTable, ClientsEmptyState, ClientsToolbar, ClientFormDialog, ArchiveDialog,
@@ -139,7 +140,7 @@ export function ClientsList() {
   }
 
   if (status === 'loading' || status === 'idle') {
-    return <div className={styles.spinner}><Spinner /></div>;
+    return <RowSkeleton count={6} withAvatar />;
   }
 
   // FTUX — zero clients. Empty state owns the only "Add" trigger.

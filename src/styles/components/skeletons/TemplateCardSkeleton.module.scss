@@ -1,0 +1,40 @@
+/* TemplateCardSkeleton — mirrors src/components/templates/TemplateCard.tsx */
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage {
+  height: 320px;
+  background: var(--color-surface);
+  display: grid;
+  place-items: center;
+  padding: 18px 0 22px;
+}
+
+.phone {
+  width: 160px;
+  height: 280px;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.meta {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-card);
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.metaSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

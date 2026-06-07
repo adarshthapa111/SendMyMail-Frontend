@@ -60,12 +60,23 @@ export function useTemplates(clientId: string | null) {
 
   const archive = useCallback(async (templateId: string) => {
     if (!clientId) throw new Error('No active client');
-    const res = await apiArchive(clientId, templateId);
-    // Soft-archive — keep in slice but flip archived flag (matches the
-    // clients-archive pattern; the list view filters archived out by default).
-    dispatch(upsertTemplate(res.data.template));
-    return res.data.template;
-  }, [clientId, dispatch]);
+    /* Optimistic — feature-perceived-performance V1. Snapshot the
+       current row, flip archived to true immediately, fire API, rollback
+       on error. The list page filters archived rows out by default so
+       the row visually disappears at once. */
+    const snapshot = store.getState().templates.items.find((t) => t.id === templateId);
+    if (snapshot) {
+      dispatch(upsertTemplate({ ...snapshot, archived: true }));
+    }
+    try {
+      const res = await apiArchive(clientId, templateId);
+      dispatch(upsertTemplate(res.data.template));
+      return res.data.template;
+    } catch (err) {
+      if (snapshot) dispatch(upsertTemplate(snapshot));     // rollback
+      throw err;
+    }
+  }, [clientId, dispatch, store]);
 
   const duplicate = useCallback(async (templateId: string) => {
     if (!clientId) throw new Error('No active client');

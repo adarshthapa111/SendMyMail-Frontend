@@ -54,8 +54,28 @@ export function useSuppression(clientId: string | null) {
 
   const remove = useCallback(async (id: string) => {
     if (!clientId) throw new Error('No client');
-    await apiRemove(clientId, id);
-    setItems((prev) => prev.filter((s) => s.id !== id));
+    /* Optimistic — feature-perceived-performance V1. */
+    let removed: Suppression | undefined;
+    let removedIndex = -1;
+    setItems((prev) => {
+      removedIndex = prev.findIndex((s) => s.id === id);
+      if (removedIndex >= 0) removed = prev[removedIndex];
+      return prev.filter((s) => s.id !== id);
+    });
+    try {
+      await apiRemove(clientId, id);
+    } catch (err) {
+      if (removed && removedIndex >= 0) {
+        const restore = removed;
+        const idx = removedIndex;
+        setItems((prev) => {
+          const next = [...prev];
+          next.splice(idx, 0, restore);
+          return next;
+        });
+      }
+      throw err;
+    }
   }, [clientId]);
 
   return {

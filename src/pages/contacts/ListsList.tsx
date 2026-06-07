@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Heading, Text, Button, Spinner, Note } from '../../components/ui';
+import { Heading, Text, Button, Note } from '../../components/ui';
+import { RowSkeleton } from '../../components/skeletons';
 import { IconPlus, IconMailOff } from '@tabler/icons-react';
 import { ListsTable, ListFormDialog } from '../../components/contacts';
 import { useLists } from '../../hooks/useLists';
@@ -85,7 +86,7 @@ export function ListsList() {
       </div>
 
       {loading ? (
-        <div className={styles.spinner}><Spinner /></div>
+        <RowSkeleton count={5} />
       ) : hasNone ? (
         <div className={styles.empty}>
           <Heading size="md">No lists yet</Heading>

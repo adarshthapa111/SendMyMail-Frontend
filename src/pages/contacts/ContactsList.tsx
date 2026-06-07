@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Heading, Text, Button, Spinner } from '../../components/ui';
+import { Heading, Text, Button } from '../../components/ui';
+import { RowSkeleton } from '../../components/skeletons';
 import { IconPlus, IconUpload, IconHistory } from '@tabler/icons-react';
 import {
   ContactsToolbar, ContactsTable, ContactsEmptyState, ContactFormDialog,
@@ -211,7 +212,7 @@ export function ContactsList() {
           />
 
           {loading ? (
-            <div className={styles.spinner}><Spinner /></div>
+            <RowSkeleton count={8} withAvatar />
           ) : contacts.items.length === 0 ? (
             <div className={styles.noMatch}>
               <Text tone="muted">No contacts match your filters.</Text>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { IconPlus, IconSparkles, IconAt, IconBell, IconShieldLock, IconBuilding, IconPalette } from '@tabler/icons-react';
-import { Heading, Text, Button, Spinner } from '../components/ui';
+import { Heading, Text, Button } from '../components/ui';
+import { DomainCardSkeleton } from '../components/skeletons';
 import { Placeholder } from './_shared/Placeholder';
 import { useSendingDomains } from '../hooks/useSendingDomains';
 import { DomainCard } from '../components/settings/DomainCard';
@@ -95,7 +96,9 @@ function SendingTab() {
       </div>
 
       {loading ? (
-        <div className={styles.center}><Spinner /></div>
+        <div className={styles.domainList} aria-busy="true">
+          <DomainCardSkeleton />
+        </div>
       ) : error ? (
         <Text tone="muted">Couldn't load sending domains: {error}</Text>
       ) : items.length === 0 ? (

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Heading, Text, Button, Spinner } from '../../components/ui';
+import { Heading, Text, Button } from '../../components/ui';
+import { TemplateCardSkeleton } from '../../components/skeletons';
 import { IconPlus, IconCloudUpload } from '@tabler/icons-react';
 import {
   TemplateCard, TemplateFormDialog, TemplatesEmptyState, ImportMjmlDialog,
@@ -159,7 +160,11 @@ export function TemplatesList() {
   }
 
   if (tpls.status === 'loading' || tpls.status === 'idle') {
-    return <div className={styles.spinner}><Spinner /></div>;
+    return (
+      <div className={styles.grid} aria-busy="true">
+        {Array.from({ length: 8 }).map((_, i) => <TemplateCardSkeleton key={i} />)}
+      </div>
+    );
   }
 
   if (tpls.status === 'error') {

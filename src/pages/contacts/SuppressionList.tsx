@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconPlus, IconSearch, IconTrash, IconAlertCircle } from '@tabler/icons-react';
-import { Heading, Text, Button, Spinner, Input, Field } from '../../components/ui';
+import { Heading, Text, Button, Input, Field } from '../../components/ui';
+import { RowSkeleton } from '../../components/skeletons';
 import { useSuppression } from '../../hooks/useSuppression';
 import { toast } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
@@ -93,7 +94,7 @@ export function SuppressionList() {
       </div>
 
       {sup.loading ? (
-        <div className={styles.center}><Spinner /></div>
+        <RowSkeleton count={6} withPill />
       ) : sup.error ? (
         <Text tone="muted">Couldn't load: {sup.error}</Text>
       ) : sup.items.length === 0 ? (

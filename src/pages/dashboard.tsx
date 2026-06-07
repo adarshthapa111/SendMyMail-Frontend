@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Spinner } from '../components/ui';
 import {
   Hero, KPIRow, SendingChart, DeliverabilityGauge, PlanUsage, ClientsHealthList,
 } from '../components/dashboard';
 import { OnboardingBanner } from '../components/onboarding/OnboardingBanner';
+import { KpiCardSkeleton, ChartSkeleton, RowSkeleton, Skeleton } from '../components/skeletons';
 import { getOverview, type OverviewPayload } from '../lib/api/overview';
 import { ApiError } from '../lib/api/client';
 import { toast } from '../lib/toast';
@@ -29,7 +29,32 @@ export function Dashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  if (loading) return <div className={styles.spinner}><Spinner /></div>;
+  if (loading) {
+    /* Skeleton mirrors the real dashboard: hero + 4 KPIs + chart +
+       clients-health rows. Zero-shift when data lands. */
+    return (
+      <div aria-busy="true">
+        <Skeleton w={280} h={32} style={{ marginBottom: 8 }} />
+        <Skeleton w={420} h={14} style={{ marginBottom: 28 }} />
+        <div className={styles.kpiRow}>
+          <KpiCardSkeleton />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton />
+        </div>
+        <div className={styles.split} style={{ marginTop: 28 }}>
+          <div><ChartSkeleton /></div>
+          <div className={styles.rightCol}>
+            <KpiCardSkeleton />
+            <KpiCardSkeleton />
+          </div>
+        </div>
+        <div style={{ marginTop: 28 }}>
+          <RowSkeleton count={5} withAvatar />
+        </div>
+      </div>
+    );
+  }
   if (!data)   return null;
 
   return (

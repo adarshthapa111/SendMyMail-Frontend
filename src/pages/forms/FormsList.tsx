@@ -4,7 +4,8 @@ import {
   IconPlus, IconForms, IconExternalLink, IconCheck, IconCopy, IconTrash,
   IconDots, IconEdit,
 } from '@tabler/icons-react';
-import { Heading, Text, Button, Spinner, Pill } from '../../components/ui';
+import { Heading, Text, Button, Pill } from '../../components/ui';
+import { FormCardSkeleton } from '../../components/skeletons';
 import { useForms } from '../../hooks/useForms';
 import { toast } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
@@ -49,7 +50,9 @@ export function FormsList() {
       </header>
 
       {forms.loading ? (
-        <div className={styles.center}><Spinner /></div>
+        <div className={styles.grid} aria-busy="true">
+          {Array.from({ length: 6 }).map((_, i) => <FormCardSkeleton key={i} />)}
+        </div>
       ) : forms.error ? (
         <Text tone="muted">Couldn't load forms: {forms.error}</Text>
       ) : forms.items.length === 0 ? (

@@ -56,9 +56,17 @@ export function useCampaigns(clientId: string | null) {
 
   const remove = useCallback(async (campaignId: string) => {
     if (!clientId) throw new Error('No active client');
-    await apiDelete(clientId, campaignId);
+    /* Optimistic — feature-perceived-performance V1. Capture snapshot,
+       remove from slice immediately, fire API, re-add on error. */
+    const snapshot = store.getState().campaigns.items.find((c) => c.id === campaignId);
     dispatch(removeCampaign(campaignId));
-  }, [clientId, dispatch]);
+    try {
+      await apiDelete(clientId, campaignId);
+    } catch (err) {
+      if (snapshot) dispatch(addCampaign(snapshot));     // rollback
+      throw err;
+    }
+  }, [clientId, dispatch, store]);
 
   const drop  = useCallback((campaignId: string) => dispatch(removeCampaign(campaignId)), [dispatch]);
   const clear = useCallback(() => dispatch(clearCampaigns()), [dispatch]);

@@ -1,0 +1,58 @@
+/* Skeleton primitives — shimmer animation. Theme-aware via CSS tokens
+   so it adapts to Default / Dark / White automatically. */
+
+/* Base skeleton — animated shimmer from --color-line to a lighter
+   peak. The lighter peak is approximated via `color-mix(...white,
+   var(--color-line))` so the shimmer reads on dark themes too. */
+.skeleton {
+  display: inline-block;
+  position: relative;
+  background: var(--color-line);
+  overflow: hidden;
+  /* Prevents inline-block from creating extra baseline gap */
+  vertical-align: middle;
+
+  /* The shimmer is a moving gradient overlay. Using ::after instead
+     of background animation so we don't repaint the whole block. */
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-bg) 30%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Reduced motion — static, no shimmer. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* ── Stacks ─────────────────────────────────────────────────────── */
+
+.textStack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.block {
+  display: block;
+  position: relative;
+  width: 100%;
+}

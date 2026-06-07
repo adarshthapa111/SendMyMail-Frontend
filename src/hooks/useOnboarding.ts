@@ -51,13 +51,42 @@ export function useOnboarding() {
   }, [refetch]);
 
   const skip = useCallback(async () => {
-    await apiSkip();
-    setData((prev) => prev ? { ...prev, setupComplete: true } : prev);
+    /* Optimistic — feature-perceived-performance V1. Banner disappears
+       immediately; rolls back on error. */
+    let prevSetupComplete: boolean | undefined;
+    setData((prev) => {
+      if (!prev) return prev;
+      prevSetupComplete = prev.setupComplete;
+      return { ...prev, setupComplete: true };
+    });
+    try {
+      await apiSkip();
+    } catch (err) {
+      if (prevSetupComplete !== undefined) {
+        const prev = prevSetupComplete;
+        setData((curr) => curr ? { ...curr, setupComplete: prev } : curr);
+      }
+      throw err;
+    }
   }, []);
 
   const complete = useCallback(async () => {
-    await apiComplete();
-    setData((prev) => prev ? { ...prev, setupComplete: true } : prev);
+    /* Optimistic — feature-perceived-performance V1. */
+    let prevSetupComplete: boolean | undefined;
+    setData((prev) => {
+      if (!prev) return prev;
+      prevSetupComplete = prev.setupComplete;
+      return { ...prev, setupComplete: true };
+    });
+    try {
+      await apiComplete();
+    } catch (err) {
+      if (prevSetupComplete !== undefined) {
+        const prev = prevSetupComplete;
+        setData((curr) => curr ? { ...curr, setupComplete: prev } : curr);
+      }
+      throw err;
+    }
   }, []);
 
   return { data, loading, error, refetch, skip, complete };

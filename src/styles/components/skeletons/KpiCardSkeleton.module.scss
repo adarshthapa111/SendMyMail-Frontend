@@ -1,0 +1,11 @@
+/* KpiCardSkeleton — single big number + label + optional subtitle */
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

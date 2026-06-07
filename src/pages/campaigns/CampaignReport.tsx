@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IconArrowLeft, IconCheck, IconAlertCircle, IconLoader2, IconEye, IconClick } from '@tabler/icons-react';
-import { Heading, Text, Spinner } from '../../components/ui';
+import { Heading, Text } from '../../components/ui';
+import { KpiCardSkeleton, RowSkeleton, Skeleton } from '../../components/skeletons';
 import {
   getCampaign,
   listCampaignSends,
@@ -101,7 +102,23 @@ export function CampaignReport() {
   }, [clientId, campaignId, sendsCursor, loadingSends]);
 
   if (!campaign && !loadErr) {
-    return <div className={styles.center}><Spinner /></div>;
+    /* Skeleton mirrors the real report: title + 4 KPI cards +
+       recipient log rows. Zero-shift transition when data lands. */
+    return (
+      <div className={styles.page} aria-busy="true">
+        <Skeleton w={120} h={11} style={{ marginBottom: 12 }} />
+        <Skeleton w={240} h={28} style={{ marginBottom: 22 }} />
+        <div className={styles.statsRow}>
+          <KpiCardSkeleton />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton withSubtitle />
+          <KpiCardSkeleton />
+        </div>
+        <div style={{ marginTop: 22 }}>
+          <RowSkeleton count={8} />
+        </div>
+      </div>
+    );
   }
   if (loadErr || !campaign) {
     return (
