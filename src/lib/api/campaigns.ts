@@ -29,6 +29,15 @@ export interface Campaign extends CampaignSummary {
   subject:             string | null;
   preheader:           string | null;
   recipientSnapshotAt: string | null;
+
+  // ── Engagement (feature-engagement-tracking V1) ───────────────────
+  // Populated by backend's GET /:id when status is past 'draft'.
+  // For drafts, uniqueOpens/Clicks are 0 and openRate/clickRate are null.
+  uniqueOpens:  number;
+  uniqueClicks: number;
+  openRate:     number | null;        // 0.0 - 1.0 (multiply by 100 for %)
+  clickRate:    number | null;
+  topLinks:     Array<{ url: string; count: number }>;
 }
 
 export interface CampaignCreateBody {
@@ -58,6 +67,12 @@ export interface SendLogEntry {
   error: string | null;
   sentAt: string | null;
   createdAt: string;
+
+  // Engagement per-recipient (feature-engagement-tracking V1)
+  openCount:     number;
+  clickCount:    number;
+  firstOpenedAt: string | null;
+  lastClickedAt: string | null;
 }
 
 function url(clientId: string, suffix = ''): string {

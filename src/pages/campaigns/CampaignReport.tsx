@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { IconArrowLeft, IconCheck, IconAlertCircle, IconLoader2 } from '@tabler/icons-react';
+import { IconArrowLeft, IconCheck, IconAlertCircle, IconLoader2, IconEye, IconClick } from '@tabler/icons-react';
 import { Heading, Text, Spinner } from '../../components/ui';
 import {
   getCampaign,
@@ -167,10 +167,54 @@ export function CampaignReport() {
       )}
 
       <div className={styles.statsRow}>
-        <StatCard label="Sent"     value={campaign.sentCount}      tone="ok" />
-        <StatCard label="Failed"   value={campaign.failedCount}    tone={campaign.failedCount > 0 ? 'bad' : 'neutral'} />
-        <StatCard label="Total"    value={campaign.totalRecipients} tone="neutral" />
+        <StatCard
+          label="Sent"
+          value={campaign.sentCount}
+          tone="ok"
+        />
+        <StatCard
+          label="Opened"
+          value={campaign.uniqueOpens}
+          subtitle={formatRate(campaign.openRate)}
+          tone={campaign.uniqueOpens > 0 ? 'engaged' : 'neutral'}
+        />
+        <StatCard
+          label="Clicked"
+          value={campaign.uniqueClicks}
+          subtitle={formatRate(campaign.clickRate)}
+          tone={campaign.uniqueClicks > 0 ? 'engaged' : 'neutral'}
+        />
+        <StatCard
+          label="Failed"
+          value={campaign.failedCount}
+          tone={campaign.failedCount > 0 ? 'bad' : 'neutral'}
+        />
       </div>
+
+      {campaign.topLinks.length > 0 && (
+        <section className={styles.topLinksSection}>
+          <Heading size="md" className={styles.logTitle}>Top links</Heading>
+          <ul className={styles.linksList}>
+            {campaign.topLinks.map((link, i) => (
+              <li key={i} className={styles.linkRow}>
+                <span className={styles.linkRank}>{i + 1}</span>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.linkUrl}
+                  title={link.url}
+                >
+                  {link.url}
+                </a>
+                <span className={styles.linkCount}>
+                  {link.count} {link.count === 1 ? 'click' : 'clicks'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className={styles.logSection}>
         <Heading size="md" className={styles.logTitle}>Recipient log</Heading>
@@ -184,6 +228,16 @@ export function CampaignReport() {
                   <span className={`${styles.logDot} ${styles['logDot_' + s.status]}`} aria-hidden="true" />
                   <span className={styles.logEmail}>{s.toEmail}</span>
                   <span className={styles.logStatus}>{s.status}</span>
+                  {s.firstOpenedAt && (
+                    <span className={`${styles.logPill} ${styles.logPill_opened}`} title={`First opened ${formatTime(s.firstOpenedAt)}`}>
+                      <IconEye size={11} /> Opened{s.openCount > 1 ? ` ×${s.openCount}` : ''}
+                    </span>
+                  )}
+                  {s.clickCount > 0 && (
+                    <span className={`${styles.logPill} ${styles.logPill_clicked}`} title={`Last clicked ${s.lastClickedAt ? formatTime(s.lastClickedAt) : ''}`}>
+                      <IconClick size={11} /> Clicked{s.clickCount > 1 ? ` ×${s.clickCount}` : ''}
+                    </span>
+                  )}
                   {s.error && <span className={styles.logError} title={s.error}>{truncate(s.error, 60)}</span>}
                   <span className={styles.logTime}>{s.sentAt ? formatTime(s.sentAt) : '—'}</span>
                 </li>
@@ -207,18 +261,33 @@ export function CampaignReport() {
 }
 
 interface StatCardProps {
-  label: string;
-  value: number;
-  tone: 'ok' | 'bad' | 'neutral';
+  label:     string;
+  value:     number;
+  /** Optional rate / sub-label shown below the big number, e.g. "68.6%". */
+  subtitle?: string;
+  tone:      'ok' | 'bad' | 'neutral' | 'engaged';
 }
 
-function StatCard({ label, value, tone }: StatCardProps) {
+function StatCard({ label, value, subtitle, tone }: StatCardProps) {
   return (
     <div className={`${styles.statCard} ${styles['statCard_' + tone]}`}>
-      <div className={styles.statValue}>{value}</div>
+      <div className={styles.statValue}>{value.toLocaleString()}</div>
       <div className={styles.statLabel}>{label}</div>
+      {subtitle && <div className={styles.statSubtitle}>{subtitle}</div>}
     </div>
   );
+}
+
+/** Format a rate (0.0 - 1.0) as a percentage string. Returns em-dash
+ *  for null (sentCount is 0 — no data to compute from). */
+function formatRate(rate: number | null): string {
+  if (rate === null) return '—';
+  const pct = rate * 100;
+  // 1 decimal place for sub-10%, no decimals above. Caps at 100%.
+  const clamped = Math.min(pct, 100);
+  return clamped < 10
+    ? `${clamped.toFixed(1)}%`
+    : `${Math.round(clamped)}%`;
 }
 
 function labelFor(s: Campaign['status']): string {
