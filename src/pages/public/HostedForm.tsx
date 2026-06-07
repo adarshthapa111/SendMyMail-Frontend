@@ -61,7 +61,10 @@ export function HostedForm() {
   };
 
   return (
-    <div className={styles.page}>
+    /* Public page — always renders default theme. Recipients land here
+       from social-bio links / QR codes — they haven't picked an app
+       theme. */
+    <div data-theme="default" className={styles.page}>
       <div className={styles.stage}>
         {state.status === 'loading' && (
           <div className={styles.loadingCard}>

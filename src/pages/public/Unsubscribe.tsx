@@ -34,7 +34,9 @@ export function Unsubscribe() {
   }, [unsubToken]);
 
   return (
-    <div className={styles.page}>
+    /* Public page — always renders default theme. Recipient hasn't
+       picked an app theme (they're external to the agency's app). */
+    <div data-theme="default" className={styles.page}>
       <div className={styles.card}>
         {state === 'loading' ? (
           <LoadingState />

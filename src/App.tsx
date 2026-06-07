@@ -7,10 +7,16 @@ import { Toaster } from 'react-hot-toast';
 import { AppRouter } from './router';
 import { useBootstrapAuth } from './hooks/useBootstrapAuth';
 import { useClientsBootstrap } from './hooks/useClientsBootstrap';
+import { useTheme } from './hooks/useTheme';
 
 export default function App() {
   useBootstrapAuth();
   useClientsBootstrap();
+  /* Mount the theme system. The hook keeps <html data-theme> in sync
+     with the user's preference + OS theme changes. The inline script
+     in index.html sets the initial value flash-free; this hook keeps
+     it correct for the rest of the session. */
+  useTheme();
   return (
     <>
       <AppRouter />

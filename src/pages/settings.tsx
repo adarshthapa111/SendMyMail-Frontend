@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { IconPlus, IconSparkles, IconAt, IconBell, IconShieldLock, IconBuilding } from '@tabler/icons-react';
+import { IconPlus, IconSparkles, IconAt, IconBell, IconShieldLock, IconBuilding, IconPalette } from '@tabler/icons-react';
 import { Heading, Text, Button, Spinner } from '../components/ui';
 import { Placeholder } from './_shared/Placeholder';
 import { useSendingDomains } from '../hooks/useSendingDomains';
 import { DomainCard } from '../components/settings/DomainCard';
 import { AddDomainDialog } from '../components/settings/AddDomainDialog';
+import { Appearance } from './settings/Appearance';
 import styles from '@styles/components/settings/Settings.module.scss';
 
 /* /settings (and /settings/:tab) — tabbed settings page.
@@ -20,6 +21,7 @@ const TABS = [
   { id: 'security',      label: 'Security',      Icon: IconShieldLock },
   { id: 'agency',        label: 'Agency',        Icon: IconBuilding },
   { id: 'sending',       label: 'Sending',       Icon: IconSparkles },
+  { id: 'appearance',    label: 'Appearance',    Icon: IconPalette },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -52,7 +54,8 @@ export function Settings() {
       </nav>
 
       <div className={styles.content}>
-        {activeTab === 'sending' ? <SendingTab /> : (
+        {activeTab === 'sending' ? <SendingTab /> :
+         activeTab === 'appearance' ? <Appearance /> : (
           <Placeholder
             title={`Settings · ${TABS.find((t) => t.id === activeTab)?.label}`}
             subtitle={`The ${activeTab} tab lands in a later PR.`}

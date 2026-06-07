@@ -168,7 +168,14 @@ export default function EditorBody() {
     >
       <div className={styles.body}>
         <Palette />
-        <Canvas />
+        {/* The MJML canvas always renders in default theme — emails are
+            white in real inboxes regardless of the user's app theme.
+            See tasks/feature-theme-system/change_log.md §Theme-INDEPENDENT
+            scoping. The Palette + Inspector adapt to the user's theme
+            (they're app chrome). */}
+        <div data-theme="default" style={{ display: 'contents' }}>
+          <Canvas />
+        </div>
         <Inspector />
       </div>
 

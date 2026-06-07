@@ -139,8 +139,10 @@ export function TemplateCard({ template, onOpen, onRename, onDuplicate, onArchiv
           {/* Dynamic island */}
           <span className={styles.notch} aria-hidden="true" />
 
-          {/* Screen — contains the email preview / thumbnail */}
-          <div className={styles.screen}>
+          {/* Screen — contains the email preview / thumbnail.
+              Always renders in default theme — the email is white in
+              real inboxes regardless of the user's app theme. */}
+          <div data-theme="default" className={styles.screen}>
             {template.thumbnailUrl ? (
               <img
                 src={template.thumbnailUrl}

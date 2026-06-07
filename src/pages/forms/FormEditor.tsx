@@ -331,7 +331,10 @@ export function FormEditor() {
             <IconCheck size={12} />
             <span>Live preview</span>
           </div>
-          <div className={styles.previewStage}>
+          {/* Preview renders in default theme — the form lives on the
+              customer's website (white). Editing in dark mode shouldn't
+              show a dark form preview that misrepresents reality. */}
+          <div data-theme="default" className={styles.previewStage}>
             <FormRenderer config={previewConfig} interactive={false} />
           </div>
           <Text size="xs" tone="muted" className={styles.previewHint}>

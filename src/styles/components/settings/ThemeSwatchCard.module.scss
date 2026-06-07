@@ -1,0 +1,181 @@
+/* ThemeSwatchCard — clickable preview card showing a mini live
+   rendering of each theme's palette. */
+
+.card {
+  appearance: none;
+  background: var(--color-card);
+  border: 2px solid var(--color-line);
+  border-radius: 12px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-align: left;
+  transition: border-color 120ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-line));
+  box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.18);
+}
+
+.cardSelected {
+  border-color: var(--color-primary);
+}
+
+.cardSelected:hover {
+  border-color: var(--color-primary);
+}
+
+/* ── Preview area ────────────────────────────────────────────────── */
+
+.previewSingle {
+  /* Inner data-theme wrapper paints its own bg via var(--color-bg) */
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-line);
+  padding: 16px 14px 14px;
+  display: grid;
+  place-items: center;
+}
+
+.previewSplit {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--color-line);
+  overflow: hidden;
+}
+
+.previewHalfLeft,
+.previewHalfRight {
+  background: var(--color-bg);
+  padding: 16px 8px 14px;
+  display: grid;
+  place-items: center;
+  min-height: 124px;
+}
+
+/* The dashed vertical line between the two halves. Use a neutral
+   color so it reads on both sides; semi-transparent so both halves
+   show through. */
+.splitDivider {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 0;
+  border-left: 1.5px dashed rgba(127, 127, 127, 0.55);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ── Mini preview content ───────────────────────────────────────── */
+
+.preview {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  padding: 8px 9px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-width: 130px;
+}
+
+/* Compact variant inside the split-card halves (less width) */
+.previewCompact {
+  max-width: 80px;
+  padding: 7px 8px 7px;
+}
+
+.miniHeader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.miniIcon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.miniTitle {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.miniBars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.miniBar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-line-strong);
+  width: 100%;
+}
+
+.miniBarShort { width: 60%; }
+
+.miniButton {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-top: 3px;
+}
+
+/* ── Meta (label + description) ─────────────────────────────────── */
+
+.meta {
+  padding: 11px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.description {
+  font-size: 11.5px;
+  color: var(--color-soft);
+  line-height: 1.35;
+}
+
+.checkBadge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+}

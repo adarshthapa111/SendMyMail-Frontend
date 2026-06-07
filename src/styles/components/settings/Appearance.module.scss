@@ -1,0 +1,50 @@
+/* Appearance settings tab — theme picker. */
+
+.tabBody {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.intro {
+  margin: 0;
+  max-width: 540px;
+  line-height: 1.55;
+}
+
+/* ── Grid (4 cards) ─────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ── System hint ────────────────────────────────────────────────── */
+
+.systemHint {
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 10px;
+  max-width: 640px;
+}
+
+.systemHint strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}

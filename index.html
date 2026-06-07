@@ -5,6 +5,32 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sendmymail-frontend</title>
+
+    <!-- feature-theme-system V1: resolve preference + apply data-theme
+         BEFORE React mounts to avoid a flash of default theme on
+         dark/white users. Storage key 'sendmymail-theme' holds one of:
+         'default' | 'dark' | 'white' | 'system'. First-visit default is
+         'system' (auto-follow OS) so dark-OS users get dark immediately. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('sendmymail-theme');
+          var pref = (stored === 'default' || stored === 'dark' ||
+                      stored === 'white' || stored === 'system')
+                     ? stored : 'system';
+          var applied = pref;
+          if (pref === 'system') {
+            applied = (window.matchMedia &&
+                       window.matchMedia('(prefers-color-scheme: dark)').matches)
+                     ? 'dark' : 'default';
+          }
+          document.documentElement.dataset.theme = applied;
+        } catch (e) {
+          /* localStorage disabled (private browsing) — fall through to default */
+          document.documentElement.dataset.theme = 'default';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

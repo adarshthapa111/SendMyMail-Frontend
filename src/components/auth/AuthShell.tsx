@@ -8,7 +8,10 @@ import s from '@styles/components/auth/AuthShell.module.scss';
    The shell uses 100vw × 100vh and is intended to render OUTSIDE the AppShell chrome. */
 
 export function AuthShell({ children }: { children: ReactNode }) {
-  return <div className={s.shell}>{children}</div>;
+  /* Auth pages are the brand experience BEFORE a user has signed in
+     and picked an app theme. Always render in default theme so the
+     warm-editorial brand DNA is what new visitors see. */
+  return <div data-theme="default" className={s.shell}>{children}</div>;
 }
 
 /* ─── LEFT panel pieces ─────────────────────────────────────────────────── */
