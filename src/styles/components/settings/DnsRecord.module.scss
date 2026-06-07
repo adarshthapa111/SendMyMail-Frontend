@@ -1,0 +1,107 @@
+/* Per-record row in the DNS records table. Mirrors the .recordsHead
+   grid in DomainCard.module.scss. */
+
+.row {
+  display: grid;
+  grid-template-columns: 70px 1.2fr 2fr auto auto;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--color-line-soft);
+  align-items: center;
+}
+
+.row:first-child { border-top: 0; }
+
+.cellType {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  padding: 3px 7px;
+  border-radius: 5px;
+  text-align: center;
+  width: fit-content;
+}
+
+.cellValue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cellValueMulti {
+  align-items: flex-start;
+}
+
+.cellValueMulti .code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.code {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  color: var(--color-ink);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--color-card);
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--color-line-soft);
+}
+
+.copyBtn {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: 5px;
+  background: var(--color-card);
+  color: var(--color-soft);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 100ms ease, color 100ms ease;
+}
+
+.copyBtn:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.cellPriority {
+  font-size: 11px;
+  color: var(--color-soft);
+  font-weight: 600;
+}
+
+.recordStatus {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.recordStatus_verified { background: rgba(28, 168, 95, 0.12);  color: #1ca85f; }
+.recordStatus_pending  { background: var(--color-surface);     color: var(--color-soft); }
+
+@media (max-width: 760px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .cellType {
+    display: inline-block;
+  }
+}

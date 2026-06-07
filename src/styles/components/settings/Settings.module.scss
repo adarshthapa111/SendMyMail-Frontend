@@ -1,0 +1,147 @@
+/* Settings page — single page with tab nav up top + content area below.
+   feature-send-hardening V1 fully implements the Sending tab; others
+   remain Placeholder cards. */
+
+.page {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin: 4px 0 24px;
+  border-bottom: 1px solid var(--color-line-soft);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-soft);
+  padding: 10px 14px 12px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color 100ms ease;
+}
+
+.tab:hover { color: var(--color-ink); }
+
+.tabActive {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.content {
+  min-height: 200px;
+}
+
+/* ── Tab body shared ─────────────────────────────────────────────── */
+
+.tabBody {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tabHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 4px;
+}
+
+.tabIntro {
+  margin: 6px 0 0;
+  max-width: 540px;
+  line-height: 1.5;
+}
+
+.tabIntro code,
+.emptyHint code,
+.subtitle code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: 60px 20px;
+  color: var(--color-soft);
+}
+
+/* ── Empty state ────────────────────────────────────────────────── */
+
+.emptyState {
+  background: var(--color-card);
+  border: 1px dashed var(--color-line);
+  border-radius: 14px;
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.emptyIcon {
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.emptyHint {
+  max-width: 440px;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+/* ── Domain list + quota hint ───────────────────────────────────── */
+
+.domainList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quotaHint {
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .tabHead {
+    flex-direction: column;
+  }
+}
