@@ -113,9 +113,33 @@
   margin-top: 12px;
 }
 
+/* Tinted icon badge — feature-empty-states-and-undo V1. Premium SaaS
+   pattern (Stripe / Vercel / Mailchimp): large icon in a soft brand-
+   tinted circle. */
+.emptyIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+
 .emptyHint {
-  max-width: 420px;
+  max-width: 480px;
   font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.emptyActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .emptyTab {

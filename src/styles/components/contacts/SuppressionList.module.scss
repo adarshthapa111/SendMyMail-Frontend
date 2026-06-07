@@ -70,9 +70,22 @@
   margin-bottom: 4px;
 }
 
+/* Tinted icon badge for polished empty state. */
+.emptyIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+
 .emptyHint {
-  max-width: 360px;
+  max-width: 480px;
   line-height: 1.55;
+  margin: 0 0 8px;
 }
 
 /* ── List + rows ─────────────────────────────────────────────────── */

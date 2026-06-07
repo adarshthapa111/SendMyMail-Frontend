@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconSend, IconTemplate } from '@tabler/icons-react';
 import { Heading, Text, Button } from '../../components/ui';
 import { CampaignCardSkeleton } from '../../components/skeletons';
 import { CampaignCard } from '../../components/campaigns';
@@ -110,14 +110,33 @@ export function CampaignsList() {
 
       {isEmpty ? (
         <div className={styles.empty}>
-          <Heading size="md">No campaigns yet</Heading>
+          <div className={styles.emptyIconBadge} aria-hidden="true">
+            <IconSend size={30} />
+          </div>
+          <Heading size="lg">Send your first campaign</Heading>
           <Text tone="muted" className={styles.emptyHint}>
-            Build your first campaign — pick a template and a list, write the
-            subject, and send. We'll handle the rest.
+            Build a campaign — pick a template and a list, write the subject,
+            launch. We'll handle delivery, suppression, and tracking.
           </Text>
-          <Button variant="primary" leading={<IconPlus size={16} />} onClick={onNewCampaign} disabled={creating}>
-            {creating ? 'Creating…' : 'New campaign'}
-          </Button>
+          <div className={styles.emptyActions}>
+            <Button
+              variant="primary"
+              size="lg"
+              leading={<IconPlus size={16} />}
+              onClick={onNewCampaign}
+              disabled={creating}
+            >
+              {creating ? 'Creating…' : 'New campaign'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              leading={<IconTemplate size={16} />}
+              onClick={() => navigate(`/clients/${clientId}/templates`)}
+            >
+              Browse templates first
+            </Button>
+          </div>
         </div>
       ) : visible.length === 0 ? (
         <div className={styles.emptyTab}>

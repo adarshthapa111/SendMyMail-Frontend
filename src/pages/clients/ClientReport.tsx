@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { IconExternalLink, IconChartLine } from '@tabler/icons-react';
-import { Heading, Text, Pill } from '../../components/ui';
+import { IconExternalLink, IconChartLine, IconPlus, IconSend } from '@tabler/icons-react';
+import { Heading, Text, Button } from '../../components/ui';
 import { KpiCardSkeleton, ChartSkeleton, RowSkeleton, Skeleton } from '../../components/skeletons';
 import { RangePicker } from '../../components/clients/RangePicker';
 import { SendingChart } from '../../components/clients/SendingChart';
@@ -215,17 +215,26 @@ function HealthCard({ label, value, tone }: { label: string; value: number; tone
 function EmptyState({ clientId, clientName }: { clientId: string | null; clientName: string }) {
   return (
     <section className={styles.empty}>
-      <IconChartLine size={32} className={styles.emptyIcon} />
-      <Heading size="md">No data yet for this range</Heading>
+      <div className={styles.emptyIconBadge} aria-hidden="true">
+        <IconChartLine size={30} />
+      </div>
+      <Heading size="lg">No data yet for this range</Heading>
       <Text tone="muted" size="sm" className={styles.emptyHint}>
-        Launch a campaign to {clientName}'s contacts and engagement metrics
-        will appear here.
+        Launch a campaign to {clientName}'s contacts and engagement metrics —
+        opens, clicks, deliverability — will appear here.
       </Text>
-      <Pill variant="indigo">
-        <Link to={`/clients/${clientId}/campaigns/new`} className={styles.emptyCta}>
-          Create a campaign
+      <div className={styles.emptyActions}>
+        <Link to={`/clients/${clientId}/campaigns/new`}>
+          <Button variant="primary" size="lg" leading={<IconSend size={16} />}>
+            Create a campaign
+          </Button>
         </Link>
-      </Pill>
+        <Link to={`/clients/${clientId}/contacts`}>
+          <Button variant="ghost" size="lg" leading={<IconPlus size={16} />}>
+            Add contacts first
+          </Button>
+        </Link>
+      </div>
     </section>
   );
 }

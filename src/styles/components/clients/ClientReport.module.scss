@@ -254,10 +254,29 @@
   margin-bottom: 4px;
 }
 
+/* Tinted icon badge for polished empty state. */
+.emptyIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+
 .emptyHint {
-  max-width: 440px;
+  max-width: 480px;
   line-height: 1.55;
   margin-bottom: 8px;
+}
+
+.emptyActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .emptyCta {

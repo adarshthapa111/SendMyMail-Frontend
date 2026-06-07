@@ -78,6 +78,25 @@ export function useTemplates(clientId: string | null) {
     }
   }, [clientId, dispatch, store]);
 
+  /* feature-empty-states-and-undo V1 — Undo handler for archive.
+     Flips archived back to false via PATCH. Used by successWithUndo
+     toasts on archive flows so users have a 6-second escape hatch. */
+  const unarchive = useCallback(async (templateId: string) => {
+    if (!clientId) throw new Error('No active client');
+    const snapshot = store.getState().templates.items.find((t) => t.id === templateId);
+    if (snapshot) {
+      dispatch(upsertTemplate({ ...snapshot, archived: false }));
+    }
+    try {
+      const res = await apiUpdate(clientId, templateId, { archived: false });
+      dispatch(upsertTemplate(res.data.template));
+      return res.data.template;
+    } catch (err) {
+      if (snapshot) dispatch(upsertTemplate(snapshot));
+      throw err;
+    }
+  }, [clientId, dispatch, store]);
+
   const duplicate = useCallback(async (templateId: string) => {
     if (!clientId) throw new Error('No active client');
     const res = await apiDuplicate(clientId, templateId);
@@ -93,6 +112,7 @@ export function useTemplates(clientId: string | null) {
     create,
     update,
     archive,
+    unarchive,
     duplicate,
     drop,
     clear,

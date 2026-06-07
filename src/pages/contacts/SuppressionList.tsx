@@ -4,7 +4,7 @@ import { IconPlus, IconSearch, IconTrash, IconAlertCircle } from '@tabler/icons-
 import { Heading, Text, Button, Input, Field } from '../../components/ui';
 import { RowSkeleton } from '../../components/skeletons';
 import { useSuppression } from '../../hooks/useSuppression';
-import { toast } from '../../lib/toast';
+import { toast, successWithUndo } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
 import type { Suppression } from '../../lib/api/suppression';
 import styles from '@styles/components/contacts/SuppressionList.module.scss';
@@ -56,7 +56,18 @@ export function SuppressionList() {
   const onRemove = async (s: Suppression) => {
     try {
       await sup.remove(s.id);
-      toast.success(`Removed ${s.email} from suppression list`);
+      /* feature-empty-states-and-undo V1 — Undo re-adds the suppression
+         with the same note. The new row gets a fresh id (the backend
+         doesn't preserve it across delete + insert) but the email +
+         reason are restored. */
+      successWithUndo(
+        `Removed ${s.email}`,
+        () => {
+          sup.add(s.email, s.note ?? undefined)
+            .then(() => toast.success(`Re-suppressed ${s.email}`))
+            .catch((err) => toast.error(err instanceof Error ? err.message : 'Failed to restore'));
+        },
+      );
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : 'Failed to remove');
     }
@@ -99,15 +110,27 @@ export function SuppressionList() {
         <Text tone="muted">Couldn't load: {sup.error}</Text>
       ) : sup.items.length === 0 ? (
         <div className={styles.empty}>
-          <IconAlertCircle size={28} className={styles.emptyIcon} />
-          <Heading size="md">
-            {sup.search ? 'No matches' : 'No suppressed emails'}
+          <div className={styles.emptyIconBadge} aria-hidden="true">
+            <IconAlertCircle size={30} />
+          </div>
+          <Heading size="lg">
+            {sup.search ? 'No matches' : 'Your do-not-mail list is empty'}
           </Heading>
           <Text tone="muted" size="sm" className={styles.emptyHint}>
             {sup.search
-              ? `No suppressed emails contain "${sup.search}".`
-              : 'When a recipient unsubscribes, their email lands here automatically.'}
+              ? `No suppressed emails contain "${sup.search}". Try a different search.`
+              : "When a recipient clicks unsubscribe, their email lands here automatically. You can also add emails manually — say if someone replies asking to be removed."}
           </Text>
+          {!sup.search && (
+            <Button
+              variant="primary"
+              size="lg"
+              leading={<IconPlus size={16} />}
+              onClick={() => setAdding(true)}
+            >
+              Add manually
+            </Button>
+          )}
         </div>
       ) : (
         <div className={styles.list}>

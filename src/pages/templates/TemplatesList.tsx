@@ -12,7 +12,7 @@ import { useTemplates } from '../../hooks/useTemplates';
 import { useClients } from '../../hooks/useClients';
 import { newTemplate } from '../../tree/newTemplate';
 import type { TemplateSummary } from '../../lib/api/templates';
-import { withFormToast } from '../../lib/toast';
+import { withFormToast, successWithUndo, toast } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
 import styles from '@styles/components/templates/TemplatesList.module.scss';
 
@@ -138,20 +138,29 @@ export function TemplatesList() {
   }
 
   // ── Archive (with confirm) ────────────────────────────────────
+  /* feature-empty-states-and-undo V1 — archive is optimistic (hook
+     updates UI immediately), so we skip the loading toast and go
+     straight to successWithUndo for the 6-second escape hatch. */
   async function onArchiveConfirm() {
     if (!archiveCand) return;
+    const cand = archiveCand;
     setArchiving(true);
+    setArchiveCand(null);                            // close modal immediately
     try {
-      await withFormToast(
-        tpls.archive(archiveCand.id),
-        {
-          loading: 'Archiving…',
-          success: `Archived ${archiveCand.name}`,
+      await tpls.archive(cand.id);
+      successWithUndo(
+        `Archived ${cand.name}`,
+        () => {
+          tpls.unarchive(cand.id)
+            .then(() => toast.success(`Restored ${cand.name}`))
+            .catch((err) => toast.error(err instanceof Error ? err.message : 'Failed to restore'));
         },
       );
-      setArchiveCand(null);
-    } catch { /* toast shown */ }
-    finally { setArchiving(false); }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to archive');
+    } finally {
+      setArchiving(false);
+    }
   }
 
   // ── Render ────────────────────────────────────────────────────

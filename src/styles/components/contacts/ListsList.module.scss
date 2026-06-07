@@ -30,6 +30,18 @@
   max-width: 42ch;
 }
 
+/* Tinted icon badge for polished empty state. */
+.emptyIconBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  margin-bottom: 8px;
+}
+
 .spinner {
   padding: 60px 0;
   display: grid;

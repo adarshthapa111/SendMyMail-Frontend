@@ -7,7 +7,7 @@ import {
 import { Heading, Text, Button, Pill } from '../../components/ui';
 import { FormCardSkeleton } from '../../components/skeletons';
 import { useForms } from '../../hooks/useForms';
-import { toast } from '../../lib/toast';
+import { toast, successWithUndo } from '../../lib/toast';
 import { ApiError } from '../../lib/api/client';
 import type { FormSummary } from '../../lib/api/forms';
 import styles from '@styles/components/forms/FormsList.module.scss';
@@ -65,9 +65,20 @@ export function FormsList() {
               form={f}
               clientId={clientId!}
               onArchive={async (formId) => {
+                /* feature-empty-states-and-undo V1 — snapshot before
+                   archive so Undo can restore the exact same row. */
+                const snapshot = forms.items.find((x) => x.id === formId);
                 try {
                   await forms.archive(formId);
-                  toast.success('Form archived');
+                  successWithUndo(
+                    `Archived ${snapshot?.name ?? 'form'}`,
+                    () => {
+                      if (!snapshot) return;
+                      forms.unarchive(snapshot)
+                        .then(() => toast.success(`Restored ${snapshot.name}`))
+                        .catch((err) => toast.error(err instanceof Error ? err.message : 'Failed to restore'));
+                    },
+                  );
                 } catch (err) {
                   toast.error(err instanceof ApiError ? err.message : 'Failed to archive');
                 }
@@ -210,18 +221,27 @@ function FormCard({ form, clientId, onArchive }: FormCardProps) {
 function EmptyState({ clientId }: { clientId: string | null }) {
   return (
     <div className={styles.empty}>
-      <IconForms size={28} className={styles.emptyIcon} />
-      <Heading size="md">No forms yet</Heading>
+      <div className={styles.emptyIconBadge} aria-hidden="true">
+        <IconForms size={30} />
+      </div>
+      <Heading size="lg">Grow lists with signup forms</Heading>
       <Text tone="muted" size="sm" className={styles.emptyHint}>
         Forms let people subscribe themselves — share the URL in social bios,
-        QR codes, or email signatures. Submissions auto-add to the list you
-        designate.
+        QR codes, ad campaigns, or email signatures. Submissions auto-add to
+        the list you designate.
       </Text>
-      <Link to={`/clients/${clientId}/forms/new`}>
-        <Button variant="primary" leading={<IconPlus size={15} />}>
-          Create your first form
-        </Button>
-      </Link>
+      <div className={styles.emptyActions}>
+        <Link to={`/clients/${clientId}/forms/new`}>
+          <Button variant="primary" size="lg" leading={<IconPlus size={16} />}>
+            Create your first form
+          </Button>
+        </Link>
+        <Link to={`/clients/${clientId}/lists`}>
+          <Button variant="ghost" size="lg">
+            Set up lists first
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

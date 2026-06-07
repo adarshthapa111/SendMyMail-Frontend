@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Heading, Text, Button, Note } from '../../components/ui';
 import { RowSkeleton } from '../../components/skeletons';
-import { IconPlus, IconMailOff } from '@tabler/icons-react';
+import { IconPlus, IconMailOff, IconListDetails } from '@tabler/icons-react';
 import { ListsTable, ListFormDialog } from '../../components/contacts';
 import { useLists } from '../../hooks/useLists';
 import type { ContactList } from '../../lib/api/lists';
@@ -89,11 +89,16 @@ export function ListsList() {
         <RowSkeleton count={5} />
       ) : hasNone ? (
         <div className={styles.empty}>
-          <Heading size="md">No lists yet</Heading>
+          <div className={styles.emptyIconBadge} aria-hidden="true">
+            <IconListDetails size={30} />
+          </div>
+          <Heading size="lg">Organize contacts into lists</Heading>
           <Text tone="muted" className={styles.emptyLede}>
-            Lists are how you group contacts for sending — Newsletter, VIP buyers, Cart abandoners. Create your first one.
+            Lists are how you group contacts for sending — Newsletter, VIP
+            buyers, Cart abandoners. Create your first one to start sending
+            campaigns.
           </Text>
-          <Button variant="primary" leading={<IconPlus size={16} />} onClick={() => setCreating(true)}>
+          <Button variant="primary" size="lg" leading={<IconPlus size={16} />} onClick={() => setCreating(true)}>
             New list
           </Button>
         </div>

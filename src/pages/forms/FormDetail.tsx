@@ -195,10 +195,22 @@ export function FormDetail() {
         <Heading size="md" className={styles.sectionTitle}>Recent submissions</Heading>
         {recentSubmissions.length === 0 ? (
           <div className={styles.empty}>
-            <IconUserPlus size={24} className={styles.emptyIcon} />
-            <Text tone="muted" size="sm">
-              No submissions yet. Share <code>{publicUrl}</code> to start collecting signups.
+            <div className={styles.emptyIconBadge} aria-hidden="true">
+              <IconUserPlus size={28} />
+            </div>
+            <Heading size="md">Waiting for first signup</Heading>
+            <Text tone="muted" size="sm" className={styles.emptyHint}>
+              Share <code>{publicUrl}</code> in social bios, QR codes,
+              email signatures, or ad campaigns. Submissions land here in
+              real time.
             </Text>
+            <Button
+              variant="primary"
+              leading={copied ? <IconCheck size={15} /> : <IconCopy size={15} />}
+              onClick={handleCopy}
+            >
+              {copied ? 'Copied!' : 'Copy URL'}
+            </Button>
           </div>
         ) : (
           <>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   listForms,
   archiveForm as apiArchive,
+  updateForm as apiUpdate,
   type FormSummary,
 } from '../lib/api/forms';
 import { ApiError } from '../lib/api/client';
@@ -67,10 +68,26 @@ export function useForms(clientId: string | null) {
     }
   }, [clientId]);
 
+  /* feature-empty-states-and-undo V1 — un-archive a form. Used by
+     successWithUndo toasts after archive. Re-inserts the row at the
+     top + PATCHes archived:false on the server. */
+  const unarchive = useCallback(async (form: FormSummary) => {
+    if (!clientId) throw new Error('No client');
+    setItems((prev) => [{ ...form, archived: false }, ...prev]);
+    try {
+      const res = await apiUpdate(clientId, form.id, { archived: false, status: 'active' });
+      setItems((prev) => prev.map((f) => f.id === form.id ? res.data.form : f));
+    } catch (err) {
+      setItems((prev) => prev.filter((f) => f.id !== form.id));
+      throw err;
+    }
+  }, [clientId]);
+
   return {
     items, loading, error,
     nextCursor, hasMore: !!nextCursor, loadMore,
     archive,
+    unarchive,
     refetch: () => fetchPage({ reset: true }),
   };
 }
