@@ -1,0 +1,118 @@
+/* OnboardingBanner — persistent reminder on the dashboard.
+   Hides itself when onboarding is complete or skipped. Dismiss "X"
+   acts as a soft-skip (flips setupComplete server-side). */
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-card));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-line-soft));
+  border-radius: 12px;
+  margin-bottom: 22px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.progress {
+  position: relative;
+  width: 80px;
+  height: 8px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 360ms ease;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--color-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: filter 100ms ease;
+}
+
+.cta:hover {
+  filter: brightness(0.95);
+}
+
+.dismiss {
+  appearance: none;
+  background: none;
+  border: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--color-soft);
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease;
+}
+
+.dismiss:hover {
+  background: rgba(43, 38, 32, 0.06);
+  color: var(--color-ink);
+}
+
+@media (max-width: 600px) {
+  .banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .actions {
+    justify-content: space-between;
+  }
+}

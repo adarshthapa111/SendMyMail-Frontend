@@ -6,7 +6,6 @@ import { workspaceSetup } from '../../lib/api/auth';
 import { setJwt } from '../../lib/api/jwt';
 import { useAuth } from '../../hooks/useAuth';
 import { withFormToast } from '../../lib/toast';
-import { PublicPlaceholder } from '../_shared/PublicPlaceholder';
 import {
   AuthShell, AuthBrand, AuthBrandContent,
   AuthEyebrow, AuthH1, AuthLede, AuthTick,
@@ -101,12 +100,4 @@ export function WorkspaceSetup() {
   );
 }
 
-export function Onboarding() {
-  return (
-    <PublicPlaceholder
-      title="Your first week"
-      subtitle="The FTUX full-viewport shell from doc/mockups/onboarding.html lands in a later PR."
-      mockup="onboarding.html"
-    />
-  );
-}
+export { Onboarding } from './Onboarding';

@@ -3,6 +3,7 @@ import { Spinner } from '../components/ui';
 import {
   Hero, KPIRow, SendingChart, DeliverabilityGauge, PlanUsage, ClientsHealthList,
 } from '../components/dashboard';
+import { OnboardingBanner } from '../components/onboarding/OnboardingBanner';
 import { getOverview, type OverviewPayload } from '../lib/api/overview';
 import { ApiError } from '../lib/api/client';
 import { toast } from '../lib/toast';
@@ -33,6 +34,8 @@ export function Dashboard() {
 
   return (
     <>
+      <OnboardingBanner />
+
       <Hero
         greeting={data.greeting}
         activeClients={data.kpis.active_clients.value ?? 0}
