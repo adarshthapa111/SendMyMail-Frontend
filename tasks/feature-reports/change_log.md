@@ -20,9 +20,169 @@
 
 ---
 
-## Status: 📋 Planning
+## Status: ✅ Done — V1 shipped
 
-Plan locked, ready to implement. Estimated 3-5 days.
+Plan estimated 3-5 days; implemented in one focused pass. Backend +
+frontend + change_log update. Zero schema migrations as promised.
+
+### What landed (file-by-file)
+
+**Backend (sendmymail-backend)**:
+
+- `src/lib/report.ts` (new, ~290 lines) — 4 shared aggregation helpers
+  used by both dashboard + per-client endpoints:
+  - `aggregateSends(opts)` — sent / unique-opens / unique-clicks / rates
+    for the given scope + range. 3 parallel COUNT queries on indexed
+    columns.
+  - `dailyChart(opts)` — UTC-day time-series with zero-fill for chart
+    continuity. Uses `$queryRawUnsafe` for `DATE_TRUNC` (Prisma's
+    groupBy can't extract date parts). All values parameterized except
+    agency-id substitution (escaped).
+  - `topCampaignsByEngagement(opts)` — top campaigns by open rate with
+    `MIN_SENDS_TO_QUALIFY = 10` filter. Fetches top-50 by sentCount
+    as candidates, then parallel-aggregates each for per-campaign open/
+    click counts, sorts by rate, returns top N.
+  - `listGrowth(opts)` — added / unsubscribed / suppressed in range.
+  - Plus 3 helpers: `startOfMonthUtc`, `subDaysUtc`, `pctChange`.
+
+- `src/lib/overview.ts` — placeholder fields replaced with real values:
+  - `emails_sent` KPI now real (last-30d sentCount + 30d delta vs
+    prior 30d)
+  - `open_rate` KPI now real (last-30d open rate + delta)
+  - `sending_chart` now real (30-day daily series)
+  - `plan_usage.sent_this_month` now real (from start of month)
+  - `top_clients[].last_campaign_subject` + `.open_rate` enriched per
+    client (parallel queries; ~10 queries total for 5 clients)
+  - Revenue + deliverability stay `available: false` (need
+    Shopify/webhook integration — V2/V3)
+
+- `src/routes/clients.ts` — new `GET /:id/report?range=30d|90d|all`
+  endpoint:
+  - Scope-checked (member-scoped users 404 on out-of-scope clients)
+  - Cached 60s in-process per (clientId, range) — same pattern as
+    overview cache
+  - Returns: KPIs (sent / opens / clicks / rates / list_growth),
+    sending chart, top campaigns, list health (subscribed /
+    unsubscribed / suppressed totals)
+  - Helper `computeListHealth(clientId, agencyId)` — 4 parallel COUNT
+    queries
+  - Export `invalidateClientReport(clientId)` for future mutation
+    hooks
+
+**Frontend (this repo)**:
+
+- `src/lib/api/clientReport.ts` (new, ~50 lines) — typed wrapper +
+  6 interfaces matching the backend payload exactly.
+
+- `src/hooks/useClientReport.ts` (new, ~45 lines) — loads on mount +
+  refetches when range changes. URL-sync handled at the page level.
+
+- `src/components/clients/RangePicker.tsx` (new, ~40 lines) —
+  segmented control with 3 options (30d / 90d / all). Active state
+  uses primary color. Radiogroup ARIA pattern.
+
+- `src/components/clients/SendingChart.tsx` (new, ~150 lines) —
+  pure-SVG dual-line chart (no library dependency). Computes paths
+  from scaled coordinates with nice-ceil Y-axis tick rounding. Shows
+  sent (solid line + filled area) and opened (dashed line). Compact
+  legend with peak/day callout. Empty state when no data.
+
+- `src/pages/clients/ClientReport.tsx` (new, ~230 lines) — full
+  report page:
+  - URL sync via `useSearchParams` (`?range=30d|90d|all`) so refreshes
+    + shared links preserve state
+  - Range picker in header
+  - 4 KPI hero cards (Sent / Opened / Clicked / List growth)
+  - Sending chart section
+  - Top campaigns list (click name → campaign report)
+  - List health row (Total / Subscribed / Unsubscribed / Suppressed)
+  - Empty state when sent_count === 0 ("Launch a campaign to see
+    metrics here" with CTA)
+
+- `src/pages/reports.tsx` (rewrite) — re-exports `ClientReport` as
+  `Reports`. Drops the placeholder. Existing sidebar Reports link
+  pointing at `/clients/:cid/reports` now hits the real page.
+
+- 3 new SCSS modules (~480 lines total):
+  - `RangePicker.module.scss` — segmented control
+  - `SendingChart.module.scss` — chart strokes/area/legend
+  - `ClientReport.module.scss` — page layout + KPI hero + top
+    campaigns + list health cards
+
+### Decisions that came up during implementation (vs plan)
+
+| Decision | What | Why |
+|---|---|---|
+| **Pure SVG chart, no recharts/visx** | Built dual-line chart from scratch in ~150 lines | Keeps the bundle small (no ~30 KB chart lib). If we need interactions later (tooltip, zoom, brush), swap to recharts then. The plan said "reuse dashboard chart components" but the dashboard chart turned out to be a placeholder too — built fresh. |
+| **URL search param for range** | `?range=30d&` in the URL, synced with hook state | Refreshes and shared links preserve view. Critical for "send this report to client" use case. |
+| **Top campaigns links to campaign report** | Click → `/clients/:cid/campaigns/:id` | Per-campaign report exists; the per-client report becomes an index into it. |
+| **List health stays a snapshot, not range-scoped** | Range picker changes the time-bounded KPIs + chart + top campaigns; list health shows current point-in-time totals | The semantics are different — "we currently have 1,847 subscribers" isn't really a 30d vs 90d question. |
+| **Empty state shows CTA + "Launch a campaign"** | Inline panel inside the report page | Better than just "no data" — guides the user to the action that fills the report. |
+| **change_30d delta hidden when prior period is 0** | `pctChange` returns null, frontend renders no arrow | "100% increase from 0" is meaningless. |
+| **`sent_count: 0` triggers empty state** | Hides chart + top campaigns sections; keeps list health visible | Empty state is more useful than empty chart + empty top campaigns. List health remains because it's point-in-time data. |
+| **MIN_SENDS_TO_QUALIFY = 10** for top campaigns | Hardcoded | Matches plan. Avoids "1-recipient campaign with 100% open rate" gaming the chart. |
+
+### Build + lint gates
+
+- Backend `tsc --noEmit`: **clean**
+- Backend: **no migrations** — uses existing schema only
+- Frontend `tsc -b --noEmit`: **clean**
+- Frontend `npm run build`: clean (2.19s). Main chunk +~0.2 KB gzipped
+  (chart SVG + KPI components).
+- Frontend `npm run lint`: 12 = pre-existing baseline. **0 new
+  issues.**
+
+### What's NOT verified yet
+
+**Manual E2E test pending** — easy this time, no ngrok needed:
+
+1. Visit `/dashboard` after launching at least one campaign — KPI
+   cards should show real numbers with delta arrows.
+2. Visit `/dashboard` with NO campaigns — KPIs show 0 / em-dash
+   gracefully.
+3. Visit `/clients/:cid/reports` — full report page renders, range
+   picker defaults to 30d.
+4. Change range to 90d → page refetches, numbers update, URL
+   reflects `?range=90d`.
+5. Refresh page → range stays at 90d (URL sync).
+6. Top campaigns section ranks by open rate with sentCount tie-breaker.
+7. Click a top campaign name → navigates to its per-campaign report.
+8. Visit `/clients/:cid/reports` for a client with no campaigns →
+   empty state with "Launch a campaign" CTA.
+9. Member-scoped user 404s on `/clients/:other/reports`.
+
+### Known V1 limitations (by design)
+
+- **Deliverability gauge** stays `available: false` — needs Resend
+  webhook ingestion (V2).
+- **Revenue KPI** stays `available: false` — needs Shopify/Stripe
+  integration (V3).
+- **No date range picker on dashboard** — dashboard stays 30d fixed
+  V1. Per-client report has the picker. V2 polish to add to dashboard.
+- **No custom date ranges** — fixed presets (30d/90d/all). Custom
+  picker is V2.
+- **No export to PDF/CSV** — V2.
+- **No compare two campaigns side-by-side** — V3 with A/B test infra.
+- **No cohort analysis** — V3.
+- **No heatmap of day-of-week × hour** — V3 send-time optimization.
+
+### Files at a glance
+
+**Backend (2 modified / 1 new / 0 migrations)**:
+- Modified: `src/lib/overview.ts`, `src/routes/clients.ts`
+- New: `src/lib/report.ts` (290 lines)
+- Migrations: NONE — uses existing schema only
+
+**Frontend (1 modified / 7 new)**:
+- Modified: `src/pages/reports.tsx` (re-export ClientReport)
+- New TS: 1 API client (`clientReport.ts`), 1 hook
+  (`useClientReport.ts`), 2 components (`RangePicker.tsx`,
+  `SendingChart.tsx`), 1 page (`ClientReport.tsx`)
+- New SCSS: 3 modules (~480 lines)
+
+---
+
+## Original planning sections below (unchanged):
 
 ---
 

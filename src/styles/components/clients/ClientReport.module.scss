@@ -1,0 +1,272 @@
+/* /clients/:cid/report — per-client engagement report page. */
+
+.page {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.crumb { margin-bottom: 12px; }
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--color-soft);
+  text-decoration: none;
+}
+.back:hover { color: var(--color-ink); }
+
+.center {
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+  color: var(--color-soft);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+/* ── KPI hero row ────────────────────────────────────────────── */
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.kpi {
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.kpiValue {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: var(--color-soft);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpiSubtitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi_neutral .kpiValue { color: var(--color-ink); }
+.kpi_engaged .kpiValue,
+.kpi_engaged .kpiSubtitle { color: var(--color-primary); }
+.kpi_ok      .kpiValue { color: #1ca85f; }
+.kpi_muted   .kpiValue { color: var(--color-muted); }
+
+/* ── Section card ────────────────────────────────────────────── */
+
+.section {
+  background: var(--color-card);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 12px;
+  padding: 18px 4px 16px;
+  margin-bottom: 22px;
+}
+
+.sectionTitle {
+  margin: 0 18px 14px;
+}
+
+.sectionEmpty {
+  margin: 0 18px 8px;
+  line-height: 1.5;
+}
+
+/* ── Top campaigns list ──────────────────────────────────────── */
+
+.topList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.topList .topRow:first-child { border-top: 0; }
+
+.topRank {
+  width: 22px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.topMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topName {
+  appearance: none;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+}
+
+.topName:hover {
+  color: var(--color-primary);
+}
+
+.topName svg {
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+.topName:hover svg { opacity: 1; }
+
+.topSubject {
+  font-size: 12px;
+  color: var(--color-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 480px;
+}
+
+.topStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.topRate {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.topSent {
+  font-size: 11px;
+  color: var(--color-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── List health row ─────────────────────────────────────────── */
+
+.healthRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  padding: 0 18px;
+}
+
+.healthCard {
+  background: var(--color-bg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.healthValue {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.healthLabel {
+  font-size: 11px;
+  color: var(--color-soft);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.healthCard_ok      .healthValue { color: #1ca85f; }
+.healthCard_bad     .healthValue { color: #d11a2a; }
+.healthCard_muted   .healthValue { color: var(--color-muted); }
+.healthCard_neutral .healthValue { color: var(--color-ink); }
+
+/* ── Empty state when no sends in range ──────────────────────── */
+
+.empty {
+  background: var(--color-card);
+  border: 1px dashed var(--color-line);
+  border-radius: 14px;
+  padding: 50px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.emptyIcon {
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.emptyHint {
+  max-width: 440px;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.emptyCta {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .header { flex-direction: column; }
+  .topRow { flex-wrap: wrap; }
+  .topSubject { max-width: 100%; }
+}

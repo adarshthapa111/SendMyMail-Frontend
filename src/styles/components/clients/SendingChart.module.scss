@@ -1,0 +1,89 @@
+/* Pure-SVG line chart for the report page. */
+
+.chartWrap {
+  position: relative;
+  padding: 0 18px 8px;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.gridLine {
+  stroke: var(--color-line-soft);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.axisLabel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  fill: var(--color-soft);
+}
+
+.sentLine {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.sentArea {
+  fill: var(--color-primary);
+  opacity: 0.10;
+}
+
+.openedLine {
+  fill: none;
+  stroke: #1ca85f;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* ── Legend ──────────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  padding: 0 14px;
+  font-size: 11px;
+  color: var(--color-soft);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendSwatch {
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.legendSent   { background: var(--color-primary); }
+.legendOpened { background: #1ca85f; }
+
+.legendMax {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Empty ───────────────────────────────────────────────────── */
+
+.empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--color-soft);
+  font-size: 13px;
+}
