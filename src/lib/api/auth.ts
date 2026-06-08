@@ -10,6 +10,20 @@ export interface AuthUser {
   role: 'owner' | 'admin' | 'member' | 'viewer';
   emailVerified: boolean;
   avatarUrl?: string | null;
+  /* Profile fields (feature-profile-settings V1) */
+  jobTitle?:    string | null;
+  bio?:         string | null;
+  phone?:       string | null;
+  createdAt?:   string;
+  lastLoginAt?: string | null;
+}
+
+export interface UpdateMeBody {
+  name?:      string;
+  avatarUrl?: string | null;
+  jobTitle?:  string | null;
+  bio?:       string | null;
+  phone?:     string | null;
 }
 
 export interface AuthAgency {
@@ -62,6 +76,16 @@ export function reset(token: string, body: { password: string }) {
 
 export function me() {
   return apiCall<{ data: { user: AuthUser; agency: AuthAgency } }>('/v1/auth/me');
+}
+
+/* PATCH /v1/auth/me — feature-profile-settings V1.
+   Only PATCH-included fields are written. Returns the updated user
+   (no agency — agency wasn't touched). */
+export function updateMe(body: UpdateMeBody) {
+  return apiCall<{ data: { user: AuthUser } }>('/v1/auth/me', {
+    method: 'PATCH',
+    body,
+  });
 }
 
 export function workspaceSetup(body: { name: string; country: string; billingEmail: string }) {

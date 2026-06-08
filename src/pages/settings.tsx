@@ -8,6 +8,7 @@ import { useSendingDomains } from '../hooks/useSendingDomains';
 import { DomainCard } from '../components/settings/DomainCard';
 import { AddDomainDialog } from '../components/settings/AddDomainDialog';
 import { Appearance } from './settings/Appearance';
+import { Profile } from './settings/Profile';
 import styles from '@styles/components/settings/Settings.module.scss';
 
 /* /settings (and /settings/:tab) — tabbed settings page.
@@ -55,8 +56,9 @@ export function Settings() {
       </nav>
 
       <div className={styles.content}>
-        {activeTab === 'sending' ? <SendingTab /> :
-         activeTab === 'appearance' ? <Appearance /> : (
+        {activeTab === 'sending'    ? <SendingTab /> :
+         activeTab === 'appearance' ? <Appearance /> :
+         activeTab === 'profile'    ? <Profile /> : (
           <Placeholder
             title={`Settings · ${TABS.find((t) => t.id === activeTab)?.label}`}
             subtitle={`The ${activeTab} tab lands in a later PR.`}

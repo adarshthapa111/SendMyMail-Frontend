@@ -40,5 +40,16 @@ export function useAuth() {
     dispatch(setAuthed(payload));
   }, [dispatch]);
 
-  return { status, user, agency, login, logout, hydrate };
+  /* feature-profile-settings V1 — refetch /me to sync any user edits
+     (avatar / name / etc.) made elsewhere. Used after PATCH /me so the
+     topbar avatar + name reflect new values app-wide. Agency stays
+     attached from the same response so we keep the existing slice
+     shape intact. */
+  const refetchMe = useCallback(async () => {
+    const res = await authApi.me();
+    dispatch(setAuthed({ user: res.data.user, agency: res.data.agency }));
+    return res.data;
+  }, [dispatch]);
+
+  return { status, user, agency, login, logout, hydrate, refetchMe };
 }

@@ -1,0 +1,175 @@
+/* Profile settings tab — 3 cards (Identity / Contact / Account) +
+   sticky save bar at the bottom. */
+
+.tabBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardSub {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Identity row — avatar on left, name+title stacked on right ─── */
+
+.identityRow {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.identityFields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ── Bio textarea + char counter ───────────────────────────────── */
+
+.bioWrap {
+  position: relative;
+}
+
+.textarea {
+  appearance: none;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-ink);
+  resize: vertical;
+  min-height: 70px;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.textarea:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.charCounter {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  font-size: 11px;
+  color: var(--color-soft);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  background: var(--color-bg);
+  padding: 0 4px;
+}
+
+/* ── Contact card — email read-only ─────────────────────────────── */
+
+.emailRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 8px;
+}
+
+.emailValue {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: var(--color-ink);
+  word-break: break-all;
+}
+
+/* ── Account info card — read-only metadata ─────────────────────── */
+
+.accountGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accountRow {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-line-soft);
+  align-items: center;
+}
+
+.accountRow:first-child { border-top: 0; padding-top: 4px; }
+
+.accountLabel {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.accountValue {
+  font-size: 14px;
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.accountHint {
+  margin: 0;
+  font-size: 12px;
+}
+
+/* ── Save bar ────────────────────────────────────────────────────── */
+
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 0 4px;
+  background: linear-gradient(180deg, transparent 0%, var(--color-bg) 24%);
+  margin-top: 6px;
+}
+
+@media (max-width: 720px) {
+  .identityRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .accountRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
