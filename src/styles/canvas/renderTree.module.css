@@ -1,5 +1,9 @@
+/* feature-editor-premium-polish V1 — body border REMOVED.
+   The new Canvas .column paper-card provides the visual frame (white
+   bg + dramatic shadow + 12px radius). An extra 1px border inside it
+   double-framed the email and read as a gray hairline against the
+   white card. */
 .body {
-  border: 1px solid var(--color-line);
   box-sizing: border-box;
 }
 
@@ -24,23 +28,19 @@
   transition: outline-color 80ms ease;
 }
 
-.section:hover {
-  outline: 1px solid var(--color-line-strong);
-}
-
-.column:hover {
-  outline: 1px dashed var(--color-line-strong);
-}
+/* feature-editor-premium-polish V1 — hover outlines REMOVED.
+   The new hover-variant floating toolbar (SelectionToolbar in 'hover'
+   mode) is now the affordance for "this block is interactive". The
+   1px gray outlines that used to live here were visual noise stacked
+   on top of the toolbar — they read as a hairline border on the paper-
+   card canvas and felt unintentional. Selected-state styling lives in
+   .selected below and stays. */
 
 /* .hero color is content default (white text on hero bg) — kept verbatim
    since recipients see the rendered email this way. */
 .hero {
   color: #ffffff;
   position: relative;
-}
-
-.hero:hover {
-  outline: 1px solid var(--color-line-strong);
 }
 
 /* ── Leaves ───────────────────────────────────────────────────── */
@@ -59,16 +59,11 @@
   position: relative;
 }
 
-.text:hover,
-.imageWrap:hover,
-.buttonWrap:hover,
-.dividerWrap:hover,
-.spacer:hover,
-.socialWrap:hover,
-.navbarWrap:hover,
-.rawHtml:hover {
-  outline: 1px solid var(--color-line-strong);
-}
+/* feature-editor-premium-polish V1 — leaf hover outlines REMOVED.
+   Same reasoning as the container hover outlines above: the new hover-
+   variant floating toolbar is now the "this block is interactive"
+   affordance. The 1px gray outline you saw on the bottom edge of text/
+   image/button blocks (especially the last leaf in a section) is gone. */
 
 .button {
   display: inline-block;
@@ -120,12 +115,12 @@
 }
 
 .socialIconImg:hover {
-  outline-color: var(--color-line-strong);
+  outline-color: color-mix(in srgb, var(--color-editor-chrome) 45%, transparent);
 }
 
 .socialIconImg.selected,
 .socialIcon.selected {
-  outline-color: var(--color-primary);
+  outline-color: var(--color-editor-chrome);
   outline-style: solid;
 }
 
@@ -176,13 +171,23 @@
 
 /* ── Selection ────────────────────────────────────────────────── */
 
+/* fix-editor-chrome V1 — selection ring switched from --color-primary
+   (terracotta, which reads as a muddy gray-brown hairline on white)
+   to the dedicated --color-editor-chrome blue. Cool chrome against
+   warm content = the eye parses it as "tool, not content".
+   border-radius + outline-offset make it hug the block like a picked-
+   up object instead of wrapping it edge-to-edge like a form field. */
 .selected {
-  outline: 2px solid var(--color-primary) !important;
+  outline: 2px solid var(--color-editor-chrome) !important;
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 /* While inline-editing, dim the outline a touch and show a caret cursor */
 .editing {
-  outline: 2px dashed var(--color-primary) !important;
+  outline: 2px dashed var(--color-editor-chrome) !important;
+  outline-offset: 2px;
+  border-radius: 3px;
   cursor: text;
 }
 

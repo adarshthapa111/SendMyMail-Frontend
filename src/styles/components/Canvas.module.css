@@ -1,11 +1,26 @@
+/* feature-editor-premium-polish V1:
+   - .canvas gets a subtle dot-pattern backdrop (theme-aware via tokens)
+   - .column becomes a "paper card" with a clean, dramatic single shadow
+   - .columnMobile clamps width to 375px with phone-frame chrome */
+
 .canvas {
   flex: 1;
   min-width: 0;
   overflow: auto;
-  padding: 32px;
+  padding: 40px;        /* was 32px — more breathing room */
   display: flex;
   justify-content: center;
   align-items: flex-start;
+
+  /* Subtle dot pattern — 2% opacity so it reads as texture, not noise.
+     Theme-aware via --color-line-strong. */
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--color-line-strong) 60%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+  background-position: 0 0;
 }
 
 .column {
@@ -13,8 +28,39 @@
   max-width: 100%;
   display: flex;
   flex-direction: column;
+
+  /* Paper card — clean, dramatic single shadow (per design decision:
+     "cleaner more dramatic" not warm multi-layer). Crisp edge against
+     the dot-pattern backdrop. */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.04),
+    0 24px 56px -16px rgba(0, 0, 0, 0.20);
+  transition: width 220ms cubic-bezier(.2, .8, .25, 1),
+              max-width 220ms cubic-bezier(.2, .8, .25, 1),
+              box-shadow 220ms ease;
+}
+
+/* feature-editor-premium-polish V1 — Mobile viewport.
+   Clamps to 375px (iPhone SE / 12-mini width) with a subtle phone-
+   frame bezel. NOT full iPhone mockup (would be too busy in the editor).
+   Just a dark thin frame that signals "this is the mobile view." */
+.columnMobile {
+  width: 375px;
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 8px #1a1814,                                /* phone bezel */
+    0 1px 1px rgba(0, 0, 0, 0.06),
+    0 28px 64px -14px rgba(0, 0, 0, 0.32);
 }
 
 .frame {
   width: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .column { transition: none; }
 }

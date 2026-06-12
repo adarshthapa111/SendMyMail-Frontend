@@ -1,9 +1,10 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import {
   IconTypography, IconRectangle, IconMinus, IconArrowsVertical,
   IconPhoto, IconStar, IconBrandFacebook,
-  IconLayoutNavbar, IconCode, IconSearch,
+  IconLayoutNavbar, IconCode, IconSearch, IconChevronRight,
+  IconLayoutGrid, IconLetterT, IconPhotoFilled, IconTools,
 } from '@tabler/icons-react';
 import { blockRegistry, type BlockDef } from '../blocks/registry';
 import {
@@ -80,8 +81,57 @@ function PaletteCard({ def }: { def: BlockDef }) {
   );
 }
 
+/* feature-editor-premium-polish V1 — category icons for the group
+   headers. Visual anchor + matches Beefree / MailerLite pattern. */
+function categoryIconFor(group: PaletteGroup): ReactNode {
+  switch (group) {
+    case 'layout':   return <IconLayoutGrid  size={13} stroke={1.6} />;
+    case 'content':  return <IconLetterT     size={13} stroke={1.6} />;
+    case 'media':    return <IconPhotoFilled size={13} stroke={1.6} />;
+    case 'advanced': return <IconTools       size={13} stroke={1.6} />;
+  }
+}
+
+/* feature-editor-premium-polish V1 — persisted collapse state per
+   group. Default: layout + content expanded, media + advanced
+   collapsed (most-used first). */
+const COLLAPSE_KEY = 'sendmymail-palette-groups';
+const DEFAULT_COLLAPSED: Record<PaletteGroup, boolean> = {
+  layout:   false,
+  content:  false,
+  media:    true,
+  advanced: true,
+};
+
+function readCollapsedState(): Record<PaletteGroup, boolean> {
+  try {
+    const raw = localStorage.getItem(COLLAPSE_KEY);
+    if (!raw) return { ...DEFAULT_COLLAPSED };
+    const parsed = JSON.parse(raw);
+    return {
+      layout:   typeof parsed.layout   === 'boolean' ? parsed.layout   : DEFAULT_COLLAPSED.layout,
+      content:  typeof parsed.content  === 'boolean' ? parsed.content  : DEFAULT_COLLAPSED.content,
+      media:    typeof parsed.media    === 'boolean' ? parsed.media    : DEFAULT_COLLAPSED.media,
+      advanced: typeof parsed.advanced === 'boolean' ? parsed.advanced : DEFAULT_COLLAPSED.advanced,
+    };
+  } catch {
+    return { ...DEFAULT_COLLAPSED };
+  }
+}
+
 export default function Palette() {
   const [search, setSearch] = useState('');
+  const [collapsed, setCollapsed] = useState<Record<PaletteGroup, boolean>>(readCollapsedState);
+
+  /* Persist collapse state on every change. */
+  useEffect(() => {
+    try {
+      localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed));
+    } catch { /* private browsing */ }
+  }, [collapsed]);
+
+  const toggle = (group: PaletteGroup) =>
+    setCollapsed((s) => ({ ...s, [group]: !s[group] }));
 
   const groups = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -98,6 +148,9 @@ export default function Palette() {
     return grouped;
   }, [search]);
 
+  /* When search is active, force all groups expanded — surface matches
+     regardless of saved collapse preferences. */
+  const isSearching  = search.trim().length > 0;
   const totalMatches = PALETTE_GROUP_ORDER.reduce((sum, g) => sum + groups[g].length, 0);
 
   return (
@@ -122,14 +175,36 @@ export default function Palette() {
         {PALETTE_GROUP_ORDER.map((group) => {
           const items = groups[group];
           if (items.length === 0) return null;
+          const isCollapsed = !isSearching && collapsed[group];
           return (
             <section key={group} className={styles.group}>
-              <div className={styles.groupHeader}>{PALETTE_GROUP_LABEL[group]}</div>
-              <div className={styles.grid}>
-                {items.map((def) => (
-                  <PaletteCard key={def.id} def={def} />
-                ))}
-              </div>
+              <button
+                type="button"
+                className={`${styles.groupHeader} ${isCollapsed ? styles.groupHeaderCollapsed : ''}`}
+                onClick={() => !isSearching && toggle(group)}
+                aria-expanded={!isCollapsed}
+                aria-controls={`palette-group-${group}`}
+                disabled={isSearching}
+              >
+                <IconChevronRight
+                  size={11}
+                  stroke={2}
+                  className={`${styles.groupChevron} ${isCollapsed ? '' : styles.groupChevronOpen}`}
+                  aria-hidden="true"
+                />
+                <span className={styles.groupIcon} aria-hidden="true">
+                  {categoryIconFor(group)}
+                </span>
+                <span>{PALETTE_GROUP_LABEL[group]}</span>
+                <span className={styles.groupCount} aria-hidden="true">{items.length}</span>
+              </button>
+              {!isCollapsed && (
+                <div className={styles.grid} id={`palette-group-${group}`}>
+                  {items.map((def) => (
+                    <PaletteCard key={def.id} def={def} />
+                  ))}
+                </div>
+              )}
             </section>
           );
         })}

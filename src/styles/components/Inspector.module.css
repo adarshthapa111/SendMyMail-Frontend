@@ -5,37 +5,139 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  animation: inspectorSlideIn 200ms cubic-bezier(.2, .8, .25, 1);
 }
 
+/* feature-editor-premium-polish V1 — gentle slide-in from the right
+   when a new block is selected. Subtle (16px translate, 200ms) so it
+   feels intentional without being slow. `key` on the <aside> re-fires
+   it per selection change. */
+@keyframes inspectorSlideIn {
+  from { transform: translateX(16px); opacity: 0.5; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inspector { animation: none; }
+}
+
+/* feature-editor-premium-polish V1 — redesigned header.
+   Block icon + name + tag-name pill. Less aggressive than the old
+   "DELETE" button at top-right (which moved to .footer). */
 .header {
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  padding: 16px;
-  border-bottom: 1px solid var(--color-line);
-  letter-spacing: 0.5px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-line);
+  background: linear-gradient(
+    to bottom,
+    var(--color-card),
+    color-mix(in srgb, var(--color-card) 92%, var(--color-bg))
+  );
+}
+
+.headerIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerTag {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-soft);
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  padding: 2px 7px;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+/* feature-editor-premium-polish V1 — Footer holding Delete. Pinned at
+   the bottom of the inspector so it's discoverable but not visually
+   competing with the property edits above. */
+.footer {
+  border-top: 1px solid var(--color-line);
+  padding: 12px 16px;
+  background: var(--color-card);
+  flex-shrink: 0;
 }
 
 .deleteBtn {
-  font-size: 11px;
-  text-transform: none;
-  letter-spacing: 0;
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+  font-size: 13px;
+  padding: 8px 12px;
   background: var(--color-card);
   border: 1px solid var(--color-line);
-  border-radius: 4px;
+  border-radius: 7px;
   color: var(--color-red);
   cursor: pointer;
   font-weight: 500;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .deleteBtn:hover {
   background: var(--color-red-bg);
   border-color: var(--color-red);
+}
+
+/* feature-editor-premium-polish V1 — Friendly empty state. */
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  gap: 10px;
+}
+
+.emptyIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.emptyTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.emptyHint {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--color-soft);
+  max-width: 240px;
 }
 
 .body {

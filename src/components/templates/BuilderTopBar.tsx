@@ -1,10 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   IconArrowLeft, IconDeviceDesktop, IconDeviceMobile, IconCode,
   IconEye,
 } from '@tabler/icons-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { togglePreview } from '../../store/slices/editorSlice';
+import { togglePreview, setCanvasViewport } from '../../store/slices/editorSlice';
 import { BuilderInlineName } from './BuilderInlineName';
 import { BuilderMoreMenu } from './BuilderMoreMenu';
 import { SaveTemplateButton } from './SaveTemplateButton';
@@ -28,7 +29,13 @@ interface Props {
    - Right: Send test · Preview · Save · More menu */
 export function BuilderTopBar({ clientId, templateId, templateName, category, onNameChange }: Props) {
   const dispatch = useAppDispatch();
-  const dirty = useAppSelector((s) => s.editor.dirty);
+  const dirty       = useAppSelector((s) => s.editor.dirty);
+  const lastSavedAt = useAppSelector((s) => s.editor.lastSavedAt);
+  const viewport    = useAppSelector((s) => s.editor.canvasViewport);
+
+  /* feature-editor-premium-polish V1 — "Saved 2s ago" relative time.
+     Re-renders every 5s while the page is visible. */
+  const relativeSaved = useRelativeSaved(lastSavedAt);
 
   return (
     <header className={styles.bar}>
@@ -46,25 +53,40 @@ export function BuilderTopBar({ clientId, templateId, templateName, category, on
           onChange={onNameChange}
         />
         <span className={styles.sep} aria-hidden="true" />
-        <span className={`${styles.status} ${dirty ? styles.statusDirty : ''}`}>
+        <span
+          className={`${styles.status} ${dirty ? styles.statusDirty : ''}`}
+          title={dirty ? 'You have unsaved changes' : relativeSaved.tooltip}
+        >
           <span className={styles.statusDot} />
-          {dirty ? 'Unsaved changes' : 'Saved'}
+          {dirty
+            ? 'Unsaved changes'
+            : relativeSaved.label /* "Saved · 2s ago" or "Saved" if never saved this session */}
         </span>
       </div>
 
-      {/* ─── Center cluster — device toggle (V1 decorative) ─── */}
+      {/* ─── Center cluster — device toggle.
+            feature-editor-premium-polish V1 wires Desktop + Mobile to
+            the real canvasViewport slice. HTML stays as a placeholder
+            (PreviewModal handles that mode). ─── */}
       <div className={styles.center}>
         <div className={styles.deviceToggle} role="tablist" aria-label="Device preview">
-          <button type="button" className={`${styles.deviceBtn} ${styles.on}`} role="tab" aria-selected="true" title="Desktop">
+          <button
+            type="button"
+            className={`${styles.deviceBtn} ${viewport === 'desktop' ? styles.on : ''}`}
+            role="tab"
+            aria-selected={viewport === 'desktop'}
+            title="Desktop view"
+            onClick={() => dispatch(setCanvasViewport('desktop'))}
+          >
             <IconDeviceDesktop size={14} /> Desktop
           </button>
           <button
             type="button"
-            className={styles.deviceBtn}
+            className={`${styles.deviceBtn} ${viewport === 'mobile' ? styles.on : ''}`}
             role="tab"
-            aria-selected="false"
-            disabled
-            title="Mobile preview — coming soon"
+            aria-selected={viewport === 'mobile'}
+            title="Mobile view (375px wide)"
+            onClick={() => dispatch(setCanvasViewport('mobile'))}
           >
             <IconDeviceMobile size={14} /> Mobile
           </button>
@@ -73,8 +95,8 @@ export function BuilderTopBar({ clientId, templateId, templateName, category, on
             className={styles.deviceBtn}
             role="tab"
             aria-selected="false"
-            disabled
-            title="HTML source — coming soon"
+            onClick={() => dispatch(togglePreview())}
+            title="HTML source — opens preview"
           >
             <IconCode size={14} /> HTML
           </button>
@@ -109,4 +131,50 @@ export function BuilderTopBar({ clientId, templateId, templateName, category, on
       </div>
     </header>
   );
+}
+
+/* ─── useRelativeSaved ──────────────────────────────────────────────
+   feature-editor-premium-polish V1 — relative-time formatter for the
+   topbar save indicator. Holds `now` in state and updates it every 5s
+   via setInterval so the rendered label moves
+   ("Saved · just now" → "5s ago" → "1m ago"). The render path stays
+   pure — Date.now() only fires inside the effect. Pauses when tab is
+   hidden (saves battery + avoids stale React state). */
+function useRelativeSaved(timestamp: number | null): { label: string; tooltip: string } {
+  const [now, setNow] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    if (!timestamp) return;
+    const tick = () => {
+      if (document.visibilityState === 'visible') setNow(Date.now());
+    };
+    tick();
+    const id = window.setInterval(tick, 5000);
+    return () => window.clearInterval(id);
+  }, [timestamp]);
+
+  if (!timestamp) {
+    return { label: 'Saved', tooltip: 'No changes saved this session yet' };
+  }
+
+  const diffMs = Math.max(0, now - timestamp);
+  const secs   = Math.floor(diffMs / 1000);
+
+  let rel: string;
+  if (secs < 5)       rel = 'just now';
+  else if (secs < 60) rel = `${secs}s ago`;
+  else {
+    const mins = Math.floor(secs / 60);
+    if (mins < 60) rel = `${mins}m ago`;
+    else {
+      const hrs = Math.floor(mins / 60);
+      rel = `${hrs}h ago`;
+    }
+  }
+
+  const tooltip = new Date(timestamp).toLocaleTimeString(undefined, {
+    hour: 'numeric', minute: '2-digit', second: '2-digit',
+  });
+
+  return { label: `Saved · ${rel}`, tooltip: `Last saved at ${tooltip}` };
 }

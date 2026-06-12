@@ -68,6 +68,7 @@ export function ClientScoped({ children }: GuardProps) {
   const { status } = useAppSelector((s) => s.auth);
   const activeClientId = useAppSelector((s) => s.clients.activeClientId);
   const { clientId } = useParams();
+  const { pathname } = useLocation();
 
   // Sync the URL :clientId into the clients slice so the topbar switcher
   // reflects the route. Side effect — must run in useEffect.
@@ -79,10 +80,17 @@ export function ClientScoped({ children }: GuardProps) {
   }, [clientId, activeClientId, dispatch]);
 
   if (status === 'authenticating') return null;
-  if (status === 'anonymous') return <Navigate to="/login" replace />;
+  /* fix-editor-chrome V1 — preserve the deep link. This guard used to
+     redirect to bare /login, dropping the URL the user was on; after
+     login they'd land on /dashboard instead of back in the builder. */
+  if (status === 'anonymous') {
+    return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />;
+  }
   if (!clientId) return <Navigate to="/clients" replace />;
   const claims = decodeJwt();
-  if (!claims) return <Navigate to="/login" replace />;
+  if (!claims) {
+    return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />;
+  }
   if (claims.scope.type === 'all') return <>{children}</>;
   if (claims.scope.ids.includes(clientId)) return <>{children}</>;
   // intentionally / : never leak that the client exists in another agency

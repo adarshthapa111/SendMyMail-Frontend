@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { AuthUser, AuthAgency } from '../../lib/api/auth';
+import { decodeJwt } from '../../lib/api/jwt';
 
 export type AuthStatus = 'anonymous' | 'authenticating' | 'authed';
 
@@ -9,8 +10,14 @@ interface AuthState {
   agency: AuthAgency | null;
 }
 
+/* fix-editor-chrome V1 — deep-link fix. If a non-expired JWT is already
+   in localStorage, boot as 'authenticating' instead of 'anonymous'.
+   Booting anonymous made every guard redirect to /login on first paint
+   (before useBootstrapAuth's /me resolved), so refreshing the browser
+   inside any guarded page (e.g. the builder) bounced to /dashboard.
+   useBootstrapAuth still owns the real verification via /me. */
 const initialState: AuthState = {
-  status: 'anonymous',
+  status: decodeJwt() ? 'authenticating' : 'anonymous',
   user: null,
   agency: null,
 };

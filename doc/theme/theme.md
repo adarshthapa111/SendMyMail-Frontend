@@ -281,6 +281,13 @@ Paste into the one global stylesheet (`src/index.css`) and the mockup shared sty
   --amber:#B07A1A; --amber-bg:#F6ECD6; --amber-tx:#8A560C;
   --red:#B5463A;   --red-bg:#FBEAE7;
   --blue:#2D6FB8;  --blue-bg:#E8F0FA;
+  /* editor chrome (fix-editor-chrome V1) — vivid blue for editor tool
+     chrome ONLY: selection rings, hover affordances, drop indicators
+     in the email builder. Deliberately cool against the warm palette
+     so the eye reads it as "tool, not content" (Figma/Canva pattern).
+     Never use in product UI — that's --primary's job.
+     Dark theme overrides to #5B96F7 for contrast. */
+  --editor-chrome:#2E77F0; --editor-chrome-bg:rgba(46,119,240,0.08);
   /* radii */
   --r-sm:12px; --r:14px; --r-lg:20px;
   /* shadows (warm — never cool grey) */

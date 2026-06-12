@@ -59,6 +59,14 @@
   --color-blue:           #2D6FB8;
   --color-blue-bg:        #E8F0FA;
 
+  /* editor chrome (fix-editor-chrome V1) — vivid blue used ONLY by
+     editor tool chrome: selection rings, hover affordances, drop
+     indicators. Deliberately outside the warm palette so the eye
+     parses it as "tool, not content" (the Figma/Canva pattern).
+     Never use for product UI — that's --color-primary's job. */
+  --color-editor-chrome:     #2E77F0;
+  --color-editor-chrome-bg:  rgba(46,119,240,0.08);
+
   /* radii */
   --radius-sm:            12px;
   --radius:               14px;
@@ -113,6 +121,10 @@
   --blue:           #2D6FB8;
   --blue-bg:        #E8F0FA;
 
+  /* editor chrome — see @theme note above */
+  --editor-chrome:     #2E77F0;
+  --editor-chrome-bg:  rgba(46,119,240,0.08);
+
   /* radii */
   --r-sm:           12px;
   --r:              14px;
@@ -156,6 +168,10 @@ html[data-theme="dark"] {
   --color-red-bg:         #2a1614;
   --color-blue-bg:        #131b2a;
 
+  /* editor chrome — brighter blue for dark-field contrast */
+  --color-editor-chrome:     #5B96F7;
+  --color-editor-chrome-bg:  rgba(91,150,247,0.14);
+
   --shadow-sm:            0 1px 2px rgba(0,0,0,0.30);
   --shadow-md:            0 1px 2px rgba(0,0,0,0.20), 0 14px 30px -22px rgba(0,0,0,0.60);
   --shadow-lg:            0 2px 6px rgba(0,0,0,0.30), 0 30px 60px -30px rgba(0,0,0,0.70);
@@ -182,6 +198,9 @@ html[data-theme="dark"] {
   --amber-tx:       #e8b878;
   --red-bg:         #2a1614;
   --blue-bg:        #131b2a;
+
+  --editor-chrome:     #5B96F7;
+  --editor-chrome-bg:  rgba(91,150,247,0.14);
 
   --shadow-sm:      0 1px 2px rgba(0,0,0,0.30);
   --shadow-md:      0 1px 2px rgba(0,0,0,0.20), 0 14px 30px -22px rgba(0,0,0,0.60);

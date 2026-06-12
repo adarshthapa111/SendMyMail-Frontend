@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from 'react';
 import type { IMjmlNode, NodePath } from '../tree/types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectNode, setContent, setEditingTextNode } from '../store/slices/editorSlice';
+import { selectNode, setContent, setEditingTextNode, hoverNode } from '../store/slices/editorSlice';
 import DropZone from './DropZone';
 import SelectionToolbar from './SelectionToolbar';
 import ContentEditable from './ContentEditable';
@@ -82,6 +82,28 @@ function useSelectHandler(id: string | undefined) {
   };
 }
 
+/* feature-editor-premium-polish V1 — hover state + handlers.
+   The hover toolbar shows actions BEFORE the user clicks (Mailchimp
+   pattern). Selection still wins z-index when both could apply. */
+function useIsHovered(id: string | undefined): boolean {
+  const hoveredId = useAppSelector((s) => s.editor.hoveredId);
+  return Boolean(id && hoveredId === id);
+}
+
+function useHoverHandlers(id: string | undefined) {
+  const dispatch = useAppDispatch();
+  return {
+    onMouseEnter: (e: MouseEvent) => {
+      e.stopPropagation();
+      if (id) dispatch(hoverNode(id));
+    },
+    onMouseLeave: (e: MouseEvent) => {
+      e.stopPropagation();
+      if (id) dispatch(hoverNode(null));
+    },
+  };
+}
+
 /* ────────────────────────────────────────────────────────────────────
  * Containers
  * ──────────────────────────────────────────────────────────────────── */
@@ -119,6 +141,8 @@ function BodyFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function SectionFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   const style: CSSProperties = {
     backgroundColor: String(node.attributes?.['background-color'] ?? 'transparent'),
@@ -132,8 +156,11 @@ function SectionFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
       style={style}
       className={`${styles.section} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {node.children?.map((child, i) => (
         <RenderNode key={child._id ?? i} node={child} path={[...path, 'children', i]} />
       ))}
@@ -143,6 +170,8 @@ function SectionFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function ColumnFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   const width = String(node.attributes?.width ?? '100%');
   const style: CSSProperties = {
@@ -157,8 +186,11 @@ function ColumnFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
       style={style}
       className={`${styles.column} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {children.length === 0 ? (
         <DropZone parentPath={path} parentTag="mj-column" index={0} large />
       ) : (
@@ -178,6 +210,8 @@ function ColumnFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function HeroFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   const bgUrl = node.attributes?.['background-url'];
   const style: CSSProperties = {
@@ -203,8 +237,11 @@ function HeroFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
       style={style}
       className={`${styles.hero} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {children.length === 0 ? (
         <DropZone parentPath={path} parentTag="mj-hero" index={0} large />
       ) : (
@@ -230,6 +267,8 @@ function HeroFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
    with drop zones so sections can still be reordered/added inside. */
 function WrapperFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   const style: CSSProperties = {
     backgroundColor: String(node.attributes?.['background-color'] ?? 'transparent'),
@@ -243,8 +282,11 @@ function WrapperFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
       style={style}
       className={`${styles.section} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {children.length === 0 ? (
         <DropZone parentPath={path} parentTag="mj-wrapper" index={0} large />
       ) : (
@@ -270,6 +312,8 @@ function TextLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const dispatch = useAppDispatch();
   const isSelected = useIsSelected(node._id);
   const isEditing = useAppSelector((s) => s.editor.editingTextId === node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onSelectClick = useSelectHandler(node._id);
 
   const style: CSSProperties = {
@@ -302,9 +346,12 @@ function TextLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
       style={style}
       className={`${styles.text} ${isSelected ? styles.selected : ''} ${isEditing ? styles.editing : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       onDoubleClick={enterEdit}
     >
       {isSelected && !isEditing && <SelectionToolbar path={path} />}
+      {!isSelected && !isEditing && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {isEditing ? (
         <ContentEditable
           initialValue={node.content ?? ''}
@@ -321,17 +368,22 @@ function TextLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function ImageLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   return (
     <div
       className={`${styles.imageWrap} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       style={{
         padding: String(node.attributes?.padding ?? '0'),
         textAlign: (node.attributes?.align as CSSProperties['textAlign']) ?? 'center',
       }}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       <img
         src={String(node.attributes?.src ?? '')}
         alt={String(node.attributes?.alt ?? '')}
@@ -349,6 +401,8 @@ function ButtonLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const dispatch = useAppDispatch();
   const isSelected = useIsSelected(node._id);
   const isEditing = useAppSelector((s) => s.editor.editingTextId === node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onSelectClick = useSelectHandler(node._id);
 
   const enterEdit = (e: MouseEvent) => {
@@ -379,6 +433,8 @@ function ButtonLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
     <div
       className={`${styles.buttonWrap} ${isSelected ? styles.selected : ''} ${isEditing ? styles.editing : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       onDoubleClick={enterEdit}
       style={{
         padding: String(node.attributes?.padding ?? '10px 25px'),
@@ -386,6 +442,7 @@ function ButtonLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
       }}
     >
       {isSelected && !isEditing && <SelectionToolbar path={path} />}
+      {!isSelected && !isEditing && isHovered && <SelectionToolbar path={path} variant="hover" />}
       {isEditing ? (
         <ContentEditable
           initialValue={node.content ?? 'Button'}
@@ -406,14 +463,19 @@ function ButtonLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function DividerLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   return (
     <div
       className={`${styles.dividerWrap} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       style={{ padding: String(node.attributes?.padding ?? '10px 25px') }}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       <hr
         style={{
           border: 'none',
@@ -431,20 +493,27 @@ function DividerLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function SpacerLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   return (
     <div
       className={`${styles.spacer} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       style={{ height: String(node.attributes?.height ?? '20px') }}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
     </div>
   );
 }
 
 function SocialLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick    = useSelectHandler(node._id);
   const mode       = String(node.attributes?.mode ?? 'horizontal');
   const iconSize   = String(node.attributes?.['icon-size'] ?? '32px');
@@ -452,12 +521,15 @@ function SocialLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
     <div
       className={`${styles.socialWrap} ${isSelected ? styles.selected : ''}`}
       onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       style={{
         padding: String(node.attributes?.padding ?? '10px 25px'),
         textAlign: (node.attributes?.align as CSSProperties['textAlign']) ?? 'center',
       }}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       <div
         style={{
           display: 'inline-flex',
@@ -532,6 +604,8 @@ function SocialIconElement({ node, size }: { node: IMjmlNode; size: string }) {
 function NavbarLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const dispatch  = useAppDispatch();
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const editingId  = useAppSelector((s) => s.editor.editingTextId);
   const onSelect   = useSelectHandler(node._id);
 
@@ -539,9 +613,12 @@ function NavbarLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
     <div
       className={`${styles.navbarWrap} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
       style={{ padding: String(node.attributes?.padding ?? '10px 25px') }}
     >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       <nav className={styles.navbar}>
         {node.children?.map((c, i) => {
           const linkPath  = [...path, 'children', i];
@@ -587,10 +664,18 @@ function NavbarLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
 
 function RawHtmlLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
+  const isHovered  = useIsHovered(node._id);
+  const hoverHandlers = useHoverHandlers(node._id);
   const onClick = useSelectHandler(node._id);
   return (
-    <div className={`${styles.rawHtml} ${isSelected ? styles.selected : ''}`} onClick={onClick}>
+    <div
+      className={`${styles.rawHtml} ${isSelected ? styles.selected : ''}`}
+      onClick={onClick}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
+    >
       {isSelected && <SelectionToolbar path={path} />}
+      {!isSelected && isHovered && <SelectionToolbar path={path} variant="hover" />}
       <div className={styles.rawHtmlLabel}>Raw HTML</div>
       <code className={styles.rawHtmlSnippet}>
         {(node.content ?? '').slice(0, 120)}

@@ -12,6 +12,8 @@ import {
   updateContent,
 } from '../../tree/operations';
 
+export type CanvasViewport = 'desktop' | 'mobile';
+
 export interface EditorState {
   tree: IMjmlNode;
   selectedId: string | null;
@@ -29,6 +31,30 @@ export interface EditorState {
    * useBlocker uses it to prompt on navigation away.
    */
   dirty: boolean;
+
+  /**
+   * feature-editor-premium-polish V1 — in-canvas Desktop/Mobile toggle.
+   * Persisted to localStorage so the user's preference survives reloads.
+   */
+  canvasViewport: CanvasViewport;
+
+  /**
+   * feature-editor-premium-polish V1 — last-saved timestamp for the
+   * "Saved 2s ago" indicator in the topbar. Updated when the save flow
+   * resolves. null until first save.
+   */
+  lastSavedAt: number | null;
+}
+
+/* localStorage hydration for canvasViewport — runs once at module load
+   so the initial state already reflects the user's preference. */
+const CANVAS_VIEWPORT_KEY = 'sendmymail-canvas-viewport';
+function readStoredViewport(): CanvasViewport {
+  try {
+    const v = localStorage.getItem(CANVAS_VIEWPORT_KEY);
+    if (v === 'desktop' || v === 'mobile') return v;
+  } catch { /* private browsing */ }
+  return 'desktop';
 }
 
 const initialTree = newTemplate();
@@ -42,6 +68,8 @@ const initialState: EditorState = {
   previewVisible: false,
   history: { past: [], future: [] },
   dirty: false,
+  canvasViewport: readStoredViewport(),
+  lastSavedAt: null,
 };
 
 const HISTORY_LIMIT = 50;
@@ -140,6 +168,15 @@ const editorSlice = createSlice({
       state.editingTextId = action.payload;
     },
 
+    /* feature-editor-premium-polish V1 — Desktop/Mobile canvas viewport.
+       Persisted to localStorage on every change. */
+    setCanvasViewport(state, action: PayloadAction<CanvasViewport>) {
+      state.canvasViewport = action.payload;
+      try {
+        localStorage.setItem(CANVAS_VIEWPORT_KEY, action.payload);
+      } catch { /* private browsing — preference lost on reload */ }
+    },
+
     togglePreview(state) {
       state.previewVisible = !state.previewVisible;
     },
@@ -197,9 +234,12 @@ const editorSlice = createSlice({
     /**
      * Clear the dirty flag after a successful PATCH. Called by
      * SaveTemplateButton when the API roundtrip resolves.
+     * Also stamps `lastSavedAt` for the "Saved 2s ago" topbar indicator
+     * (feature-editor-premium-polish V1).
      */
     markSaved(state) {
       state.dirty = false;
+      state.lastSavedAt = Date.now();
     },
   },
 });
@@ -219,6 +259,7 @@ export const {
   redo,
   loadTemplate,
   markSaved,
+  setCanvasViewport,
 } = editorSlice.actions;
 
 export default editorSlice.reducer;

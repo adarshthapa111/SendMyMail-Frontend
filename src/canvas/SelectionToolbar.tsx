@@ -10,6 +10,16 @@ import styles from '@styles/canvas/SelectionToolbar.module.css';
 
 interface Props {
   path: NodePath;
+  /**
+   * feature-editor-premium-polish V1 — visual variant.
+   *   'selected' (default): full opacity, persistent — shown when the
+   *                          block IS selected.
+   *   'hover': subordinate styling, no actions clickable (just preview) —
+   *            shown when the block is hovered but NOT selected.
+   * Hover variant signals "actions available" without committing the
+   * user to a selection. Click the block to commit.
+   */
+  variant?: 'selected' | 'hover';
 }
 
 export interface CanvasDragData {
@@ -30,7 +40,7 @@ export interface CanvasDragData {
  * Move-button semantics: toIndex is the position in the pre-detach array
  * (drop-zone convention). "Move down" = current+2, "move up" = current-1.
  */
-export default function SelectionToolbar({ path }: Props) {
+export default function SelectionToolbar({ path, variant = 'selected' }: Props) {
   const dispatch = useAppDispatch();
   const tree = useAppSelector((s) => s.editor.tree);
 
@@ -84,8 +94,16 @@ export default function SelectionToolbar({ path }: Props) {
     dispatch(selectNode(null));
   });
 
+  const variantClass = variant === 'hover' ? styles.toolbarHover : '';
+
   return (
-    <div className={styles.toolbar} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${styles.toolbar} ${variantClass}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* fix-editor-chrome V1 — block name tag. Selection now reads as
+          "picked up the Text block", not an anonymous outline. */}
+      <span className={styles.tag}>{getTagLabel(tagName)}</span>
       <span
         ref={setNodeRef}
         {...listeners}

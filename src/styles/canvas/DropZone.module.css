@@ -1,4 +1,6 @@
-/* === Slim drop zone (between existing children) === */
+/* === Slim drop zone (between existing children) ===
+   fix-editor-chrome V1 — all drop indicators use --color-editor-chrome
+   (vivid blue) instead of --color-primary: tool chrome, not content. */
 
 /*
  * Hit area: 16px tall transparent strip that's the actual droppable target.
@@ -25,14 +27,29 @@
   pointer-events: none;
 }
 
+/* feature-editor-premium-polish V1 — drop zone "invite during drag":
+   bumped opacity (12% → 28%) so the zone reads against cream bg,
+   plus a slow pulse keyframe so it feels alive without being noisy.
+   Mailchimp / Beefree pattern. */
 .barActive {
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  background: color-mix(in srgb, var(--color-editor-chrome) 28%, transparent);
+  animation: dropZonePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dropZonePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
 }
 
 .barOver {
   height: 16px;
-  background: var(--color-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  background: var(--color-editor-chrome);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-editor-chrome) 30%, transparent);
+  animation: none;     /* over takes priority; no pulse */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barActive { animation: none; }
 }
 
 .barRejected {
@@ -69,17 +86,30 @@
   transition: background 100ms ease, border-color 100ms ease, color 100ms ease;
 }
 
+/* feature-editor-premium-polish V1 — large empty-container drop zone
+   matches the slim-zone polish: bumped opacity + pulse during drag. */
 .largeActive {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+  border-color: var(--color-editor-chrome);
+  color: var(--color-editor-chrome);
+  background: color-mix(in srgb, var(--color-editor-chrome) 10%, transparent);
+  animation: dropZoneLargePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dropZoneLargePulse {
+  0%, 100% { background: color-mix(in srgb, var(--color-editor-chrome) 10%, transparent); }
+  50%      { background: color-mix(in srgb, var(--color-editor-chrome) 4%, transparent);  }
 }
 
 .largeOver {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-color: var(--color-editor-chrome);
+  color: var(--color-editor-chrome);
+  background: color-mix(in srgb, var(--color-editor-chrome) 18%, transparent);
   border-style: solid;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .largeActive { animation: none; }
 }
 
 .largeRejected {

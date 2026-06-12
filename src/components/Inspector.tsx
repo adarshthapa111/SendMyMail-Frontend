@@ -1,3 +1,10 @@
+import type { ReactNode } from 'react';
+import {
+  IconTypography, IconRectangle, IconPhoto, IconMinus, IconArrowsVertical,
+  IconLayoutColumns, IconLayoutGrid, IconStar, IconBrandFacebook,
+  IconLayoutNavbar, IconCode, IconCursorText, IconClick, IconTrash,
+  IconPointer,
+} from '@tabler/icons-react';
 import type { IMjmlNode, NodePath } from '../tree/types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectSelectedNode } from '../store/selectors';
@@ -31,6 +38,27 @@ const LABELS: Record<string, string> = {
   'mj-navbar': 'Navbar',
   'mj-raw': 'Raw HTML',
 };
+
+/* feature-editor-premium-polish V1 — block icon for the inspector
+   header. Matches the palette's icon vocabulary so block identity is
+   consistent across surfaces. */
+function blockIconFor(tagName: string): ReactNode {
+  switch (tagName) {
+    case 'mj-text':           return <IconCursorText  size={15} stroke={1.7} />;
+    case 'mj-button':         return <IconClick       size={15} stroke={1.7} />;
+    case 'mj-image':          return <IconPhoto       size={15} stroke={1.7} />;
+    case 'mj-divider':        return <IconMinus       size={15} stroke={2}   />;
+    case 'mj-spacer':         return <IconArrowsVertical size={15} stroke={1.7} />;
+    case 'mj-section':        return <IconLayoutGrid  size={15} stroke={1.7} />;
+    case 'mj-column':         return <IconLayoutColumns size={15} stroke={1.7} />;
+    case 'mj-hero':           return <IconRectangle   size={15} stroke={1.7} />;
+    case 'mj-social':         return <IconBrandFacebook size={15} stroke={1.7} />;
+    case 'mj-social-element': return <IconStar        size={15} stroke={1.7} />;
+    case 'mj-navbar':         return <IconLayoutNavbar size={15} stroke={1.7} />;
+    case 'mj-raw':            return <IconCode        size={15} stroke={1.7} />;
+    default:                  return <IconTypography  size={15} stroke={1.7} />;
+  }
+}
 
 function FormForNode({ node, path }: { node: IMjmlNode; path: NodePath }) {
   switch (node.tagName) {
@@ -73,13 +101,23 @@ export default function Inspector() {
   const dispatch = useAppDispatch();
   const selection = useAppSelector(selectSelectedNode);
 
+  /* feature-editor-premium-polish V1 — Friendly empty state with an
+     icon + helper text instead of a bare "select a block" line. */
   if (!selection) {
     return (
       <aside className={styles.inspector}>
         <div className={styles.header}>
-          <span>Properties</span>
+          <span className={styles.headerTitle}>Properties</span>
         </div>
-        <div className={styles.placeholder}>Select a block to edit its properties.</div>
+        <div className={styles.empty}>
+          <span className={styles.emptyIcon} aria-hidden="true">
+            <IconPointer size={28} stroke={1.4} />
+          </span>
+          <div className={styles.emptyTitle}>Nothing selected</div>
+          <div className={styles.emptyHint}>
+            Click any block on the canvas to edit its properties here.
+          </div>
+        </div>
       </aside>
     );
   }
@@ -87,21 +125,31 @@ export default function Inspector() {
   const { node, path } = selection;
   const label = LABELS[node.tagName] ?? node.tagName;
 
+  /* feature-editor-premium-polish V1 — header redesigned with block
+     icon + name; Delete button moved to the bottom footer so it stops
+     competing with property edits for attention. */
   return (
-    <aside className={styles.inspector}>
+    <aside className={styles.inspector} key={node._id /* slide-in on selection change */}>
       <div className={styles.header}>
-        <span>{label}</span>
+        <span className={styles.headerIcon} aria-hidden="true">
+          {blockIconFor(node.tagName)}
+        </span>
+        <span className={styles.headerTitle}>{label}</span>
+        <span className={styles.headerTag} title={node.tagName}>{node.tagName}</span>
+      </div>
+      <div className={styles.scroll}>
+        <FormForNode node={node} path={path} />
+      </div>
+      <div className={styles.footer}>
         <button
           type="button"
           className={styles.deleteBtn}
           onClick={() => dispatch(deleteBlock({ path }))}
-          title="Delete block (Del)"
+          title="Delete this block (Del)"
         >
-          Delete
+          <IconTrash size={14} stroke={1.7} />
+          Delete block
         </button>
-      </div>
-      <div className={styles.scroll}>
-        <FormForNode node={node} path={path} />
       </div>
     </aside>
   );

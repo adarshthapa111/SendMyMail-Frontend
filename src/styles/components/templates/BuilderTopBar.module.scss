@@ -47,28 +47,38 @@
   flex-shrink: 0;
 }
 
-/* Save status indicator — dot pulses when dirty */
+/* Save status indicator — dot pulses when dirty.
+   feature-editor-premium-polish V1 — saved state gets a green dot,
+   text shows "Saved · 2s ago" (relative time refreshes every 5s
+   via useRelativeSaved hook). */
 .status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--color-soft);
+  color: var(--color-muted);
   font-weight: 500;
   white-space: nowrap;
+  cursor: default;
 }
 .statusDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--color-soft);
+  background: var(--color-green, #4caf50);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-green, #4caf50) 18%, transparent);
 }
 .statusDirty {
   color: var(--color-primary);
 }
 .statusDirty .statusDot {
   background: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
   animation: btbPulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusDirty .statusDot { animation: none; }
 }
 @keyframes btbPulse {
   0%, 100% { opacity: 0.4; }
