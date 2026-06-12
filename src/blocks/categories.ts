@@ -8,20 +8,51 @@
 export type BlockCategory = 'section' | 'column' | 'content';
 
 /**
- * UI-only grouping for the palette sidebar. Distinct from BlockCategory:
+ * UI-only grouping for the palette rail. Distinct from BlockCategory:
  *   category = where the block can be dropped (drop-target constraint)
- *   group    = where the block appears in the palette (sidebar organization)
- * e.g. an image is category: 'content' but group: 'media'.
+ *   group    = which rail entry the block appears under
+ *
+ * feature-section-library V1 — widened from {layout, content, media,
+ * advanced} to the MailerLite-style rail categories. The old content/
+ * media/advanced primitives all live under 'elements' now; everything
+ * else is a pre-designed section composite group.
  */
-export type PaletteGroup = 'layout' | 'content' | 'media' | 'advanced';
+export type PaletteGroup =
+  | 'elements'
+  | 'layout'
+  | 'header'
+  | 'hero'
+  | 'features'
+  | 'gallery'
+  | 'table'
+  | 'video'
+  | 'cta'
+  | 'footer';
 
-export const PALETTE_GROUP_ORDER: PaletteGroup[] = ['layout', 'content', 'media', 'advanced'];
+export const PALETTE_GROUP_ORDER: PaletteGroup[] = [
+  'elements',
+  'layout',
+  'header',
+  'hero',
+  'features',
+  'gallery',
+  'table',
+  'video',
+  'cta',
+  'footer',
+];
 
 export const PALETTE_GROUP_LABEL: Record<PaletteGroup, string> = {
-  layout: 'Layout',
-  content: 'Content',
-  media: 'Media',
-  advanced: 'Advanced',
+  elements: 'Elements',
+  layout:   'Layout',
+  header:   'Header',
+  hero:     'Hero',
+  features: 'Features',
+  gallery:  'Gallery',
+  table:    'Table',
+  video:    'Video',
+  cta:      'Call to action',
+  footer:   'Footer',
 };
 
 /**

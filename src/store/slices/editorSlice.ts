@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { current, type WritableDraft } from 'immer';
 import type { IMjmlNode, NodePath } from '../../tree/types';
-import { buildIdPathCache, assignFreshIds } from '../../tree/paths';
+import { buildIdPathCache, assignFreshIds, getAtPath } from '../../tree/paths';
 import { newTemplate } from '../../tree/newTemplate';
 import {
   insertNode,
@@ -149,6 +149,29 @@ const editorSlice = createSlice({
       state.dirty = true;
     },
 
+    /* feature-section-library V1 — column gap. MJML has no native `gap`
+       attribute; the email-safe convention is horizontal padding on each
+       column (padding-left/right = gap ÷ 2). This applies it to EVERY
+       child mj-column of the section in ONE history entry, so a single
+       undo restores the whole gap change. gapPx undefined/0 removes the
+       paddings. */
+    setColumnGap(state, action: PayloadAction<{ path: NodePath; gapPx: number | undefined }>) {
+      const prev = snapshot(state);
+      const { path, gapPx } = action.payload;
+      const section = getAtPath(state.tree, path);
+      if (!section?.children?.length) return;
+      const half = gapPx && gapPx > 0 ? `${gapPx / 2}px` : undefined;
+      const columnTags = section.children.map((c) => c.tagName);
+      columnTags.forEach((tagName, i) => {
+        if (tagName !== 'mj-column') return;
+        const colPath = [...path, 'children', i];
+        state.tree = updateAttr(state.tree, colPath, 'padding-left', half);
+        state.tree = updateAttr(state.tree, colPath, 'padding-right', half);
+      });
+      pushHistory(state, prev);
+      state.dirty = true;
+    },
+
     setContent(state, action: PayloadAction<{ path: NodePath; content: string }>) {
       const prev = snapshot(state);
       state.tree = updateContent(state.tree, action.payload.path, action.payload.content);
@@ -250,6 +273,7 @@ export const {
   deleteBlock,
   duplicateBlock,
   setAttr,
+  setColumnGap,
   setContent,
   selectNode,
   hoverNode,

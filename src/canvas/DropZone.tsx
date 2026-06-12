@@ -45,7 +45,11 @@ export default function DropZone({ parentPath, parentTag, index, large = false }
   const directlyAccepts = draggedCategory ? accepts.includes(draggedCategory) : false;
   // Auto-wrap exception: a 'content' block dropped into mj-body wraps in a section.
   const autoWrappable = parentTag === 'mj-body' && draggedCategory === 'content';
-  const canDrop = directlyAccepts || autoWrappable;
+  // Section bubble-up (feature-section-library V1): a 'section' block
+  // dropped inside an existing section inserts AFTER it at body level
+  // (see EditorBody.onDragEnd) — so show these zones as valid, not red.
+  const sectionBubble = draggedCategory === 'section' && parentPath.length >= 4;
+  const canDrop = directlyAccepts || autoWrappable || sectionBubble;
 
   if (large) {
     let stateClass = '';
@@ -64,8 +68,13 @@ export default function DropZone({ parentPath, parentTag, index, large = false }
   else if (active && isOver && !canDrop) barStateClass = styles.barRejected;
   else if (active && canDrop) barStateClass = styles.barActive;
 
+  /* Body-level zones (between sections) collapse to zero visible gap so
+     sections touch seamlessly like the compiled email; zones inside
+     columns keep a small visible gap so there's a place to aim drops. */
+  const levelClass = parentTag === 'mj-body' ? styles.hitAreaSeamless : '';
+
   return (
-    <div ref={setNodeRef} className={`${styles.hitArea} ${active ? styles.armed : ''}`}>
+    <div ref={setNodeRef} className={`${styles.hitArea} ${levelClass} ${active ? styles.armed : ''}`}>
       <div className={`${styles.bar} ${barStateClass}`} />
     </div>
   );

@@ -15,7 +15,7 @@ interface Props {
   path: NodePath;
 }
 
-const KNOWN_KEYS = ['src', 'alt', 'href', 'width', 'padding', 'align', 'fluid-on-mobile'];
+const KNOWN_KEYS = ['src', 'alt', 'href', 'width', 'height', 'padding', 'align', 'fluid-on-mobile'];
 
 export default function ImageInspector({ node, path }: Props) {
   const attrs = node.attributes ?? {};
@@ -59,6 +59,16 @@ export default function ImageInspector({ node, path }: Props) {
           value={(attrs.width as string) ?? '600px'}
           units={['px', '%']}
           onCommit={set('width')}
+        />
+        {/* mj-image height is px-only (no %). Empty = auto: the image
+            keeps its aspect ratio from the width — usually what you
+            want; set it only to force a crop/stretch. */}
+        <NumberInput
+          label="Height"
+          value={(attrs.height as string) ?? ''}
+          units={['px']}
+          placeholder="auto"
+          onCommit={(v) => set('height')(v || undefined)}
         />
         <SelectInput
           label="Align"

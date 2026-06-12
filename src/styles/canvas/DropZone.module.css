@@ -11,11 +11,19 @@
 .hitArea {
   position: relative;
   height: 16px;
-  margin: -6px 0;
+  margin: -6px 0;     /* 4px visible gap — a place to aim inside columns */
   pointer-events: auto;
   display: flex;
   align-items: center;
   z-index: 1;
+}
+
+/* feature-section-library V1 — body-level zones (between sections):
+   margins fully cancel the height so sections touch seamlessly. The
+   old 4px gap read as a white border line between dark/image sections.
+   Hit geometry unchanged — pointerWithin uses the 16px strip. */
+.hitAreaSeamless {
+  margin: -8px 0;
 }
 
 .bar {

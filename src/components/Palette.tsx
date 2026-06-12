@@ -1,214 +1,136 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useDraggable } from '@dnd-kit/core';
-import {
-  IconTypography, IconRectangle, IconMinus, IconArrowsVertical,
-  IconPhoto, IconStar, IconBrandFacebook,
-  IconLayoutNavbar, IconCode, IconSearch, IconChevronRight,
-  IconLayoutGrid, IconLetterT, IconPhotoFilled, IconTools,
-} from '@tabler/icons-react';
-import { blockRegistry, type BlockDef } from '../blocks/registry';
-import {
-  PALETTE_GROUP_ORDER,
-  PALETTE_GROUP_LABEL,
-  type BlockCategory,
-  type PaletteGroup,
-} from '../blocks/categories';
+import { useEffect, useRef, useState } from 'react';
+import { useDndMonitor } from '@dnd-kit/core';
+import { type PaletteGroup } from '../blocks/categories';
+import CategoryRail from './palette/CategoryRail';
+import Flyout from './palette/Flyout';
 import styles from '@styles/components/Palette.module.css';
 
-export interface PaletteDragData {
-  source: 'palette';
-  blockId: string;
-  category: BlockCategory;
-  label: string;
-}
+/* feature-section-library V1 — the palette is two-level
+   (MailerLite pattern):
 
-/* Visual for the three layout blocks — N rectangles side-by-side instead
-   of a generic icon. Matches doc/mockups/builder.html — Beefree / Stripo
-   style. The rectangle count signals exactly what dragging in produces. */
-function ColumnVisual({ cols }: { cols: 1 | 2 | 3 }) {
-  return (
-    <span className={styles.layoutVisual} aria-hidden="true">
-      {Array.from({ length: cols }, (_, i) => <i key={i} />)}
-    </span>
-  );
-}
+     [CategoryRail]  [Flyout ▸ overlays the canvas edge, full height]
 
-/* Map block id → React icon. Layout blocks use ColumnVisual; everything
-   else uses a Tabler icon. */
-function iconFor(blockId: string): ReactNode {
-  switch (blockId) {
-    case 'section-1col': return <ColumnVisual cols={1} />;
-    case 'section-2col': return <ColumnVisual cols={2} />;
-    case 'section-3col': return <ColumnVisual cols={3} />;
-    case 'text':         return <IconTypography size={18} stroke={1.6} />;
-    case 'button':       return <IconRectangle size={18} stroke={1.6} />;
-    case 'divider':      return <IconMinus size={18} stroke={2} />;
-    case 'spacer':       return <IconArrowsVertical size={18} stroke={1.6} />;
-    case 'image':        return <IconPhoto size={18} stroke={1.6} />;
-    case 'hero':         return <IconStar size={18} stroke={1.6} />;
-    case 'social':       return <IconBrandFacebook size={18} stroke={1.6} />;
-    case 'navbar':       return <IconLayoutNavbar size={18} stroke={1.6} />;
-    case 'rawHtml':      return <IconCode size={18} stroke={1.6} />;
-    default:             return null;
-  }
-}
+   HOVERING a rail entry opens its flyout (with a short grace delay on
+   leave so the diagonal mouse path into the flyout doesn't close it).
+   CLICKING pins the category open — a pinned flyout survives the mouse
+   leaving; Esc / ✕ / re-click unpins.
 
-function PaletteCard({ def }: { def: BlockDef }) {
-  const data: PaletteDragData = {
-    source: 'palette',
-    blockId: def.id,
-    category: def.category,
-    label: def.label,
-  };
-  const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
-    id: `palette-${def.id}`,
-    data,
-  });
+   Drag data shape is unchanged from the old single-panel palette, so
+   DropZone + EditorBody.onDragEnd work as-is. */
 
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      role="button"
-      aria-label={`Drag to add ${def.label} block`}
-      title={def.label}
-      className={`${styles.blockCard} ${isDragging ? styles.dragging : ''}`}
-    >
-      <span className={styles.blockIcon}>{iconFor(def.id)}</span>
-      <span className={styles.blockLabel}>{def.label}</span>
-    </div>
-  );
-}
+export type { PaletteDragData } from './palette/Flyout';
 
-/* feature-editor-premium-polish V1 — category icons for the group
-   headers. Visual anchor + matches Beefree / MailerLite pattern. */
-function categoryIconFor(group: PaletteGroup): ReactNode {
-  switch (group) {
-    case 'layout':   return <IconLayoutGrid  size={13} stroke={1.6} />;
-    case 'content':  return <IconLetterT     size={13} stroke={1.6} />;
-    case 'media':    return <IconPhotoFilled size={13} stroke={1.6} />;
-    case 'advanced': return <IconTools       size={13} stroke={1.6} />;
-  }
-}
+const PIN_KEY = 'sendmymail-palette-category';
+const LEAVE_GRACE_MS = 260;
 
-/* feature-editor-premium-polish V1 — persisted collapse state per
-   group. Default: layout + content expanded, media + advanced
-   collapsed (most-used first). */
-const COLLAPSE_KEY = 'sendmymail-palette-groups';
-const DEFAULT_COLLAPSED: Record<PaletteGroup, boolean> = {
-  layout:   false,
-  content:  false,
-  media:    true,
-  advanced: true,
-};
-
-function readCollapsedState(): Record<PaletteGroup, boolean> {
+function readPinned(): PaletteGroup | null {
   try {
-    const raw = localStorage.getItem(COLLAPSE_KEY);
-    if (!raw) return { ...DEFAULT_COLLAPSED };
-    const parsed = JSON.parse(raw);
-    return {
-      layout:   typeof parsed.layout   === 'boolean' ? parsed.layout   : DEFAULT_COLLAPSED.layout,
-      content:  typeof parsed.content  === 'boolean' ? parsed.content  : DEFAULT_COLLAPSED.content,
-      media:    typeof parsed.media    === 'boolean' ? parsed.media    : DEFAULT_COLLAPSED.media,
-      advanced: typeof parsed.advanced === 'boolean' ? parsed.advanced : DEFAULT_COLLAPSED.advanced,
-    };
+    const raw = localStorage.getItem(PIN_KEY);
+    if (raw === null || raw === '') return 'elements';
+    if (raw === 'closed') return null;
+    return raw as PaletteGroup;
   } catch {
-    return { ...DEFAULT_COLLAPSED };
+    return 'elements';
   }
 }
 
 export default function Palette() {
-  const [search, setSearch] = useState('');
-  const [collapsed, setCollapsed] = useState<Record<PaletteGroup, boolean>>(readCollapsedState);
+  const [pinned, setPinned] = useState<PaletteGroup | null>(readPinned);
+  const [hovered, setHovered] = useState<PaletteGroup | null>(null);
+  const leaveTimer = useRef<number | null>(null);
 
-  /* Persist collapse state on every change. */
   useEffect(() => {
     try {
-      localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed));
+      localStorage.setItem(PIN_KEY, pinned ?? 'closed');
     } catch { /* private browsing */ }
-  }, [collapsed]);
+  }, [pinned]);
 
-  const toggle = (group: PaletteGroup) =>
-    setCollapsed((s) => ({ ...s, [group]: !s[group] }));
+  useEffect(() => () => {
+    if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
+  }, []);
 
-  const groups = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    const grouped: Record<PaletteGroup, BlockDef[]> = {
-      layout: [],
-      content: [],
-      media: [],
-      advanced: [],
-    };
-    for (const def of Object.values(blockRegistry)) {
-      if (q && !def.label.toLowerCase().includes(q)) continue;
-      grouped[def.group].push(def);
+  const open = hovered ?? pinned;
+
+  /* While a palette card is being dragged, the flyout must stay MOUNTED
+     (dnd-kit cancels the drag if the active draggable unmounts) but
+     visually hidden so the canvas is clear. dragGroup freezes whichever
+     group was open at drag start — hover-grace timeouts firing mid-drag
+     can no longer unmount it. */
+  const [dragGroup, setDragGroup] = useState<PaletteGroup | null>(null);
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  useDndMonitor({
+    onDragStart(event) {
+      const data = event.active.data.current as { source?: string } | undefined;
+      if (data?.source === 'palette') setDragGroup(openRef.current);
+    },
+    onDragEnd() {
+      setDragGroup(null);
+      setHovered(null);   // mouse is over the canvas now — drop the hover preview
+    },
+    onDragCancel() {
+      setDragGroup(null);
+      setHovered(null);
+    },
+  });
+
+  const cancelLeave = () => {
+    if (leaveTimer.current) {
+      window.clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
     }
-    return grouped;
-  }, [search]);
+  };
 
-  /* When search is active, force all groups expanded — surface matches
-     regardless of saved collapse preferences. */
-  const isSearching  = search.trim().length > 0;
-  const totalMatches = PALETTE_GROUP_ORDER.reduce((sum, g) => sum + groups[g].length, 0);
+  const onHover = (group: PaletteGroup) => {
+    cancelLeave();
+    setHovered(group);
+  };
+
+  /* Mouse left the rail+flyout region — drop the hover preview after a
+     grace period. A pinned category stays open. */
+  const onRegionLeave = () => {
+    cancelLeave();
+    leaveTimer.current = window.setTimeout(() => setHovered(null), LEAVE_GRACE_MS);
+  };
+
+  const onPin = (group: PaletteGroup) => {
+    setPinned((cur) => (cur === group ? null : group));
+    setHovered(null);
+  };
+
+  const onClose = () => {
+    setPinned(null);
+    setHovered(null);
+  };
 
   return (
-    <aside className={styles.palette}>
-      <div className={styles.searchWrap}>
-        <IconSearch size={14} className={styles.searchIcon} aria-hidden="true" />
-        <input
-          type="search"
-          className={styles.search}
-          placeholder="Search blocks…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Search blocks"
+    /* Hover handlers live on the WHOLE sidebar (not just the rail) so the
+       flyout — anchored to the aside, full height beside it — counts as
+       part of the hover region. Leaving both closes the hover preview. */
+    <aside
+      className={styles.palette}
+      onMouseLeave={onRegionLeave}
+      onMouseEnter={cancelLeave}
+    >
+      <div className={styles.railWrap}>
+        <CategoryRail
+          active={open}
+          pinned={pinned}
+          onSelect={onPin}
+          onHover={onHover}
         />
       </div>
 
-      <div className={styles.scroller}>
-        {totalMatches === 0 && (
-          <div className={styles.empty}>No blocks match “{search}”.</div>
-        )}
-
-        {PALETTE_GROUP_ORDER.map((group) => {
-          const items = groups[group];
-          if (items.length === 0) return null;
-          const isCollapsed = !isSearching && collapsed[group];
-          return (
-            <section key={group} className={styles.group}>
-              <button
-                type="button"
-                className={`${styles.groupHeader} ${isCollapsed ? styles.groupHeaderCollapsed : ''}`}
-                onClick={() => !isSearching && toggle(group)}
-                aria-expanded={!isCollapsed}
-                aria-controls={`palette-group-${group}`}
-                disabled={isSearching}
-              >
-                <IconChevronRight
-                  size={11}
-                  stroke={2}
-                  className={`${styles.groupChevron} ${isCollapsed ? '' : styles.groupChevronOpen}`}
-                  aria-hidden="true"
-                />
-                <span className={styles.groupIcon} aria-hidden="true">
-                  {categoryIconFor(group)}
-                </span>
-                <span>{PALETTE_GROUP_LABEL[group]}</span>
-                <span className={styles.groupCount} aria-hidden="true">{items.length}</span>
-              </button>
-              {!isCollapsed && (
-                <div className={styles.grid} id={`palette-group-${group}`}>
-                  {items.map((def) => (
-                    <PaletteCard key={def.id} def={def} />
-                  ))}
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
+      {/* Anchored to the aside → spans the FULL sidebar height. */}
+      <Flyout
+        group={dragGroup ?? open}
+        search=""
+        hidden={dragGroup !== null}
+        onClose={onClose}
+      />
     </aside>
   );
 }

@@ -183,6 +183,17 @@
   border-radius: 3px;
 }
 
+/* Full-width containers (sections / heroes / columns) get an INSET
+   ring instead: with the outward offset, the ring's top/bottom edges
+   detach from the full-bleed section and read as stray gray/blue
+   border lines across the email. Inside the bounds = clean. */
+.section.selected,
+.hero.selected,
+.column.selected {
+  outline-offset: -2px;
+  border-radius: 0;
+}
+
 /* While inline-editing, dim the outline a touch and show a caret cursor */
 .editing {
   outline: 2px dashed var(--color-editor-chrome) !important;

@@ -12,6 +12,8 @@ interface Props {
   min?: number;
   max?: number;
   step?: number;
+  /** Shown in the number field when empty (e.g. "auto" for optional attrs). */
+  placeholder?: string;
   onCommit: (value: string | undefined) => void;
 }
 
@@ -52,6 +54,7 @@ export default function NumberInput({
   min,
   max,
   step,
+  placeholder,
   onCommit,
 }: Props) {
   const effectiveDefaultUnit = defaultUnit ?? units[0];
@@ -72,6 +75,7 @@ export default function NumberInput({
           min={min}
           max={max}
           step={step ?? 1}
+          placeholder={placeholder}
           onChange={(e) => onCommit(buildValue(e.target.value, parsed.unit))}
           disabled={!showNumberField}
         />

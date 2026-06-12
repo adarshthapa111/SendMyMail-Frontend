@@ -1,8 +1,11 @@
 import type { IMjmlNode, NodePath } from '../../tree/types';
+import { useAppDispatch } from '../../store/hooks';
+import { setColumnGap } from '../../store/slices/editorSlice';
 import FormSection from './controls/FormSection';
 import ColorPicker from './controls/ColorPicker';
 import UrlInput from './controls/UrlInput';
 import SelectInput from './controls/SelectInput';
+import NumberInput from './controls/NumberInput';
 import PaddingControl from './controls/PaddingControl';
 import AdvancedPanel from './AdvancedPanel';
 import { useAttrSetter } from './useInspectorHelpers';
@@ -22,9 +25,21 @@ const KNOWN_KEYS = [
   'text-align',
 ];
 
+/* Read the section's column gap back from its first mj-column:
+   gap = padding-left × 2 (how setColumnGap writes it). */
+function readColumnGap(node: IMjmlNode): string {
+  const firstCol = node.children?.find((c) => c.tagName === 'mj-column');
+  const pl = firstCol?.attributes?.['padding-left'];
+  if (!pl) return '';
+  const n = parseFloat(String(pl));
+  return Number.isFinite(n) && n > 0 ? `${n * 2}px` : '';
+}
+
 export default function SectionInspector({ node, path }: Props) {
+  const dispatch = useAppDispatch();
   const attrs = node.attributes ?? {};
   const set = useAttrSetter(path);
+  const columnCount = node.children?.filter((c) => c.tagName === 'mj-column').length ?? 0;
 
   return (
     <>
@@ -68,6 +83,30 @@ export default function SectionInspector({ node, path }: Props) {
 
       <FormSection title="Spacing">
         <PaddingControl value={attrs.padding as string} onCommit={set('padding')} />
+        {columnCount > 0 && (
+          <>
+            {/* MJML has no native gap attr — this writes padding-left/right
+                = gap/2 onto every child column (the email-safe way). */}
+            <NumberInput
+              label="Column gap"
+              value={readColumnGap(node)}
+              units={['px']}
+              min={0}
+              step={2}
+              placeholder="0"
+              onCommit={(v) => {
+                const n = v ? parseFloat(v) : undefined;
+                dispatch(setColumnGap({
+                  path,
+                  gapPx: Number.isFinite(n as number) && (n as number) > 0 ? n : undefined,
+                }));
+              }}
+            />
+            <span className={styles.fieldHint}>
+              Space between columns (applied as padding on each column).
+            </span>
+          </>
+        )}
       </FormSection>
 
       <AdvancedPanel node={node} path={path} knownKeys={KNOWN_KEYS} />

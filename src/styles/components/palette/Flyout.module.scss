@@ -1,0 +1,212 @@
+/* feature-section-library V1 — the flyout panel.
+   Anchored to the palette's right edge (left:100%) and overlays the
+   canvas — the canvas does NOT reflow when it opens/closes. */
+
+.flyout {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  background: var(--color-card);
+  border-right: 1px solid var(--color-line);
+  border-left: 1px solid var(--color-line-soft);
+  box-shadow: 8px 0 24px -12px rgba(15, 23, 42, 0.18);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  animation: flyoutIn 160ms cubic-bezier(.2, .8, .25, 1);
+}
+
+@keyframes flyoutIn {
+  from { transform: translateX(-8px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flyout { animation: none; }
+}
+
+/* While one of our cards is being dragged: stay mounted (unmounting
+   the active draggable cancels the dnd-kit drag) but invisible and
+   click-through so the canvas drop zones are unobstructed. */
+.flyoutHidden {
+  visibility: hidden;
+  pointer-events: none;
+  animation: none;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-line-soft);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.closeBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  color: var(--color-soft);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.closeBtn:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  /* Full-height scroll WITHOUT a visible scrollbar (still wheel/touch
+     scrollable) — the preview cards stay edge-clean. */
+  scrollbar-width: none;                   /* Firefox */
+  &::-webkit-scrollbar { display: none; }  /* Chrome / Safari */
+
+  /* Cards are flex children — without this they SHRINK to fit the
+     panel instead of overflowing it, which squashed the previews and
+     left nothing to scroll. Keep natural heights; overflow scrolls. */
+  > * { flex-shrink: 0; }
+}
+
+.empty {
+  padding: 16px;
+  color: var(--color-soft);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+/* ─── Element tiles (icon grid — same vocabulary as the old palette) ─── */
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 6px 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-card);
+  border-radius: 10px;
+  cursor: grab;
+  font: inherit;
+  color: var(--color-ink);
+  user-select: none;
+  touch-action: none;
+  text-align: center;
+  min-height: 72px;
+  transition: background 140ms ease, border-color 140ms ease,
+              color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.tile:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-ink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.tile:active { cursor: grabbing; transform: translateY(0); }
+
+.tileIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 22px;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.tileLabel {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* The 1/2/3-column rectangles visual. */
+.layoutVisual {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  height: 22px;
+}
+.layoutVisual i {
+  width: 9px;
+  height: 16px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+/* ─── Composite preview cards ─── */
+
+.card {
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-card);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.card:hover {
+  border-color: var(--color-editor-chrome);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--color-editor-chrome) 40%, transparent);
+}
+
+.card:active { cursor: grabbing; transform: translateY(0); }
+
+.cardLabel {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-muted);
+  padding: 8px 10px 6px;
+}
+
+/* No inner border — the card's outer border is the only frame
+   (an extra ring around the mini-render read as a double frame). */
+.cardPreview {
+  overflow: hidden;
+  pointer-events: none;   /* preview is display-only; the card drags */
+  background: #ffffff;     /* emails are white regardless of app theme */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .tile:hover, .card, .card:hover { transform: none; transition: none; }
+}
+
+.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}

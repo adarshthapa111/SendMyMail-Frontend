@@ -31,6 +31,7 @@ import {
 } from '../store/slices/editorSlice';
 import { blockRegistry } from '../blocks/registry';
 import { createSectionWithColumn } from '../blocks/sections';
+import { getAtPath } from '../tree/paths';
 
 import styles from '@styles/components/EditorBody.module.css';
 
@@ -58,6 +59,7 @@ export default function EditorBody() {
   const dispatch = useAppDispatch();
   const selectedId = useAppSelector((s) => s.editor.selectedId);
   const idPathCache = useAppSelector((s) => s.editor.idPathCache);
+  const tree = useAppSelector((s) => s.editor.tree);
 
   // Label shown in the <DragOverlay> chip. Set on drag-start from either
   // palette or canvas data; cleared on drag-end / drag-cancel.
@@ -144,7 +146,11 @@ export default function EditorBody() {
     if (directlyAccepts) {
       const node = blockDef.factory();
       dispatch(insertBlock({ parentPath: targetData.parentPath, index: targetData.index, node }));
-      if (node._id) dispatch(selectNode(node._id));
+      /* Sections land WITHOUT auto-select — the selection ring on a
+         fresh full-width drop reads as an uninvited border. Click to
+         select. Leaf elements keep auto-select (opens their inspector
+         for immediate editing). */
+      if (node._id && blockDef.category !== 'section') dispatch(selectNode(node._id));
       return;
     }
 
@@ -156,6 +162,28 @@ export default function EditorBody() {
       );
       if (inner._id) dispatch(selectNode(inner._id));
       return;
+    }
+
+    /* feature-section-library V1 — section bubble-up (the MailerLite
+       behavior). A 'section' block dropped INSIDE an existing section
+       (onto a column/hero content zone, or a section's column gap)
+       inserts at the BODY level, right after the enclosing section.
+       Without this, section composites are only droppable in the thin
+       body-level gaps — nearly impossible to hit on a dense email.
+
+       Zone parentPath shape: ['children', bodyIdx, 'children',
+       sectionIdx, ...deeper]; slice(0,2) is the body, [3] is the index
+       of the enclosing section in it. */
+    if (blockDef.category === 'section' && targetData.parentPath.length >= 4) {
+      const bodyPath = targetData.parentPath.slice(0, 2);
+      const sectionIdx = targetData.parentPath[3];
+      const body = getAtPath(tree, bodyPath);
+      if (body?.tagName === 'mj-body' && typeof sectionIdx === 'number') {
+        const node = blockDef.factory();
+        dispatch(insertBlock({ parentPath: bodyPath, index: sectionIdx + 1, node }));
+        // No auto-select — see the section note in the directlyAccepts branch.
+        return;
+      }
     }
   };
 

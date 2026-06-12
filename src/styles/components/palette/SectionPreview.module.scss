@@ -1,0 +1,30 @@
+/* feature-section-library V1 — mini-preview stage.
+   The stage renders at the email's 600px base width and is shrunk
+   with `zoom` (set inline) so its layout box scales too. */
+
+.clip {
+  overflow: hidden;
+}
+
+.stage {
+  pointer-events: none;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Social placeholder dots. */
+.socialDot {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #C7CAD0;
+}
+
+/* Unknown tag fallback — a visible gray bar so a future composite
+   never silently renders as nothing. */
+.unknownBar {
+  height: 18px;
+  border-radius: 4px;
+  background: #E9EAEC;
+  margin: 4px 0;
+}

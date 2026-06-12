@@ -168,6 +168,35 @@ function SectionFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   );
 }
 
+/* Resolve MJML's padding model (shorthand + per-side overrides) into
+   the four final sides. NEVER mix the CSS `padding` shorthand with
+   per-side keys in a React style object — React clobbers the shorthand
+   when longhand keys are present (even undefined ones). */
+function resolvePadding(attrs: IMjmlNode['attributes']): {
+  paddingTop?: string; paddingRight?: string; paddingBottom?: string; paddingLeft?: string;
+} {
+  const a = attrs ?? {};
+  const parts = a.padding !== undefined && a.padding !== ''
+    ? String(a.padding).trim().split(/\s+/)
+    : null;
+  // CSS shorthand expansion: 1 → all; 2 → v h; 3 → t h b; 4 → t r b l
+  const [t, r, b, l] = !parts ? [undefined, undefined, undefined, undefined]
+    : parts.length === 1 ? [parts[0], parts[0], parts[0], parts[0]]
+    : parts.length === 2 ? [parts[0], parts[1], parts[0], parts[1]]
+    : parts.length === 3 ? [parts[0], parts[1], parts[2], parts[1]]
+    : [parts[0], parts[1], parts[2], parts[3]];
+  const side = (key: string, fallback: string | undefined) => {
+    const v = a[key];
+    return v !== undefined && v !== '' ? String(v) : fallback;
+  };
+  return {
+    paddingTop:    side('padding-top', t),
+    paddingRight:  side('padding-right', r),
+    paddingBottom: side('padding-bottom', b),
+    paddingLeft:   side('padding-left', l),
+  };
+}
+
 function ColumnFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
   const isSelected = useIsSelected(node._id);
   const isHovered  = useIsHovered(node._id);
@@ -179,6 +208,16 @@ function ColumnFrame({ node, path }: { node: IMjmlNode; path: NodePath }) {
     width: width.endsWith('%') ? undefined : width,
     minWidth: 0,
     position: 'relative',
+    // mj-column padding/background compile into the email (it's how
+    // gallery composites get gaps between images) — the canvas must
+    // apply them too. border-box keeps the % width including padding,
+    // matching MJML's column math. resolvePadding merges shorthand +
+    // per-side attrs into longhands only (see its comment).
+    ...resolvePadding(node.attributes),
+    backgroundColor: node.attributes?.['background-color']
+      ? String(node.attributes['background-color'])
+      : undefined,
+    boxSizing: 'border-box',
   };
   const children = node.children ?? [];
   return (
@@ -378,7 +417,10 @@ function ImageLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
       onMouseEnter={hoverHandlers.onMouseEnter}
       onMouseLeave={hoverHandlers.onMouseLeave}
       style={{
-        padding: String(node.attributes?.padding ?? '0'),
+        // '10px 25px' is mj-image's compile-time default — the canvas must
+        // match it or images without an explicit padding attr look crammed
+        // here while the preview shows gaps.
+        padding: String(node.attributes?.padding ?? '10px 25px'),
         textAlign: (node.attributes?.align as CSSProperties['textAlign']) ?? 'center',
       }}
     >
@@ -389,6 +431,9 @@ function ImageLeaf({ node, path }: { node: IMjmlNode; path: NodePath }) {
         alt={String(node.attributes?.alt ?? '')}
         style={{
           width: String(node.attributes?.width ?? '100%'),
+          // Matches compiled output: mj-image emits height as an <img>
+          // attribute, which stretches the image — so the canvas does too.
+          height: node.attributes?.height ? String(node.attributes.height) : undefined,
           maxWidth: '100%',
           display: 'inline-block',
         }}
