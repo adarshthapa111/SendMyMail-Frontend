@@ -1,17 +1,15 @@
 import type { IMjmlNode } from '../../tree/types';
-import { section, column, text, button, social, FONT, MUTED } from './shared';
+import { section, column, text, button, social, brandMark, MUTED } from './shared';
 
 /* feature-section-library V1 — header section composites.
    The email's masthead: brand name (swap for a logo image), optional
-   nav links, optional CTA. */
+   nav links, optional CTA.
 
-const brand = (align = 'center') =>
-  text('<strong>✦ Your Brand</strong>', {
-    'font-size': '18px',
-    'letter-spacing': '0.02em',
-    align,
-    padding: '0',
-  });
+   feature-client-brand-kit V1 — `brand` is now `brandMark()`, which
+   renders the active client's logo image (if set) or a "✦ {name}"
+   wordmark using the client's name. */
+
+const brand = (align = 'center') => brandMark({}, align);
 
 const navLinks = (align = 'center') =>
   text(
@@ -70,7 +68,6 @@ export const createHeaderLogoButton = (): IMjmlNode =>
           'inner-padding': '9px 20px',
           padding: '0',
           align: 'right',
-          'font-family': FONT,
         })],
         { width: '40%', 'vertical-align': 'middle' }
       ),

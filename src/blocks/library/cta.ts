@@ -1,7 +1,10 @@
 import type { IMjmlNode } from '../../tree/types';
 import { section, column, text, button, MUTED } from './shared';
+import { activeBrandKit } from './brandKit';
 
-/* feature-section-library V1 — call-to-action composites. */
+/* feature-section-library V1 — call-to-action composites.
+   feature-client-brand-kit V1 — the banner CTA's background uses the
+   active client's primary color (its highest-impact brand surface). */
 
 /** Centered CTA: headline + button on white. */
 export const createCtaCentered = (): IMjmlNode =>
@@ -48,9 +51,10 @@ export const createCtaPromo = (): IMjmlNode =>
     { 'background-color': '#F6F7F9', padding: '32px 24px' }
   );
 
-/** Banner CTA: dark band, white text + outline-ish button. */
-export const createCtaBanner = (): IMjmlNode =>
-  section(
+/** Banner CTA: brand-color band, white text + inverted button. */
+export const createCtaBanner = (): IMjmlNode => {
+  const primary = activeBrandKit().primaryColor;
+  return section(
     [
       column([
         text('Last 24 hours — 20% off ends tonight', {
@@ -62,10 +66,11 @@ export const createCtaBanner = (): IMjmlNode =>
         }),
         button('Claim the offer', {
           'background-color': '#ffffff',
-          color: '#111827',
+          color: primary,
           align: 'center',
         }),
       ]),
     ],
-    { 'background-color': '#111827', padding: '32px 24px' }
+    { 'background-color': primary, padding: '32px 24px' }
   );
+};

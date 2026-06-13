@@ -46,6 +46,7 @@ import {
   createFooterFull,
   createFooterMinimal,
   createFooterContact,
+  createFooterLinks,
 } from './library/footers';
 import { createTableSimple, createTableOrder } from './library/tables';
 import { createVideoThumb } from './library/videos';
@@ -461,5 +462,14 @@ export const blockRegistry: Record<string, BlockDef> = {
     group: 'footer',
     kind: 'section-composite',
     factory: createFooterFull,
+  },
+  'footer-links': {
+    id: 'footer-links',
+    label: 'Link columns',
+    icon: '≡≡',
+    category: 'section',
+    group: 'footer',
+    kind: 'section-composite',
+    factory: createFooterLinks,
   },
 };

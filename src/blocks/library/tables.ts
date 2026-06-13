@@ -1,5 +1,6 @@
 import type { IMjmlNode } from '../../tree/types';
-import { section, column, text, FONT, INK, MUTED, LINE } from './shared';
+import { section, column, text, INK, MUTED, LINE } from './shared';
+import { activeBrandKit } from './brandKit';
 
 /* feature-section-library V1 — table composites.
 
@@ -14,7 +15,7 @@ const cell = (content: string, opts: { head?: boolean; align?: string } = {}) =>
   const color = opts.head ? `color:${INK};` : `color:${MUTED};`;
   return (
     `<td style="padding:10px 12px;border-bottom:1px solid ${LINE};` +
-    `font-family:${FONT};font-size:13px;${weight}${color}` +
+    `font-family:${activeBrandKit().fontFamily};font-size:13px;${weight}${color}` +
     `text-align:${opts.align ?? 'left'};">${content}</td>`
   );
 };

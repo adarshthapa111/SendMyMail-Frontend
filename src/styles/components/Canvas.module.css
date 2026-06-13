@@ -55,9 +55,18 @@
     0 28px 64px -14px rgba(0, 0, 0, 0.32);
 }
 
+/* fix-toolbar-clip V1 — overflow VISIBLE so the selection toolbar
+   (floats above the first block) isn't clipped by the email frame. The
+   old overflow:hidden existed to clip content to the card's rounded
+   corners — but the desktop card is square now (border-radius: 0), so
+   there's nothing to clip. Mobile keeps the clip for its rounded bezel. */
 .frame {
   width: 100%;
   border-radius: inherit;
+  overflow: visible;
+}
+
+.columnMobile .frame {
   overflow: hidden;
 }
 

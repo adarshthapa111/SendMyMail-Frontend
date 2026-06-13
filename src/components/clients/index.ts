@@ -2,6 +2,7 @@
 
 export { BrandColorPicker }   from './BrandColorPicker';
 export { ClientForm, type ClientFormValues } from './ClientForm';
+export { BrandKitCard }       from './BrandKitCard';
 export { ClientFormDialog }   from './ClientFormDialog';
 export { ClientsTable }       from './ClientsTable';
 export { ClientsToolbar, type StatusFilter } from './ClientsToolbar';

@@ -1,0 +1,64 @@
+/* feature-client-brand-kit V1 — brand kit editor card. */
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.headIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--primary-light, #f5e7d9);
+  color: var(--primary, #c56a33);
+  flex-shrink: 0;
+}
+
+.sub {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .grid, .grid3 { grid-template-columns: 1fr; }
+}
+
+.logoPreview {
+  margin: -4px 0 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r, 14px);
+  background: #ffffff;       /* emails are white — preview the logo on white */
+  display: flex;
+  justify-content: center;
+}
+
+.logoPreview img {
+  max-height: 56px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

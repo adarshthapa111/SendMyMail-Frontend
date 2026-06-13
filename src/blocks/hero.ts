@@ -1,19 +1,19 @@
 import { v4 as uuid } from 'uuid';
 import type { IMjmlNode } from '../tree/types';
+import { activeBrandKit } from './library/brandKit';
 
-const PLACEHOLDER_BG =
-  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 300'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%231a73e8'/><stop offset='1' stop-color='%23174ea6'/></linearGradient></defs><rect width='600' height='300' fill='url(%23g)'/></svg>";
-
+/* feature-client-brand-kit V1 — the bare Hero primitive uses the active
+   client's primary color as a solid background (default near-black
+   #111827). The old blue gradient placeholder (#1a73e8) was the same
+   Google-blue that collided with the editor-chrome selection blue.
+   Users set their own background image from the inspector. */
 export const createHeroNode = (): IMjmlNode => ({
   tagName: 'mj-hero',
   _id: uuid(),
   attributes: {
     mode: 'fixed-height',
     height: '300px',
-    'background-url': PLACEHOLDER_BG,
-    'background-width': '600px',
-    'background-height': '300px',
-    'background-color': '#1a73e8',
+    'background-color': activeBrandKit().primaryColor,
     'vertical-align': 'middle',
     padding: '40px 30px',
   },

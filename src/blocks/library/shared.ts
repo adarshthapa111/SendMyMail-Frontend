@@ -1,20 +1,26 @@
 import { v4 as uuid } from 'uuid';
 import type { IMjmlNode } from '../../tree/types';
+import { activeBrandKit, DEFAULT_BRAND_KIT } from './brandKit';
+import { monoSocialIcon, SOCIAL_DEFAULTS, type SocialNetwork } from './socialIcons';
 
 /* feature-section-library V1 — shared building helpers for the
    pre-designed section composites. Pure TS, no React.
 
-   Styling philosophy: neutral + email-safe so a composite looks clean
-   in ANY brand context. Helvetica stack, near-black ink, warm-gray
-   muted text, dark CTA buttons, light placeholder imagery (inline SVG
-   data-URIs — zero network fetches in the editor). When the per-client
-   brand kit lands (Phase 2), these constants become kit lookups. */
+   feature-client-brand-kit V1 — the per-client kit landed: text/button
+   helpers read activeBrandKit() at CALL time (drop time), so a dropped
+   composite picks up the active client's font + primary color + brand
+   name. INK/MUTED/LINE stay neutral (not themed per client). The kit is
+   a module singleton set by the editor — see brandKit.ts for why. */
 
-export const FONT  = 'Helvetica, Arial, sans-serif';
-export const INK   = '#1F2937';
-export const MUTED = '#6B7280';
-export const LINE  = '#E5E7EB';
-export const BTN_BG = '#111827';
+/* Neutral constants — NOT themed per client. Kept as named exports for
+   the composites that reference them directly. */
+export const INK   = DEFAULT_BRAND_KIT.ink;    // '#1F2937'
+export const MUTED = DEFAULT_BRAND_KIT.muted;  // '#6B7280'
+export const LINE  = DEFAULT_BRAND_KIT.line;   // '#E5E7EB'
+/* Default font/primary — fallbacks for any neutral need. Per-client
+   values come from activeBrandKit() inside the helpers below. */
+export const FONT   = DEFAULT_BRAND_KIT.fontFamily;
+export const BTN_BG = DEFAULT_BRAND_KIT.primaryColor;
 
 /** Light-gray image placeholder (with a subtle mountain glyph), any size. */
 export function placeholderImg(w: number, h: number): string {
@@ -32,7 +38,7 @@ export function text(content: string, attrs: Record<string, string> = {}): IMjml
     tagName: 'mj-text',
     _id: uuid(),
     attributes: {
-      'font-family': FONT,
+      'font-family': activeBrandKit().fontFamily,
       color: INK,
       'font-size': '14px',
       'line-height': '1.6',
@@ -48,8 +54,8 @@ export function button(label: string, attrs: Record<string, string> = {}): IMjml
     tagName: 'mj-button',
     _id: uuid(),
     attributes: {
-      'font-family': FONT,
-      'background-color': BTN_BG,
+      'font-family': activeBrandKit().fontFamily,
+      'background-color': activeBrandKit().primaryColor,
       color: '#ffffff',
       'font-size': '14px',
       'font-weight': '600',
@@ -61,6 +67,34 @@ export function button(label: string, attrs: Record<string, string> = {}): IMjml
     },
     content: label,
   };
+}
+
+/* feature-client-brand-kit V1 — the brand mark for headers/footers.
+   Renders the active client's logo image when set, else a text wordmark
+   ("✦ {brandName}"). align controls text alignment. */
+export function brandMark(attrs: Record<string, string> = {}, align = 'center'): IMjmlNode {
+  const kit = activeBrandKit();
+  if (kit.logoUrl) {
+    return {
+      tagName: 'mj-image',
+      _id: uuid(),
+      attributes: {
+        src: kit.logoUrl,
+        alt: kit.brandName,
+        width: '140px',
+        align,
+        padding: '0',
+        ...attrs,
+      },
+    };
+  }
+  return text(`<strong>✦ ${kit.brandName}</strong>`, {
+    'font-size': '18px',
+    'letter-spacing': '0.02em',
+    align,
+    padding: '0',
+    ...attrs,
+  });
 }
 
 export function image(w: number, h: number, attrs: Record<string, string> = {}): IMjmlNode {
@@ -112,22 +146,33 @@ export function section(children: IMjmlNode[], attrs: Record<string, string> = {
   };
 }
 
+/* feature-section-library V1 — social row.
+   Default = 4 small monochrome (B&W) icons: Instagram, Facebook, TikTok,
+   X. Custom SVG `src` per element so they're neutral + include TikTok
+   (MJML's built-in `name` presets are full-color and have no TikTok).
+   `background-color: transparent` drops the default colored circle. */
 export function social(attrs: Record<string, string> = {}): IMjmlNode {
-  const el = (name: string): IMjmlNode => ({
+  const el = (network: SocialNetwork): IMjmlNode => ({
     tagName: 'mj-social-element',
     _id: uuid(),
-    attributes: { name, href: '#' },
+    attributes: {
+      name: network,
+      src: monoSocialIcon(network),
+      'background-color': 'transparent',
+      href: '#',
+    },
   });
   return {
     tagName: 'mj-social',
     _id: uuid(),
     attributes: {
       mode: 'horizontal',
-      'icon-size': '20px',
+      'icon-size': '18px',
+      'inner-padding': '0 6px',
       padding: '8px 0',
       align: 'center',
       ...attrs,
     },
-    children: [el('facebook'), el('instagram'), el('twitter')],
+    children: SOCIAL_DEFAULTS.map(el),
   };
 }

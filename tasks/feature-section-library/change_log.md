@@ -196,6 +196,24 @@ Verified end-to-end in headless Chrome: drag Banner CTA → drops next
 to the hovered section → appears in canvas → "Unsaved changes" → and
 renders in the compiled Preview iframe (`banner text in iframe: 1`).
 
+### Follow-up: monochrome social + richer footers (2026-06-13, user req)
+- `blocks/library/socialIcons.ts` — NEW: B&W (single-color) SVG glyphs
+  for Instagram, Facebook, TikTok, X as data-URIs. `social()` default is
+  now these 4, 18px (was 3 full-color built-ins, 20px), with
+  `background-color: transparent` to drop the colored circle.
+  Verified live: 4 icons render at 18px, order insta/fb/tiktok/x.
+  ⚠ Caveat documented in the file: data-URI SVG renders in editor +
+  preview + modern webmail, but Outlook desktop / parts of Gmail block
+  it — host PNG versions for production sends.
+- Footers: Contact footer gained the social row; new **Link columns**
+  footer (3 link columns + brand + social + legal, built on mj-wrapper
+  so it's 2 stacked sections in one composite). 5 footer variants total.
+- 26 composites total now (was 25).
+- `SectionPreview` fixes so the flyout cards match the dropped result:
+  (a) `mj-social` renders the real icon `src` images (was gray dots);
+  (b) added an `mj-wrapper` case — the Link-columns footer's root is a
+  wrapper, so without it that card rendered as the gray "unknown" bar.
+
 ### Verify (manual)
 1. Hover rail entries → flyout previews each category; move into the
    flyout → stays open; leave both → closes after a beat.

@@ -1,4 +1,4 @@
-import type { MouseEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBlock, duplicateBlock, moveBlock, selectNode } from '../store/slices/editorSlice';
@@ -30,6 +30,10 @@ export interface CanvasDragData {
   label: string;
 }
 
+/* Resting offset: toolbar floats 38px above the block. The slide effect
+   raises it toward the block when the block nears the canvas top. */
+const REST_TOP = -38;
+
 /**
  * Floating action row anchored above the currently selected block.
  *
@@ -43,6 +47,35 @@ export interface CanvasDragData {
 export default function SelectionToolbar({ path, variant = 'selected' }: Props) {
   const dispatch = useAppDispatch();
   const tree = useAppSelector((s) => s.editor.tree);
+
+  /* fix-toolbar-clip V1 — the toolbar floats at top: -38px (above the
+     block). For a block near the canvas top that overflows the scroll
+     edge + sits under the BuilderTopBar → clipped. Instead of a fixed
+     offset, the toolbar SLIDES: it stays at -38px when there's room,
+     and as the block approaches the top it pins just below the canvas
+     top edge (never clipped, only overlaps content at the extreme).
+     Hooks declared before the early returns so they run unconditionally;
+     re-checks on scroll/resize. */
+  const ref = useRef<HTMLDivElement>(null);
+  const [topPx, setTopPx] = useState(REST_TOP);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const block = el?.parentElement;
+    const scroller = el?.closest('[class*="canvas"]') as HTMLElement | null;
+    if (!el || !block || !scroller) return;
+    const check = () => {
+      const room = block.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      // Keep the toolbar's top edge >= 4px below the canvas top edge.
+      setTopPx(Math.max(REST_TOP, 4 - room));
+    };
+    check();
+    scroller.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      scroller.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, [path]);
 
   if (path.length < 2) return null;
   const lastIndex = path[path.length - 1];
@@ -98,7 +131,9 @@ export default function SelectionToolbar({ path, variant = 'selected' }: Props) 
 
   return (
     <div
+      ref={ref}
       className={`${styles.toolbar} ${variantClass}`}
+      style={{ top: topPx }}
       onClick={(e) => e.stopPropagation()}
     >
       {/* fix-editor-chrome V1 — block name tag. Selection now reads as

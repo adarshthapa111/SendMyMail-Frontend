@@ -46,6 +46,15 @@ function PreviewNode({ node, siblingCount = 1 }: { node: IMjmlNode; siblingCount
   const children = node.children ?? [];
 
   switch (node.tagName) {
+    case 'mj-wrapper': {
+      // mj-wrapper groups stacked sections under shared bg/padding
+      // (e.g. the Link-columns footer). Render its sections in a column.
+      return (
+        <div style={{ ...styleFromAttrs(a), display: 'block' }}>
+          {children.map((c, i) => <PreviewNode key={c._id ?? i} node={c} />)}
+        </div>
+      );
+    }
     case 'mj-section': {
       return (
         <div style={{ ...styleFromAttrs(a), display: 'flex', alignItems: 'stretch' }}>
@@ -148,11 +157,19 @@ function PreviewNode({ node, siblingCount = 1 }: { node: IMjmlNode; siblingCount
       return <div style={{ height: a.height ?? '20px' }} />;
     }
     case 'mj-social': {
+      const iconSize = attr(a, 'icon-size') ?? '18px';
+      const justify =
+        attr(a, 'align') === 'left' ? 'flex-start'
+        : attr(a, 'align') === 'right' ? 'flex-end'
+        : 'center';
       return (
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: a.padding ?? '8px 0' }}>
-          {(children.length ? children : [0, 1, 2]).map((_, i) => (
-            <span key={i} className={styles.socialDot} />
-          ))}
+        <div style={{ display: 'flex', gap: 8, justifyContent: justify, alignItems: 'center', padding: attr(a, 'padding') ?? '8px 0' }}>
+          {(children.length ? children : []).map((c, i) => {
+            const src = attr(c.attributes ?? {}, 'src');
+            return src
+              ? <img key={c._id ?? i} src={src} alt="" style={{ width: iconSize, height: iconSize, display: 'block' }} />
+              : <span key={c._id ?? i} className={styles.socialDot} />;
+          })}
         </div>
       );
     }

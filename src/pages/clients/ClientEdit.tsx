@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Heading, Text, Card, Button, Spinner } from '../../components/ui';
 import { IconArrowLeft, IconArchive } from '@tabler/icons-react';
-import { ClientForm, ArchiveDialog, type ClientFormValues } from '../../components/clients';
+import { ClientForm, BrandKitCard, ArchiveDialog, type ClientFormValues } from '../../components/clients';
 import { updateClient, archiveClient } from '../../lib/api/clients';
 import { upsertClient } from '../../store/slices/clientsSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -78,7 +78,7 @@ export function ClientEdit() {
   }
 
   return (
-    <div className={s.narrow}>
+    <div className={s.wide}>
       <Link to="/clients" className={s.back}>
         <IconArrowLeft size={14} /> Back to clients
       </Link>
@@ -92,16 +92,24 @@ export function ClientEdit() {
         </div>
       </div>
 
-      <Card padding="lg">
-        <ClientForm
-          initial={client}
-          submitLabel="Save changes"
-          submitting={submitting}
-          fieldErrors={fieldErrors}
-          onSubmit={onSave}
-          onCancel={() => navigate('/clients')}
+      {/* Basic details + brand kit, side by side (feature-client-brand-kit V1). */}
+      <div className={s.cardRow}>
+        <Card padding="lg">
+          <ClientForm
+            initial={client}
+            submitLabel="Save changes"
+            submitting={submitting}
+            fieldErrors={fieldErrors}
+            onSubmit={onSave}
+            onCancel={() => navigate('/clients')}
+          />
+        </Card>
+
+        <BrandKitCard
+          client={client}
+          onSaved={(updated) => dispatch(upsertClient(updated))}
         />
-      </Card>
+      </div>
 
       {/* Danger zone */}
       <div className={s.danger}>

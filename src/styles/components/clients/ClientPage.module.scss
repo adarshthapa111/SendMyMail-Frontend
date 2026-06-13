@@ -6,6 +6,24 @@
   margin: 0 auto;
 }
 
+/* Edit page — wider so the basic-details + brand-kit cards sit side by
+   side (.cardRow). Collapses to a single column on narrow screens. */
+.wide {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .cardRow { grid-template-columns: 1fr; }
+}
+
 .back {
   display: inline-flex;
   align-items: center;
@@ -39,6 +57,11 @@
   padding: 60px 0;
   display: grid;
   place-items: center;
+}
+
+/* Spacing wrapper for cards stacked below the main form (brand kit). */
+.section {
+  margin-top: 20px;
 }
 
 /* Danger zone — sits below the form on the edit page */

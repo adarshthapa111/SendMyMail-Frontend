@@ -6,6 +6,8 @@ import { Spinner } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadTemplate } from '../../store/slices/editorSlice';
 import { getTemplate, type Template } from '../../lib/api/templates';
+import { getClient } from '../../lib/api/clients';
+import { setActiveBrandKit } from '../../blocks/library/brandKit';
 import { ApiError } from '../../lib/api/client';
 import { toast } from '../../lib/toast';
 import styles from '@styles/components/templates/Builder.module.scss';
@@ -53,6 +55,23 @@ export function Builder() {
       });
     return () => { cancelled = true; };
   }, [clientId, templateId, dispatch]);
+
+  // ── Brand kit ─────────────────────────────────────────────────
+  // feature-client-brand-kit V1 — load the active client's brand kit so
+  // section composites drop on-brand. Reset to neutral defaults when the
+  // builder unmounts. clientId is fixed for the session (it's in the URL),
+  // so this runs once per builder visit.
+  useEffect(() => {
+    if (!clientId) return;
+    let cancelled = false;
+    getClient(clientId)
+      .then((res) => { if (!cancelled) setActiveBrandKit(res.data.client); })
+      .catch(() => { if (!cancelled) setActiveBrandKit(null); });
+    return () => {
+      cancelled = true;
+      setActiveBrandKit(null);
+    };
+  }, [clientId]);
 
   // ── Dirty-leave guard ─────────────────────────────────────────
   const blocker = useBlocker(
