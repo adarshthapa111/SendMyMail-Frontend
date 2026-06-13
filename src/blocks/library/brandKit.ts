@@ -47,6 +47,24 @@ export const DEFAULT_BRAND_KIT: BrandKit = {
 
 let active: BrandKit = { ...DEFAULT_BRAND_KIT };
 
+/* feature-client-brand-kit V1 — tiny observable so React surfaces that
+   render with the kit (the Flyout's live preview cards) can re-render +
+   rebuild when the active kit changes. The factories themselves stay
+   pull-based (read activeBrandKit() at call time); this is only for the
+   UI that needs to KNOW when to re-render. version bumps every change;
+   useSyncExternalStore subscribes via subscribeBrandKit. */
+let version = 0;
+const listeners = new Set<() => void>();
+
+export function subscribeBrandKit(cb: () => void): () => void {
+  listeners.add(cb);
+  return () => { listeners.delete(cb); };
+}
+
+export function brandKitVersion(): number {
+  return version;
+}
+
 /** Source shape from the API Client — only the brand-relevant subset. */
 export interface BrandKitSource {
   name?: string | null;
@@ -80,6 +98,8 @@ export function resolveBrandKit(src: BrandKitSource | null | undefined): BrandKi
 /** Editor calls this once when a client's template loads. null → reset. */
 export function setActiveBrandKit(src: BrandKitSource | null): void {
   active = src ? resolveBrandKit(src) : { ...DEFAULT_BRAND_KIT };
+  version++;
+  listeners.forEach((l) => l());
 }
 
 /** Read the active kit — called by shared.ts helpers at factory time. */

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import {
   IconX, IconTypography, IconRectangle, IconMinus, IconArrowsVertical,
@@ -6,6 +6,7 @@ import {
 } from '@tabler/icons-react';
 import { blockRegistry, type BlockDef } from '../../blocks/registry';
 import { PALETTE_GROUP_LABEL, type BlockCategory, type PaletteGroup } from '../../blocks/categories';
+import { subscribeBrandKit, brandKitVersion } from '../../blocks/library/brandKit';
 import SectionPreview from './SectionPreview';
 import styles from '@styles/components/palette/Flyout.module.scss';
 
@@ -31,9 +32,20 @@ const PREVIEW_W = 274;
    uuid(), so calling factory() during render would re-render previews
    with new ids each time. Cache one preview node per block. The
    factory is called AGAIN at drop time (in EditorBody), so dropped
-   blocks always get fresh ids. */
+   blocks always get fresh ids.
+
+   feature-client-brand-kit V1 — the cache is keyed by brand-kit version
+   too: factories read the active kit at call time, so a node cached
+   under client A is stale after switching to client B. The whole cache
+   is dropped when the version changes (the Flyout re-renders via
+   useSyncExternalStore), so previews rebuild on-brand. */
 const previewCache = new Map<string, ReturnType<BlockDef['factory']>>();
-function previewNodeFor(def: BlockDef) {
+let cacheVersion = -1;
+function previewNodeFor(def: BlockDef, version: number) {
+  if (version !== cacheVersion) {
+    previewCache.clear();
+    cacheVersion = version;
+  }
   let node = previewCache.get(def.id);
   if (!node) {
     node = def.factory();
@@ -105,9 +117,9 @@ function ElementTile({ def }: { def: BlockDef }) {
   );
 }
 
-function CompositeCard({ def }: { def: BlockDef }) {
+function CompositeCard({ def, kitVersion }: { def: BlockDef; kitVersion: number }) {
   const { setNodeRef, listeners, attributes, isDragging } = useDragHandle(def);
-  const node = previewNodeFor(def);
+  const node = previewNodeFor(def, kitVersion);
   return (
     <div
       ref={setNodeRef}
@@ -137,6 +149,11 @@ interface Props {
 
 export default function Flyout({ group, search, hidden = false, onClose }: Props) {
   const isSearching = search.trim().length > 0;
+
+  /* Re-render (and rebuild preview cards) whenever the active brand kit
+     changes — e.g. switching clients or the kit finishing its async
+     load — so the sidebar previews reflect the client's colors/font. */
+  const kitVersion = useSyncExternalStore(subscribeBrandKit, brandKitVersion);
 
   const defs = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -190,7 +207,7 @@ export default function Flyout({ group, search, hidden = false, onClose }: Props
         )}
 
         {composites.map((def) => (
-          <CompositeCard key={def.id} def={def} />
+          <CompositeCard key={`${def.id}:${kitVersion}`} def={def} kitVersion={kitVersion} />
         ))}
       </div>
     </div>

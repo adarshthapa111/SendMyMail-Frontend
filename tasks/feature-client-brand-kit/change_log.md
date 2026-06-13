@@ -108,6 +108,21 @@ font. Verified live: a dropped Button on the red-branded client renders
 `rgb(192,57,43)`, not blue. (The other primitives — text/image/divider/
 spacer — were already neutral.)
 
+## Follow-up (2026-06-13): sidebar previews react to the kit
+Bug: dropped blocks were on-brand, but the flyout's live PREVIEW cards
+stayed on the default/old brand after the kit loaded or the client
+changed — the preview node cache was keyed only by block id and built
+once (often before the async kit load finished).
+Fix:
+- brandKit.ts — `version` counter + `subscribeBrandKit` / `brandKitVersion`
+  (a tiny observable). `setActiveBrandKit` bumps + notifies. Factories
+  stay pull-based; this is only so the UI knows when to re-render.
+- Flyout.tsx — `useSyncExternalStore(subscribeBrandKit, brandKitVersion)`;
+  the preview cache is keyed by version and cleared on change, and
+  CompositeCard keys include the version → previews rebuild on-brand.
+Verified live: the Banner CTA preview card renders rgb(192,57,43) (the
+client's red), not the default near-black.
+
 ## V2 / later
 - Logo upload via Cloudinary (today: paste a URL)
 - Secondary color usage (stored, not yet consumed)
