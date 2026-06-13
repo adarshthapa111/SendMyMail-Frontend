@@ -31,28 +31,28 @@
   height: 4px;
   border-radius: 2px;
   background: transparent;
-  transition: background 100ms ease, height 100ms ease, box-shadow 100ms ease;
+  border: 1.5px dashed transparent;
+  box-sizing: border-box;
+  transition: background 120ms ease, height 120ms ease, border-color 120ms ease;
   pointer-events: none;
 }
 
-/* feature-editor-premium-polish V1 — drop zone "invite during drag":
-   bumped opacity (12% → 28%) so the zone reads against cream bg,
-   plus a slow pulse keyframe so it feels alive without being noisy.
-   Mailchimp / Beefree pattern. */
+/* fix-dropzone-slot V1 — non-hovered valid zones render NOTHING
+   (MailerLite keeps the canvas completely clean during drag). The
+   dashed slot below is the signal when the pointer reaches a target;
+   the 16px hit strips make targets easy to reach without hints. */
 .barActive {
-  background: color-mix(in srgb, var(--color-editor-chrome) 28%, transparent);
-  animation: dropZonePulse 1.5s ease-in-out infinite;
+  background: transparent;
 }
 
-@keyframes dropZonePulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.55; }
-}
-
+/* fix-dropzone-slot V1 — hovered target renders as a roomy DASHED SLOT
+   (MailerLite pattern): rounded dashed band with a faint tint that
+   previews "your block lands here", instead of a thin solid bar. */
 .barOver {
-  height: 16px;
-  background: var(--color-editor-chrome);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-editor-chrome) 30%, transparent);
+  height: 42px;
+  background: color-mix(in srgb, var(--color-editor-chrome) 6%, #ffffff);
+  border-color: color-mix(in srgb, var(--color-editor-chrome) 55%, transparent);
+  border-radius: 8px;
   animation: none;     /* over takes priority; no pulse */
 }
 

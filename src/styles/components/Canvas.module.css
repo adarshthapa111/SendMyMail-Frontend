@@ -29,14 +29,14 @@
   display: flex;
   flex-direction: column;
 
-  /* Paper card — clean, dramatic single shadow (per design decision:
-     "cleaner more dramatic" not warm multi-layer). Crisp edge against
-     the dot-pattern backdrop. */
+  /* Paper sheet — square-edged like a real email in Gmail, with a
+     whisper of elevation. (The earlier dramatic 24px/56px shadow +
+     12px radius read as "too much chrome" — user call.) */
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.04),
-    0 24px 56px -16px rgba(0, 0, 0, 0.20);
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 8px 24px -12px rgba(0, 0, 0, 0.10);
   transition: width 220ms cubic-bezier(.2, .8, .25, 1),
               max-width 220ms cubic-bezier(.2, .8, .25, 1),
               box-shadow 220ms ease;

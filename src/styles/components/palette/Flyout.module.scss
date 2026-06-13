@@ -2,6 +2,8 @@
    Anchored to the palette's right edge (left:100%) and overlays the
    canvas — the canvas does NOT reflow when it opens/closes. */
 
+/* Borderless + whisper shadow — the panel reads as part of the
+   sidebar, not a floating box stacked on it. */
 .flyout {
   position: absolute;
   left: 100%;
@@ -9,9 +11,7 @@
   bottom: 0;
   width: 300px;
   background: var(--color-card);
-  border-right: 1px solid var(--color-line);
-  border-left: 1px solid var(--color-line-soft);
-  box-shadow: 8px 0 24px -12px rgba(15, 23, 42, 0.18);
+  box-shadow: 6px 0 14px -10px rgba(15, 23, 42, 0.08);
   z-index: 20;
   display: flex;
   flex-direction: column;
